@@ -1,113 +1,81 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premios</title>
-    <style>
-        /* ESTILO "BRUTALISTA" / MÍNIMO */
-        body {
-            font-family: sans-serif; /* Usa la fuente de tu sistema */
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4; /* Gris muy pálido, descuidado pero legible */
-            color: #000;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premios</title>
+<style>
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+  }
 
-        /* El Título: Grande y gritón */
-        h1 {
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 2rem;
-            margin-bottom: 5px;
-            letter-spacing: -1px;
-        }
+  .card {
+    display: flex;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
 
-        p.subtitulo {
-            margin-top: 0;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
+  .card img {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 12px;
+  }
 
-        /* La Lista de Premios */
-        .catalogo {
-            list-style: none; /* Quita los puntos de lista */
-            padding: 0;
-        }
+  .points {
+    font-size: 13px;
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 4px;
+  }
 
-        /* Cada Tarjeta de Premio */
-        .item {
-            background-color: #fff;
-            border: 2px solid #000; /* Borde negro grueso, estilo cómic/informal */
-            margin-bottom: 15px;
-            padding: 15px;
-            display: flex; /* Pone el texto a la izquierda y puntos a la derecha */
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 4px 4px 0px #000; /* Sombra sólida "fea" pero cool */
-        }
+  .title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
 
-        /* Texto del Premio */
-        .nombre-premio {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        /* La Etiqueta de Puntos */
-        .puntos {
-            background-color: #000;
-            color: #fff;
-            padding: 5px 10px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        /* Un botón simple abajo por si acaso */
-        .btn-simple {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background: black;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 40px;
-            border: none;
-        }
-    </style>
+  .desc {
+    font-size: 13px;
+    color: #555;
+  }
+</style>
 </head>
 <body>
 
-    <h1>Premios 🎁</h1>
-    <p class="subtitulo">Junta puntos, canjea cosas gratis.</p>
+<div class="card">
+  <img src="https://via.placeholder.com/70" alt="premio">
+  <div>
+    <div class="points">120 pts</div>
+    <div class="title">Taza Personalizada</div>
+    <div class="desc">Cerámica premium con impresión UV.</div>
+  </div>
+</div>
 
-    <ul class="catalogo">
-        
-        <li class="item">
-            <div class="nombre-premio">Café Americano</div>
-            <div class="puntos">100 pts</div>
-        </li>
+<div class="card">
+  <img src="https://via.placeholder.com/70" alt="premio">
+  <div>
+    <div class="points">80 pts</div>
+    <div class="title">Afilador de cuchillos</div>
+    <div class="desc">Compacto, práctico y durable.</div>
+  </div>
+</div>
 
-        <li class="item">
-            <div class="nombre-premio">Postre del Día</div>
-            <div class="puntos">350 pts</div>
-        </li>
-
-        <li class="item">
-            <div class="nombre-premio">Hamburguesa Simple</div>
-            <div class="puntos">500 pts</div>
-        </li>
-
-        <li class="item">
-            <div class="nombre-premio">Combo Familiar</div>
-            <div class="puntos">1200 pts</div>
-        </li>
-
-    </ul>
-
-    <a href="#" class="btn-simple">ACCEDER A MI CUENTA -></a>
+<div class="card">
+  <img src="https://via.placeholder.com/70" alt="premio">
+  <div>
+    <div class="points">150 pts</div>
+    <div class="title">Pack Hogar</div>
+    <div class="desc">Dispensador + afilador.</div>
+  </div>
+</div>
 
 </body>
 </html>
