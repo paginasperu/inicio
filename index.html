@@ -246,23 +246,31 @@
         vendorFilter.addEventListener('change', filterRewards);
 
         // --- LÓGICA DE URL PARA GITHUB PAGES (?vendedor=...) ---
-        document.addEventListener("DOMContentLoaded", () => {
-            // Leemos los parámetros de la URL (ej: ?vendedor=nike)
-            const urlParams = new URLSearchParams(window.location.search);
-            const vendedorParam = urlParams.get('vendedor'); // 'nike', 'augusto', etc.
+        // --- LÓGICA DE URL ---
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const vendedorParam = urlParams.get('vendedor');
 
-            if (vendedorParam) {
-                // Buscamos si el parámetro coincide con alguna opción del filtro
-                const options = vendorFilter.options;
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].value === vendedorParam.toLowerCase()) {
-                        vendorFilter.selectedIndex = i; // Seleccionamos el filtro
-                        filterRewards(); // Ejecutamos el filtrado visual
-                        break;
-                    }
-                }
+    if (vendedorParam) {
+        const options = vendorFilter.options;
+        for (let i = 0; i < options.length; i++) {
+            // Comparamos ignorando mayúsculas/minúsculas
+            if (options[i].value.toLowerCase() === vendedorParam.toLowerCase()) {
+                vendorFilter.selectedIndex = i; 
+                filterRewards();
+                
+                // TRUCO FINAL DE MAGIA:
+                // Esto cambia la URL en el navegador visualmente sin recargar la página.
+                // El usuario verá: premios.pe (pero viendo solo el contenido de Augusto)
+                // Opcional: puedes dejarlo así para que sientan que están en su "app".
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({path:newUrl},'',newUrl);
+                
+                break;
             }
-        });
+        }
+    }
+});
 
         // --- Modal (Igual que antes) ---
         const modal = document.getElementById('rewardModal');
