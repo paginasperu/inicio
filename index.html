@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Premios - Negrita Suave</title>
+    <title>Listado de Premios - Puntos Minúscula</title>
     <style>
         /* --- Estilos Base --- */
         :root {
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
-            --text-dark: #374151; /* Un gris oscuro (no negro puro) ayuda a que se vea menos grueso */
+            --text-dark: #374151; /* Gris oscuro para suavizar la negrita */
             --text-gray: #6b7280;
             --points-bg: #e0e7ff;
-            --points-text: #4f46e5; /* Ajustado ligeramente */
+            --points-text: #4f46e5;
             
             /* Tamaños */
             --img-size-desktop: 140px; 
@@ -29,7 +29,7 @@
             display: flex;
             justify-content: center;
             
-            /* TRUCO: Esto hace que la letra se vea más nítida y fina en Chrome/Safari */
+            /* Suavizado de fuente */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -86,15 +86,14 @@
             height: 100%;
         }
 
-        /* Puntos (Negrita Ajustada) */
+        /* Puntos (Ahora en minúscula) */
         .reward-points {
             display: inline-block;
             background-color: var(--points-bg);
             color: var(--points-text);
             
             font-size: var(--font-size-main); 
-            /* Cambio clave: de 800 a 600 */
-            font-weight: 600; 
+            font-weight: 600; /* Semi-bold */
             
             padding: 4px 12px;
             border-radius: 50px;
@@ -103,14 +102,11 @@
             line-height: 1;
         }
 
-        /* Título (Negrita Ajustada) */
+        /* Título */
         .reward-title {
             margin: 0 0 6px 0;
-            
             font-size: var(--font-size-main);
-            /* Cambio clave: de 700 a 600 */
-            font-weight: 600;
-            
+            font-weight: 600; /* Semi-bold */
             color: var(--text-dark);
             white-space: nowrap;      
             overflow: hidden;         
@@ -127,7 +123,7 @@
             -webkit-line-clamp: 2; 
             -webkit-box-orient: vertical;
             overflow: hidden;
-            font-weight: 400; /* Regular */
+            font-weight: 400; 
         }
 
         /* --- Móvil --- */
@@ -169,7 +165,7 @@
                 <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80" alt="Zapatillas">
             </div>
             <div class="reward-content">
-                <span class="reward-points">2,500 Pts</span>
+                <span class="reward-points">2,500 puntos</span>
                 <h3 class="reward-title">Zapatillas Running Pro</h3>
                 <p class="reward-desc">Modelo ergonómico con suela de aire, ideal para maratones y entrenamiento diario intenso.</p>
             </div>
@@ -180,7 +176,7 @@
                 <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=300&q=80" alt="Smartwatch">
             </div>
             <div class="reward-content">
-                <span class="reward-points">5,000 Pts</span>
+                <span class="reward-points">5,000 puntos</span>
                 <h3 class="reward-title">Smartwatch Series 5</h3>
                 <p class="reward-desc">Control de ritmo cardíaco, GPS, resistencia al agua y batería de 48 horas.</p>
             </div>
@@ -191,7 +187,7 @@
                 <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80" alt="Auriculares">
             </div>
             <div class="reward-content">
-                <span class="reward-points">1,200 Pts</span>
+                <span class="reward-points">1,200 puntos</span>
                 <h3 class="reward-title">Auriculares Bluetooth</h3>
                 <p class="reward-desc">Cancelación de ruido activa, conexión multipunto y estuche de carga rápida.</p>
             </div>
@@ -202,7 +198,7 @@
                 <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=300&q=80" alt="Mochila">
             </div>
             <div class="reward-content">
-                <span class="reward-points">850 Pts</span>
+                <span class="reward-points">850 puntos</span>
                 <h3 class="reward-title">Mochila Urbana Waterproof</h3>
                 <p class="reward-desc">Diseño antirrobo con puerto USB de carga, ideal para viajes cortos o la universidad.</p>
             </div>
