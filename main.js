@@ -1,9 +1,12 @@
-// main.js - VERSIÓN DINÁMICA
+// main.js - CORREGIDO
 
 // 1. CONFIGURACIÓN
-const SHEET_ID = '1ew2qtysq4rwWkL7VU2MTaOv2O3tmD28kFYN5eVHCiUY'; // <--- PEGA TU ID
-const SHEET_NAME = 'negocios'; // <--- Nombre exacto de tu pestaña en Excel
+const SHEET_ID = '1ew2qtysq4rwWkL7VU2MTaOv2O3tmD28kFYN5eVHCiUY'; 
+const SHEET_NAME = 'negocios'; 
 const API_URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
+
+// --- ¡ESTA ES LA LÍNEA QUE FALTABA! ---
+const IMAGEN_DEFECTO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23e2e8f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2364748b'%3ESin Logo%3C/text%3E%3C/svg%3E";
 
 const rewardsList = document.getElementById('rewardsList');
 
