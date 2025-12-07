@@ -11,6 +11,8 @@ const IMAGEN_DEFECTO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 const rewardsList = document.getElementById('rewardsList');
 
 // --- FUNCIÓN PRINCIPAL: CARGAR NEGOCIOS ---
+// main.js - VERSIÓN LIMPIA (Sin estilos inline)
+
 async function cargarNegocios() {
     try {
         const response = await fetch(API_URL);
@@ -19,53 +21,36 @@ async function cargarNegocios() {
         rewardsList.innerHTML = ''; 
 
         data.forEach(negocio => {
+            // Validación de logo
             let urlLogo = (negocio.logo && negocio.logo.trim() !== '') ? negocio.logo : IMAGEN_DEFECTO;
 
+            // HTML Limpio: Usa solo las clases de tu CSS original
             const cardHTML = `
                 <article class="reward-card business-card" 
                     data-category="${negocio.categoria}" 
                     data-name="${negocio.nombre}"
                     data-distrito="${negocio.distrito}"
                     data-depa="${negocio.departamento}"
-                    onclick="irANegocio('${negocio.usuario}')"
-                    style="align-items: flex-start; padding: 15px;"> 
+                    onclick="irANegocio('${negocio.usuario}')">
                     
-                    <div class="reward-image" style="width: 110px; height: 110px;">
+                    <div class="reward-image">
                         <img src="${urlLogo}" 
                              alt="${negocio.nombre}" 
-                             onerror="this.onerror=null; this.src='${IMAGEN_DEFECTO}'"
-                             style="border-radius: 8px;">
+                             onerror="this.onerror=null; this.src='${IMAGEN_DEFECTO}'">
                     </div>
 
-                    <div class="reward-content" style="padding: 0 0 0 15px; justify-content: space-between;">
+                    <div class="reward-content">
+                        <div class="reward-vendor">${negocio.categoria}</div>
                         
-                        <h3 class="reward-title" style="font-size: 1.3rem; margin: 0 0 4px 0; line-height: 1.1;">
-                            ${negocio.nombre}
-                        </h3>
-
-                        <div class="reward-vendor" style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: normal;">
-                            ${negocio.categoria}
-                        </div>
-
-                        <p class="reward-desc" style="margin-bottom: 12px; font-size: 0.9rem;">
+                        <h3 class="reward-title">${negocio.nombre}</h3>
+                        
+                        <p class="reward-desc">
                             ${negocio.distrito} - ${negocio.provincia} - ${negocio.departamento}
                         </p>
 
-                        <div style="
-                            background-color: var(--primary); 
-                            color: white; 
-                            text-align: center; 
-                            padding: 8px 12px; 
-                            border-radius: 6px; 
-                            font-weight: 600; 
-                            font-size: 1.1rem;
-                            width: 100%;
-                            cursor: pointer;
-                            transition: background 0.2s;
-                        ">
+                        <span class="reward-points" style="margin-top: 10px; cursor: pointer;">
                             Ver premios
-                        </div>
-
+                        </span>
                     </div>
                 </article>
             `;
