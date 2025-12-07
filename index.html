@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Premios</title>
+    <title>Listado de Premios Moderno</title>
     <style>
         /* --- Estilos Generales --- */
         :root {
-            --primary-color: #6366f1; /* Color principal (Indigo) */
-            --bg-color: #f3f4f6;      /* Fondo gris suave */
+            --primary-color: #6366f1;
+            --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-dark: #1f2937;
             --text-gray: #6b7280;
@@ -25,58 +25,61 @@
             justify-content: center;
         }
 
-        /* Contenedor principal */
         .rewards-container {
             width: 100%;
-            max-width: 600px; /* Ancho máximo de la lista */
+            max-width: 600px;
             display: flex;
             flex-direction: column;
-            gap: 16px; /* Espacio entre tarjetas */
+            gap: 16px;
         }
 
-        /* --- Estilos de la Tarjeta (Premio) --- */
+        /* --- Estilos de la Tarjeta (Modificado) --- */
         .reward-card {
             background-color: var(--card-bg);
             border-radius: 16px;
-            padding: 16px;
-            display: flex; /* Activa las 2 columnas */
-            align-items: center;
-            gap: 20px;
+            /* Padding eliminado para que la imagen toque el borde */
+            padding: 0; 
+            display: flex;
+            align-items: stretch; /* Estira los elementos para que ocupen toda la altura */
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
                         0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             cursor: pointer;
+            overflow: hidden; /* Asegura que nada se salga de los bordes redondeados */
         }
 
-        /* Efecto Hover (al pasar el mouse) */
         .reward-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
                         0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        /* Columna Izquierda: Imagen */
+        /* Columna Izquierda: Imagen (Modificado) */
         .reward-image {
-            width: 100px;
-            height: 100px;
-            flex-shrink: 0; /* Evita que la imagen se aplaste */
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: #eee;
+            width: 120px; /* Un poco más grande para balancear */
+            flex-shrink: 0;
+            position: relative;
+            /* No necesitamos border-radius aquí porque el overflow:hidden de la tarjeta lo recorta */
         }
 
         .reward-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Mantiene la imagen cuadrada sin deformarla */
+            object-fit: cover;
+            display: block; /* Elimina espacios fantasma debajo de la imagen */
+            position: absolute; /* Posicionamiento absoluto para llenar el contenedor padre */
+            top: 0;
+            left: 0;
         }
 
-        /* Columna Derecha: Contenido */
+        /* Columna Derecha: Contenido (Modificado) */
         .reward-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            /* Añadimos padding aquí porque lo quitamos de la tarjeta principal */
+            padding: 20px; 
         }
 
         /* Badge de Puntos */
@@ -86,42 +89,42 @@
             color: var(--points-text);
             font-weight: 700;
             font-size: 0.85rem;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             align-self: flex-start;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        /* Nombre del Premio */
         .reward-title {
-            margin: 0 0 6px 0;
-            font-size: 1.1rem;
+            margin: 0 0 8px 0;
+            font-size: 1.15rem;
             color: var(--text-dark);
-            font-weight: 600;
+            font-weight: 700;
             line-height: 1.2;
         }
 
-        /* Descripción */
         .reward-desc {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-gray);
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
-        /* Responsividad para móviles muy pequeños */
-        @media (max-width: 400px) {
+        /* Responsividad para móviles */
+        @media (max-width: 480px) {
             .reward-card {
                 flex-direction: column;
-                text-align: center;
-            }
-            .reward-points {
-                align-self: center;
             }
             .reward-image {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 8px;
+                width: 100%;
+                height: 160px; /* Altura fija para la imagen tipo banner en móvil */
+            }
+            /* En móvil, la imagen ya no necesita posición absoluta porque tiene altura definida */
+            .reward-image img {
+                 position: relative;
+            }
+            .reward-content {
+                padding: 20px 24px; /* Un poco más de padding lateral en móvil se ve mejor */
             }
         }
     </style>
@@ -132,10 +135,10 @@
         
         <article class="reward-card">
             <div class="reward-image">
-                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=150&q=80" alt="Zapatillas Deportivas">
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80" alt="Zapatillas Deportivas">
             </div>
             <div class="reward-content">
-                <span class="reward-points">⚡ 2,500 Pts</span>
+                <span class="reward-points">2,500 Pts</span>
                 <h3 class="reward-title">Zapatillas Running Pro</h3>
                 <p class="reward-desc">Modelo ergonómico con suela de aire, ideal para maratones y entrenamiento diario.</p>
             </div>
@@ -143,10 +146,10 @@
 
         <article class="reward-card">
             <div class="reward-image">
-                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=150&q=80" alt="Reloj Inteligente">
+                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=300&q=80" alt="Reloj Inteligente">
             </div>
             <div class="reward-content">
-                <span class="reward-points">💎 5,000 Pts</span>
+                <span class="reward-points">5,000 Pts</span>
                 <h3 class="reward-title">Smartwatch Series 5</h3>
                 <p class="reward-desc">Control de ritmo cardíaco, GPS integrado y resistencia al agua hasta 50m.</p>
             </div>
@@ -154,10 +157,10 @@
 
         <article class="reward-card">
             <div class="reward-image">
-                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=150&q=80" alt="Auriculares">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80" alt="Auriculares">
             </div>
             <div class="reward-content">
-                <span class="reward-points">🎵 1,200 Pts</span>
+                <span class="reward-points">1,200 Pts</span>
                 <h3 class="reward-title">Auriculares Bluetooth</h3>
                 <p class="reward-desc">Cancelación de ruido activa y batería de larga duración (20 horas).</p>
             </div>
@@ -165,10 +168,10 @@
 
         <article class="reward-card">
             <div class="reward-image">
-                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=150&q=80" alt="Vale de Compra">
+                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=300&q=80" alt="Vale de Compra">
             </div>
             <div class="reward-content">
-                <span class="reward-points">🏷️ 500 Pts</span>
+                <span class="reward-points">500 Pts</span>
                 <h3 class="reward-title">Gift Card $20</h3>
                 <p class="reward-desc">Canjeable en toda nuestra tienda online sin monto mínimo de compra.</p>
             </div>
