@@ -247,28 +247,27 @@
 
        // --- LÓGICA DE NAVEGACIÓN CON HASH (#) ---
 
-// 1. Función que lee el hash y aplica el filtro
-function checkHash() {
-    // Obtenemos el hash (ej: "#/negocio/nike" o "#nike")
-    let hash = window.location.hash;
+// --- LÓGICA PROFESIONAL PARA HASH (#/) ---
+        // Esto permite urls tipo: premios.pe/#/nike o premios.pe/#/augusto
+        function checkHash() {
+            let hash = window.location.hash; // Ej: "#/augusto"
 
-    // Si no hay hash, no hacemos nada (o mostramos el home)
-    if (!hash) return;
+            if (hash) {
+                // 1. Quitamos los símbolos extra ("#/" o "#") para dejar limpio "augusto"
+                // EL CAMBIO ESTÁ AQUÍ: Ahora limpiamos '#/' explícitamente
+                let vendorSlug = hash.replace('#/', '').replace('#', '').toLowerCase();
 
-    // Limpiamos el hash para quedarnos solo con el nombre (ej: "nike")
-    // Esto elimina "#/negocio/" o simplemente "#"
-    let slug = hash.replace("#/negocio/", "").replace("#", "").toLowerCase();
-
-    // Buscamos si existe en el filtro
-    const options = vendorFilter.options;
-    for (let i = 0; i < options.length; i++) {
-        if (options[i].value.toLowerCase() === slug) {
-            vendorFilter.selectedIndex = i;
-            filterRewards(); // Ejecutamos el filtro visual
-            break;
+                // 2. Buscamos si existe en el filtro
+                const options = vendorFilter.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value.toLowerCase() === vendorSlug) {
+                        vendorFilter.selectedIndex = i; 
+                        filterRewards();
+                        break;
+                    }
+                }
+            }
         }
-    }
-}
 
 // 2. Ejecutar cuando la página carga por primera vez
 document.addEventListener("DOMContentLoaded", checkHash);
