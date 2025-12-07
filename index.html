@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premios con Filtros y Modal</title>
+    <title>Premios - Buscador Full y Filtros 2 Col</title>
     <style>
         /* --- 1. Variables y Reset --- */
         :root {
@@ -11,8 +11,8 @@
             --card-bg: #ffffff;
             --text-dark: #334155;
             --text-gray: #64748b;
-            --primary: #4f46e5;      /* Color botones/puntos */
-            --border-color: #e2e8f0;
+            --primary: #4f46e5;
+            --border-color: #cbd5e1; /* Un poco más oscuro para mejor contraste en inputs */
             
             /* Dimensiones */
             --img-size-desktop: 140px; 
@@ -30,42 +30,64 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- 2. Buscador y Filtros --- */
+        /* --- 2. CONTENEDOR DE FILTROS (MODIFICADO) --- */
         .filters-container {
             width: 100%;
             max-width: 600px;
             margin-bottom: 20px;
+            
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-wrap: wrap; /* Permite que los elementos caigan a la siguiente línea */
+            gap: 12px;       /* Espacio entre buscador y filtros, y entre los dos filtros */
         }
 
-        /* Input de búsqueda */
+        /* BUSCADOR: Ocupa todo el ancho (Fila 1) */
         .search-box {
-            flex-grow: 1;
+            width: 100%; 
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+            background-color: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .search-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* FILTROS: Comparten espacio (Fila 2) */
+        .filter-select {
+            flex: 1; /* Esto hace que ambos crezcan para ocupar el 50% cada uno */
+            min-width: 0; /* Evita que el select se desborde si el texto es muy largo */
+            
             padding: 12px 16px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-            min-width: 200px;
-        }
-        .search-box:focus { border-color: var(--primary); }
-
-        /* Selects (Dropdowns) */
-        .filter-select {
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 0.9rem;
             background-color: white;
             color: var(--text-dark);
             cursor: pointer;
             outline: none;
+            box-sizing: border-box;
+            
+            /* Icono de flecha custom (opcional para que se vea más moderno) */
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 30px; /* Espacio para la flecha */
         }
 
-        /* --- 3. Lista de Tarjetas --- */
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        /* --- 3. Lista de Tarjetas (Igual que antes) --- */
         .rewards-container {
             width: 100%;
             max-width: 600px;
@@ -85,7 +107,7 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             height: var(--img-size-desktop);
-            position: relative; /* Para efectos */
+            position: relative;
         }
 
         .reward-card:hover {
@@ -112,7 +134,6 @@
             height: 100%;
         }
 
-        /* NEGOCIO: Estilo sutil arriba */
         .reward-vendor {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -154,9 +175,9 @@
             font-weight: 400;
         }
 
-        /* --- 4. Modal (Pop-up) --- */
+        /* --- 4. Modal --- */
         .modal-backdrop {
-            display: none; /* Oculto por defecto */
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.5);
@@ -175,7 +196,7 @@
             overflow: hidden;
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
             animation: slideUp 0.3s ease-out;
-            max-height: 90vh; /* Scroll si es muy largo */
+            max-height: 90vh;
             overflow-y: auto;
         }
 
@@ -184,50 +205,27 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .modal-img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
+        .modal-img { width: 100%; height: 250px; object-fit: cover; }
         .modal-body { padding: 24px; }
-        
-        .modal-header-row {
-            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;
-        }
-        
-        .modal-vendor {
-            font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase;
-        }
-        
-        .modal-category {
-            font-size: 0.75rem; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; color: var(--text-dark);
-        }
-
+        .modal-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .modal-vendor { font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+        .modal-category { font-size: 0.75rem; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; color: var(--text-dark); }
         .modal-title { margin: 5px 0 15px 0; font-size: 1.5rem; color: var(--text-dark); }
-        
-        .modal-points {
-            font-size: 1.2rem; color: var(--primary); font-weight: 700; margin-bottom: 20px; display: block;
-        }
-
+        .modal-points { font-size: 1.2rem; color: var(--primary); font-weight: 700; margin-bottom: 20px; display: block; }
         .modal-desc-long { font-size: 1rem; line-height: 1.6; color: var(--text-dark); margin-bottom: 24px; }
+        .modal-close-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-size: 1rem; font-weight: 600; border-radius: 12px; cursor: pointer; }
 
-        .modal-close-btn {
-            width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-size: 1rem; font-weight: 600; border-radius: 12px; cursor: pointer;
-        }
-
-        /* --- 5. Media Queries (Móvil) --- */
+        /* --- 5. Media Queries --- */
         @media (max-width: 480px) {
             .reward-card, .reward-image { height: var(--img-size-mobile); }
             .reward-image { width: var(--img-size-mobile); }
             .reward-content { padding: 0 14px; }
             .reward-title { font-size: 1rem; }
             .reward-vendor { font-size: 0.7rem; }
-            .reward-desc {
-                display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem;
-            }
-            .filters-container { flex-direction: column; }
-            .filter-select { width: 100%; }
+            .reward-desc { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; }
+            
+            /* Ajuste para filtros en móviles muy pequeños */
+            .filter-select { font-size: 0.85rem; padding: 10px 12px; }
         }
     </style>
 </head>
@@ -237,15 +235,13 @@
         <input type="text" id="searchInput" class="search-box" placeholder="Buscar premio...">
         
         <select id="categoryFilter" class="filter-select">
-            <option value="all">Todas las categorías</option>
-            <option value="tecnologia">Tecnología</option>
+            <option value="all">Categoría (Todas)</option> <option value="tecnologia">Tecnología</option>
             <option value="deporte">Deporte</option>
             <option value="accesorios">Accesorios</option>
         </select>
 
         <select id="vendorFilter" class="filter-select">
-            <option value="all">Todos los negocios</option>
-            <option value="nike">Nike Store</option>
+            <option value="all">Negocio (Todos)</option> <option value="nike">Nike Store</option>
             <option value="ishop">iShop</option>
             <option value="sony">Sony Center</option>
             <option value="falabella">Falabella</option>
@@ -254,24 +250,19 @@
 
     <div class="rewards-container" id="rewardsList">
         
-        <article class="reward-card" 
-                 data-category="deporte" 
-                 data-vendor="nike"
-                 data-long-desc="Estas zapatillas cuentan con la última tecnología FlyKnit, proporcionando un ajuste perfecto y una transpirabilidad superior. Ideales para correr largas distancias o para el uso diario en el gimnasio. Disponible en tallas 38 a 44.">
+        <article class="reward-card" data-category="deporte" data-vendor="nike" data-long-desc="Estas zapatillas cuentan con la última tecnología FlyKnit, proporcionando un ajuste perfecto y una transpirabilidad superior. Ideales para correr largas distancias.">
             <div class="reward-image">
                 <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80">
             </div>
             <div class="reward-content">
-                <div class="reward-vendor">Nike Store</div> <h3 class="reward-title">Zapatillas Running Pro</h3>
+                <div class="reward-vendor">Nike Store</div>
+                <h3 class="reward-title">Zapatillas Running Pro</h3>
                 <span class="reward-points">2,500 puntos</span>
                 <p class="reward-desc">Modelo ergonómico con suela de aire, ideal para maratones.</p>
             </div>
         </article>
 
-        <article class="reward-card" 
-                 data-category="tecnologia" 
-                 data-vendor="ishop"
-                 data-long-desc="El Smartwatch Series 5 es tu compañero ideal de salud. Monitoriza tu oxígeno en sangre, ritmo cardíaco y sueño. Además, recibe notificaciones de WhatsApp y llamadas directamente en tu muñeca. Resistente al agua 50 metros.">
+        <article class="reward-card" data-category="tecnologia" data-vendor="ishop" data-long-desc="El Smartwatch Series 5 es tu compañero ideal de salud. Monitoriza tu oxígeno en sangre, ritmo cardíaco y sueño.">
             <div class="reward-image">
                 <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=300&q=80">
             </div>
@@ -283,10 +274,7 @@
             </div>
         </article>
 
-        <article class="reward-card" 
-                 data-category="tecnologia" 
-                 data-vendor="sony"
-                 data-long-desc="Disfruta del silencio con la mejor cancelación de ruido del mercado. Batería de 30 horas de duración, carga rápida (10 min de carga = 5 horas de música) y control táctil. Incluye estuche de viaje.">
+        <article class="reward-card" data-category="tecnologia" data-vendor="sony" data-long-desc="Disfruta del silencio con la mejor cancelación de ruido del mercado. Batería de 30 horas de duración y carga rápida.">
             <div class="reward-image">
                 <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80">
             </div>
@@ -298,10 +286,7 @@
             </div>
         </article>
 
-        <article class="reward-card" 
-                 data-category="accesorios" 
-                 data-vendor="falabella"
-                 data-long-desc="Mochila diseñada para la vida urbana moderna. Cuenta con material impermeable, cremalleras ocultas para evitar robos y un puerto USB integrado para cargar tu celular mientras caminas (batería no incluida).">
+        <article class="reward-card" data-category="accesorios" data-vendor="falabella" data-long-desc="Mochila diseñada para la vida urbana moderna. Cuenta con material impermeable y cremalleras ocultas.">
             <div class="reward-image">
                 <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=300&q=80">
             </div>
@@ -332,7 +317,6 @@
     </div>
 
     <script>
-        // --- 1. Lógica de Filtrado y Búsqueda ---
         const searchInput = document.getElementById('searchInput');
         const categoryFilter = document.getElementById('categoryFilter');
         const vendorFilter = document.getElementById('vendorFilter');
@@ -349,28 +333,20 @@
                 const cardCategory = card.getAttribute('data-category');
                 const cardVendor = card.getAttribute('data-vendor');
 
-                // Lógica: Debe coincidir texto Y categoría Y negocio
                 const matchesText = title.includes(searchText) || desc.includes(searchText);
                 const matchesCategory = category === 'all' || cardCategory === category;
                 const matchesVendor = vendor === 'all' || cardVendor === vendor;
 
-                if (matchesText && matchesCategory && matchesVendor) {
-                    card.style.display = 'flex'; // Mostrar
-                } else {
-                    card.style.display = 'none'; // Ocultar
-                }
+                card.style.display = (matchesText && matchesCategory && matchesVendor) ? 'flex' : 'none';
             });
         }
 
-        // Escuchar cambios en los inputs
         searchInput.addEventListener('input', filterRewards);
         categoryFilter.addEventListener('change', filterRewards);
         vendorFilter.addEventListener('change', filterRewards);
 
-        // --- 2. Lógica del Modal (Pop-up) ---
+        // Modal Logic
         const modal = document.getElementById('rewardModal');
-        
-        // Elementos dentro del modal
         const mImg = document.getElementById('modalImg');
         const mVendor = document.getElementById('modalVendor');
         const mCategory = document.getElementById('modalCategory');
@@ -378,43 +354,27 @@
         const mPoints = document.getElementById('modalPoints');
         const mDesc = document.getElementById('modalDesc');
 
-        // Al hacer clic en una tarjeta
         cards.forEach(card => {
             card.addEventListener('click', () => {
-                // Sacar datos de la tarjeta clicada
                 const imgSrc = card.querySelector('img').src;
                 const title = card.querySelector('.reward-title').textContent;
                 const points = card.querySelector('.reward-points').textContent;
                 const vendorName = card.querySelector('.reward-vendor').textContent;
-                
-                // Sacar datos ocultos (data-attributes)
                 const category = card.getAttribute('data-category');
                 const longDesc = card.getAttribute('data-long-desc');
 
-                // Llenar el modal
                 mImg.src = imgSrc;
                 mTitle.textContent = title;
                 mPoints.textContent = points;
                 mVendor.textContent = vendorName;
-                mCategory.textContent = category.toUpperCase(); // Mostrar categoría en mayus
+                mCategory.textContent = category.toUpperCase();
                 mDesc.textContent = longDesc;
-
-                // Mostrar modal
                 modal.style.display = 'flex';
             });
         });
 
-        // Función para cerrar
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        // Cerrar si se hace clic fuera del contenido blanco
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
+        function closeModal() { modal.style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == modal) closeModal(); }
     </script>
 
 </body>
