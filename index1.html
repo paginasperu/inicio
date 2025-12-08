@@ -1,404 +1,590 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Academia Teorema 21 — Preparación universitaria de alto nivel</title>
-  <meta name="description" content="Academia Teorema 21 — Preparación intensiva y personalizada para asegurar tu ingreso a la universidad. Cursos presenciales y online, clases por módulos, simulacros y seguimiento personalizado." />
-  <meta name="theme-color" content="#0b76ef" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230b76ef'/><text x='50' y='58' font-size='46' text-anchor='middle' fill='white' font-family='Arial'>T</text></svg>" />
-
-  <!-- Minimal, self-contained styles (no frameworks) -->
-  <style>
-    :root{
-      --blue:#0b76ef;
-      --muted:#6b7280;
-      --bg:#f7f8fb;
-      --card:#ffffff;
-      --glass: rgba(255,255,255,0.6);
-      --radius:12px;
-      --maxw:1100px;
-      --accent:#06b6d4;
-      --shadow: 0 6px 18px rgba(11,118,239,0.08);
-      color-scheme: light;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#fbfdff 0%, var(--bg) 100%); color:#0f1724;}
-    a{color:var(--blue);text-decoration:none}
-    .container{max-width:var(--maxw);margin:0 auto;padding:28px 18px;}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:58px;height:58px;border-radius:12px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--blue),#0666d0);box-shadow:0 6px 18px rgba(11,118,239,0.12);
-      color:white;font-weight:700;font-size:20px;
-    }
-    h1{font-size:22px;margin:0}
-    header nav{display:flex;gap:12px;align-items:center}
-    .btn{background:var(--blue);color:white;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:600;box-shadow:var(--shadow)}
-    .ghost{background:transparent;border:1px solid rgba(11,118,239,0.12);color:var(--blue);padding:8px 12px;border-radius:10px}
-    /* Hero */
-    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-top:22px}
-    .card{background:var(--card);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
-    .kicker{display:inline-block;background:linear-gradient(90deg,#e6f3ff,#eef9ff);color:var(--blue);padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;margin-bottom:14px}
-    h2{font-size:30px;margin:6px 0 12px;line-height:1.06}
-    p.lead{color:var(--muted);margin:0 0 18px}
-    .features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
-    .feature{display:flex;gap:10px;align-items:flex-start}
-    .icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#0b76ef);display:grid;place-items:center;color:white;font-weight:700}
-    /* right column */
-    .panel-cta{padding:18px;border-radius:12px;background:linear-gradient(180deg,#ffffff,#fbfdff);border:1px solid rgba(11,118,239,0.04)}
-    .small{font-size:13px;color:var(--muted)}
-    .input{width:100%;padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:15px}
-    .row{display:flex;gap:8px}
-    .price{font-size:20px;font-weight:700;color:var(--blue)}
-    /* cards area */
-    .grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:22px}
-    .stat{display:flex;flex-direction:column;gap:6px}
-    .stat .num{font-weight:700;font-size:22px;color:var(--blue)}
-    footer{margin-top:34px;padding:22px 0;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;align-items:center}
-    /* responsive */
-    @media (max-width:920px){
-      .hero{grid-template-columns:1fr; padding-bottom:6px}
-      .panel-cta{order:2}
-    }
-    /* testimonial */
-    .testi{background:linear-gradient(180deg,#fff,#f8fcff);padding:14px;border-radius:12px;border:1px solid rgba(11,118,239,0.04)}
-    /* faq */
-    details{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(15,23,36,0.04)}
-    /* subtle link button */
-    .link-btn{background:transparent;border:none;color:var(--blue);font-weight:600;padding:6px 8px;cursor:pointer}
-  </style>
-
-  <!-- JSON-LD (SEO básico) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"EducationalOrganization",
-    "name":"Academia Teorema 21",
-    "url":"https://premios.pe/",
-    "logo":"https://premios.pe/favicon.png",
-    "description":"Preparación de alto nivel para asegurar tu ingreso a la universidad. Cursos presenciales y online, simulacros y seguimiento personalizado.",
-    "sameAs": []
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Libro de Reclamaciones · Plantilla Perú — Academia / Comercio</title>
+<meta name="description" content="Plantilla de Libro de Reclamaciones para Perú. Formulario accesible, imprimible, exportable y con panel local para gestionar respuestas. Úsalo en negocios para registrar quejas y entregar comprobante al cliente." />
+<meta name="theme-color" content="#0b76ef" />
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --card:#fff;
+    --accent:#0b76ef;
+    --muted:#6b7280;
+    --radius:10px;
+    --maxw:900px;
   }
-  </script>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;background:linear-gradient(180deg,#ffffff 0%,var(--bg) 100%);color:#0f1724}
+  .wrap{max-width:var(--maxw);margin:20px auto;padding:18px}
+  header{display:flex;align-items:center;gap:14px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:white;font-weight:700}
+  h1{margin:0;font-size:20px}
+  p.lead{margin:6px 0 0;color:var(--muted);font-size:14px}
+  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(11,118,239,0.06);margin-top:14px}
+  form{display:grid;gap:10px}
+  .row{display:flex;gap:10px}
+  .col{flex:1;min-width:0}
+  label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+  input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="time"], input[type="number"], select, textarea{
+    width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;font-size:14px;background:#fff;
+  }
+  textarea{min-height:110px;resize:vertical}
+  .muted{color:var(--muted);font-size:13px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  button{cursor:pointer;border:0;padding:10px 12px;border-radius:8px;font-weight:700}
+  .primary{background:var(--accent);color:white}
+  .ghost{background:transparent;border:1px solid rgba(11,118,239,0.12);color:var(--accent)}
+  .small{font-size:13px;color:var(--muted)}
+  .center{display:flex;justify-content:center;align-items:center}
+  /* table lista */
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th,td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:13px}
+  th{background:#fbfdff;font-weight:700}
+  .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#eef6ff;color:var(--accent);font-weight:700;font-size:12px}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  /* panel admin */
+  .admin-panel{margin-top:12px}
+  .secret{display:flex;gap:8px;align-items:center}
+  /* printable ticket */
+  .ticket{max-width:720px;margin:0 auto;padding:14px;border-radius:8px;background:white;border:1px solid #e6eef8}
+  @media print {
+    body *:not(.printable){display:none}
+    .printable{display:block}
+    .ticket{box-shadow:none;border:none}
+  }
+  /* responsive */
+  @media (max-width:820px){
+    .row{flex-direction:column}
+    header{flex-direction:column;align-items:flex-start;gap:8px}
+  }
+</style>
 </head>
 <body>
-  <div class="container">
+  <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo" aria-hidden="true">T21</div>
+        <div class="logo" aria-hidden="true">LR</div>
         <div>
-          <h1>Academia Teorema 21</h1>
-          <div style="font-size:13px;color:var(--muted)">Preparación universitaria · Presencial &amp; Online</div>
+          <h1>Libro de Reclamaciones (Plantilla Perú)</h1>
+          <p class="lead">Registro oficial y entregable de reclamos — imprime una copia para el cliente y guarda el registro en tu negocio.</p>
         </div>
       </div>
 
-      <nav aria-label="Navegación principal">
-        <a class="ghost" href="#cursos">Cursos</a>
-        <a class="ghost" href="#metodo">Método</a>
-        <a class="ghost" href="#precios">Precios</a>
-        <a class="ghost" href="#contacto">Contacto</a>
-        <a class="btn" href="tel:+51950141414" title="Llamar">Reservar</a>
-      </nav>
+      <div class="controls">
+        <button class="ghost" id="btnList" title="Ver reclamos guardados">Ver reclamos</button>
+        <button class="ghost" id="btnExport" title="Exportar registros CSV">Exportar CSV</button>
+        <button class="ghost" id="btnClear" title="Borrar todos los registros (local)">Borrar todo</button>
+        <button class="primary" id="btnAdmin" title="Panel administrador">Panel admin</button>
+      </div>
     </header>
 
-    <!-- HERO -->
-    <section class="hero" aria-labelledby="hero-title">
-      <div>
-        <span class="kicker">Admisión 2026</span>
-        <h2 id="hero-title">Preparación de alto nivel para asegurar tu ingreso a la universidad</h2>
-        <p class="lead">Clases intensivas por módulos, enfoque en técnicas de examen y simulacros reales. Profesores con experiencia en universidades públicas y privadas y seguimiento personalizado para cada alumno.</p>
+    <!-- INSTRUCCIONES -->
+    <div class="card">
+      <strong>Instrucciones rápidas:</strong>
+      <ul class="small" style="margin:8px 0 0 18px">
+        <li>Completa el formulario con los datos del reclamante y la descripción del problema.</li>
+        <li>Al enviar, genera e imprime la <strong>Constancia de Reclamo</strong> para entregar al cliente (se abrirá una vista imprimible).</li>
+        <li>Guarda el registro para el negocio; luego podrás registrar la respuesta y descargar el CSV.</li>
+      </ul>
+    </div>
 
-        <div class="card" aria-hidden="false" style="margin-top:16px">
-          <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
-            <div>
-              <div style="font-weight:700">Próximo ciclo</div>
-              <div class="small">Inicio: 12 de enero · Duración: 10 semanas · Horario: Sábados 8:30 - 12:30</div>
-            </div>
-            <div style="text-align:right">
-              <div class="price">S/ 299</div>
-              <div class="small">Plazas limitadas</div>
-            </div>
+    <!-- FORM -->
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title" style="margin:0 0 8px">Nuevo Reclamo</h2>
+
+      <form id="reclamoForm" autocomplete="off">
+        <div class="row">
+          <div class="col">
+            <label>Fecha</label>
+            <input type="date" id="fecha" required>
           </div>
-
-          <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-            <button class="btn" onclick="openSignup()">Inscribirme</button>
-            <a class="link-btn" href="#contacto">Solicitar llamada</a>
-          </div>
-
-          <div class="features" style="margin-top:18px">
-            <div class="feature">
-              <div class="icon">S</div>
-              <div>
-                <div style="font-weight:700">Simulacros reales</div>
-                <div class="small">Evaluaciones con formato oficial</div>
-              </div>
-            </div>
-            <div class="feature">
-              <div class="icon">P</div>
-              <div>
-                <div style="font-weight:700">Plan personalizado</div>
-                <div class="small">Seguimiento y ajuste por rendimiento</div>
-              </div>
-            </div>
-            <div class="feature">
-              <div class="icon">G</div>
-              <div>
-                <div style="font-weight:700">Grupo reducido</div>
-                <div class="small">Atención individual y feedback</div>
-              </div>
-            </div>
-            <div class="feature">
-              <div class="icon">O</div>
-              <div>
-                <div style="font-weight:700">Modalidad híbrida</div>
-                <div class="small">Clases presenciales y acceso a la plataforma</div>
-              </div>
-            </div>
+          <div class="col">
+            <label>Hora</label>
+            <input type="time" id="hora" required>
           </div>
         </div>
 
-        <!-- quick stats -->
-        <div class="grid-cards" style="margin-top:16px">
-          <div class="card stat">
-            <div class="num">+1,200</div>
-            <div class="small">Estudiantes formados</div>
+        <div class="row">
+          <div class="col">
+            <label>Tipo de cliente</label>
+            <select id="tipo_cliente" required>
+              <option value="Persona Natural">Persona Natural</option>
+              <option value="Persona Jurídica">Persona Jurídica</option>
+            </select>
           </div>
-          <div class="card stat">
-            <div class="num">82%</div>
-            <div class="small">Tasa de ingreso en últimos 2 años</div>
-          </div>
-          <div class="card stat">
-            <div class="num">12</div>
-            <div class="small">Aulas y simulacros mensuales</div>
+          <div class="col">
+            <label>N° de documento (DNI / RUC)</label>
+            <input type="text" id="documento" placeholder="DNI o RUC" required pattern="[\d- ]+">
           </div>
         </div>
-      </div>
 
-      <!-- RIGHT PANEL: signup / consult points concept -->
-      <aside class="panel-cta card" aria-labelledby="cta-title">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div>
-            <div id="cta-title" style="font-weight:700">Reserva tu plaza</div>
-            <div class="small">Rellena tus datos y te llamamos</div>
+        <div class="row">
+          <div class="col">
+            <label>Nombre / Razón social</label>
+            <input type="text" id="nombre" placeholder="Nombre completo o razón social" required>
           </div>
-          <div class="small">Contacto: <strong>+51 950 141 414</strong></div>
+          <div class="col">
+            <label>Teléfono / WhatsApp</label>
+            <input type="tel" id="telefono" placeholder="+51 9xxxxxxxx">
+          </div>
         </div>
 
-        <form id="signupForm" onsubmit="event.preventDefault(); submitForm()">
-          <label class="small" for="name">Nombre</label>
-          <input id="name" class="input" placeholder="Ej. Ana Pérez" required>
-
-          <label class="small" for="phone" style="margin-top:8px">Teléfono (WhatsApp)</label>
-          <input id="phone" class="input" placeholder="+51 9xxxxxxxx" required style="margin-bottom:8px">
-
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" type="submit">Solicitar llamada</button>
-            <a class="ghost" href="https://wa.me/51950141414" target="_blank" rel="noopener">Chatear por WhatsApp</a>
+        <div class="row">
+          <div class="col">
+            <label>Correo (opcional)</label>
+            <input type="email" id="correo" placeholder="cliente@ejemplo.com">
           </div>
-        </form>
-
-        <hr style="border:none;height:1px;background:#eef6ff;margin:14px 0;border-radius:2px">
-
-        <div style="font-size:13px;color:var(--muted)">
-          Modalidades: <strong>Presencial</strong> · <strong>Online</strong><br>
-          Nivel: <strong>Preuniversitario intensivo</strong>
+          <div class="col">
+            <label>Dirección (opcional)</label>
+            <input type="text" id="direccion" placeholder="Dirección del reclamante">
+          </div>
         </div>
-      </aside>
+
+        <hr style="border:none;height:1px;background:#eef6ff;margin:8px 0;border-radius:2px">
+
+        <div class="row">
+          <div class="col">
+            <label>Producto / Servicio reclamado</label>
+            <input type="text" id="producto" placeholder="Ej: Curso intensivo - Matrícula">
+          </div>
+          <div class="col">
+            <label>Fecha de compra / prestación</label>
+            <input type="date" id="fecha_compra">
+          </div>
+        </div>
+
+        <div>
+          <label>Importe (S/)</label>
+          <input type="number" id="monto" min="0" step="0.01" placeholder="0.00">
+        </div>
+
+        <div>
+          <label>Descripción del reclamo</label>
+          <textarea id="descripcion" placeholder="Explicar claramente el motivo del reclamo..." required></textarea>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label>Resolución solicitada</label>
+            <select id="resolucion_solicitada" required>
+              <option value="Reembolso">Reembolso</option>
+              <option value="Cambio">Cambio por otro producto</option>
+              <option value="Garantía">Garantía / reparación</option>
+              <option value="Descuento">Descuento / compensación</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>Sucursal / Vendedor (opcional)</label>
+            <input type="text" id="sucursal" placeholder="Ej: Sucursal Miraflores / Vendedor: Juan">
+          </div>
+        </div>
+
+        <div class="row" style="align-items:flex-end">
+          <div style="flex:1">
+            <label>Firma del reclamante (escribe nombre como firma)</label>
+            <input type="text" id="firma" placeholder="Nombre del reclamante" required>
+            <div class="small" style="margin-top:6px">Al firmar, acepta que esta constancia es válida como registro de su reclamo.</div>
+          </div>
+
+          <div style="width:220px">
+            <label>N° de Reclamo (autogenerado)</label>
+            <input type="text" id="num_reclamo" readonly>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit">Generar constancia e imprimir</button>
+          <button class="ghost" type="button" id="btnSave">Guardar sin imprimir</button>
+          <div class="small muted">Al enviar se guarda localmente en este equipo (storage local) — el negocio debe archivar una copia física.</div>
+        </div>
+      </form>
     </section>
 
-    <!-- MÉTODO -->
-    <section id="metodo" style="margin-top:26px">
-      <h3 style="margin:0 0 8px">Nuestro método</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div class="card">
-          <h4 style="margin:0 0 8px">Diagnóstico inicial</h4>
-          <p class="small">Evaluación para identificar fortalezas y debilidades. Plan de estudio personalizado.</p>
-        </div>
-        <div class="card">
-          <h4 style="margin:0 0 8px">Práctica guiada</h4>
-          <p class="small">Clases enfocadas en resolución de problemas, estrategias de tiempo y gestión del examen.</p>
-        </div>
-        <div class="card">
-          <h4 style="margin:0 0 8px">Simulacros oficiales</h4>
-          <p class="small">Simulacros periódicos corregidos por profesores con retroalimentación detallada.</p>
-        </div>
-        <div class="card">
-          <h4 style="margin:0 0 8px">Seguimiento</h4>
-          <p class="small">Revisión de avances, tutorías personalizadas y recursos digitales a tu ritmo.</p>
-        </div>
-      </div>
+    <!-- Lista de reclamos -->
+    <section id="lista" class="card" style="display:none">
+      <h3 style="margin:0 0 8px">Reclamos guardados</h3>
+      <div id="reclamosTableWrap"></div>
     </section>
 
-    <!-- CURSOS / TEMARIOS -->
-    <section id="cursos" style="margin-top:22px">
-      <h3 style="margin:0 0 6px">Cursos destacados</h3>
-      <div class="grid-cards">
-        <div class="card">
-          <strong>Curso Intensivo - Matemáticas</strong>
-          <div class="small" style="margin-top:8px">Álgebra, Geometría, Análisis de problemas y estrategias de examen. 30 horas.</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <div class="small">Precio: S/ 199</div>
-            <a class="link-btn" href="#precios">Inscribirme</a>
-          </div>
+    <!-- Admin panel modal (simple) -->
+    <section id="admin" class="card admin-panel" style="display:none">
+      <h3 style="margin:0 0 8px">Panel administrador (local)</h3>
+      <div class="secret">
+        <label style="margin-right:6px">PIN</label>
+        <input id="adminPin" type="password" placeholder="PIN (local)">
+        <button class="ghost" id="btnUnlock">Abrir</button>
+        <div class="small muted" style="margin-left:8px">PIN por defecto: <strong>1234</strong> (cámbialo en ajustes)</div>
+      </div>
+
+      <div id="adminArea" style="display:none;margin-top:12px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="ghost" id="btnExportCSV2">Exportar CSV</button>
+          <button class="ghost" id="btnPrintAll">Imprimir todo</button>
+          <button class="ghost" id="btnClearAll">Borrar todos (local)</button>
         </div>
-        <div class="card">
-          <strong>Comunicación y Razonamiento Verbal</strong>
-          <div class="small" style="margin-top:8px">Comprensión lectora, redacción y análisis crítico. 24 horas.</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <div class="small">Precio: S/ 169</div>
-            <a class="link-btn" href="#precios">Inscribirme</a>
-          </div>
-        </div>
-        <div class="card">
-          <strong>Simulacro Completo + Corrección</strong>
-          <div class="small" style="margin-top:8px">Prueba completa, reporte de desempeño y tutoría posterior.</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <div class="small">Precio: S/ 80</div>
-            <a class="link-btn" href="#precios">Reservar</a>
-          </div>
-        </div>
+
+        <div style="margin-top:10px" id="adminList"></div>
       </div>
     </section>
 
-    <!-- TESTIMONIOS -->
-    <section style="margin-top:22px">
-      <h3 style="margin:0 0 8px">Testimonios</h3>
-      <div class="grid-cards">
-        <div class="testi">
-          <strong>María L. — Ingresó a Medicina</strong>
-          <div class="small" style="margin-top:8px">"Las clases intensivas y los simulacros cambiaron mi forma de estudiar. Logré el puntaje que necesitaba."</div>
-        </div>
-        <div class="testi">
-          <strong>Carlos R. — Ingresó a Ingeniería</strong>
-          <div class="small" style="margin-top:8px">"Profesores con mucha experiencia y mucha práctica enfocada a preguntas reales."</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRECIOS -->
-    <section id="precios" style="margin-top:22px">
-      <h3 style="margin:0 0 8px">Planes y precios</h3>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div class="card" style="flex:1;min-width:220px">
-          <div style="font-weight:700">Plan Básico</div>
-          <div class="small">Acceso a clases en vivo + material digital</div>
-          <div style="margin-top:10px;font-size:20px;color:var(--blue)">S/ 199</div>
-        </div>
-        <div class="card" style="flex:1;min-width:220px">
-          <div style="font-weight:700">Plan Premium</div>
-          <div class="small">Incluye tutoría personalizada y 2 simulacros</div>
-          <div style="margin-top:10px;font-size:20px;color:var(--blue)">S/ 299</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section style="margin-top:22px">
-      <h3 style="margin:0 0 8px">Preguntas frecuentes</h3>
-      <div style="display:grid;gap:10px">
-        <details>
-          <summary style="font-weight:700">¿Cómo me inscribo?</summary>
-          <div class="small" style="margin-top:8px">Completa el formulario arriba o escríbenos por WhatsApp al <strong>+51 950 141 414</strong>. Te confirmamos disponibilidad y te indicamos formas de pago.</div>
-        </details>
-        <details>
-          <summary style="font-weight:700">¿Hay clases grabadas?</summary>
-          <div class="small" style="margin-top:8px">Sí. Todas las clases quedan grabadas y están disponibles en la plataforma por 90 días para los inscritos.</div>
-        </details>
-        <details>
-          <summary style="font-weight:700">¿Ofrecen facilidades de pago?</summary>
-          <div class="small" style="margin-top:8px">Sí. Consultar modalidades en la inscripción. Aceptamos pago efectivo, transferencia y pagos por Yape/Plin.</div>
-        </details>
-      </div>
-    </section>
-
-    <!-- CONTACTO -->
-    <section id="contacto" style="margin-top:22px">
-      <h3 style="margin:0 0 8px">Contacto</h3>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div class="card" style="flex:1;min-width:260px">
-          <strong>Dirección</strong>
-          <div class="small" style="margin-top:6px">Av. Principal 123, San Miguel, Lima</div>
-
-          <div style="margin-top:10px">
-            <strong>Teléfono / WhatsApp</strong>
-            <div class="small" style="margin-top:6px">+51 950 141 414</div>
-            <div style="margin-top:8px">
-              <a class="btn" href="https://wa.me/51950141414" target="_blank" rel="noopener">Chatear por WhatsApp</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="flex:1;min-width:260px">
-          <strong>Escríbenos</strong>
-          <form onsubmit="event.preventDefault(); submitContact()" id="contactForm">
-            <div style="margin-top:8px">
-              <input id="cname" class="input" placeholder="Nombre" required>
-            </div>
-            <div style="margin-top:8px">
-              <input id="cemail" class="input" placeholder="Correo (opcional)">
-            </div>
-            <div style="margin-top:8px">
-              <textarea id="cmsg" class="input" placeholder="Mensaje" rows="3" style="resize:vertical"></textarea>
-            </div>
-            <div style="margin-top:8px;display:flex;gap:8px">
-              <button class="btn" type="submit">Enviar mensaje</button>
-              <a class="ghost" href="mailto:info@teorema21.pe">Email</a>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <div>© <strong>Academia Teorema 21</strong> · Todos los derechos reservados</div>
-      <div style="display:flex;gap:12px;align-items:center">
-        <a href="#" aria-label="Instagram">Instagram</a>
-        <a href="#" aria-label="Facebook">Facebook</a>
-      </div>
+    <footer class="small muted" style="margin-top:14px">
+      <div>Recomendación: imprime la constancia y entrégala al cliente. Conserva copia física o exporta CSV para archivo digital. Esta plantilla es una herramienta práctica — adapta su uso según la normativa local vigente.</div>
     </footer>
   </div>
 
-  <!-- Simple client-side scripts (no backend): form mock and helpers -->
-  <script>
-    function openSignup(){
-      document.getElementById('name').focus();
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
+  <!-- PRINTABLE TICKET TEMPLATE (hidden) -->
+  <div id="printable" style="display:none">
+    <div class="ticket printable" id="ticketContent" role="document" aria-label="Constancia de reclamo">
+      <!-- Content filled by JS -->
+    </div>
+  </div>
 
-    function submitForm(){
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      if(!name || !phone) return alert('Por favor completa nombre y teléfono.');
-      // Mock: open WhatsApp with prefilled message
-      const text = encodeURIComponent(`Hola, soy ${name}. Quiero información sobre el ciclo 2026.`);
-      const wa = 'https://wa.me/51950141414?text=' + text;
-      window.open(wa,'_blank');
-    }
+<script>
+/* === UTILIDADES === */
+const LS_KEY = 'libro_reclamaciones_local_v1';
+const LS_PIN_KEY = 'libro_reclamaciones_pin_v1';
 
-    function submitContact(){
-      const name = document.getElementById('cname').value.trim();
-      const email = document.getElementById('cemail').value.trim();
-      const msg = document.getElementById('cmsg').value.trim();
-      if(!name || !msg) return alert('Por favor ingresa tu nombre y mensaje.');
-      // Simula envío: abrir mailto con contenido (user-friendly)
-      const subject = encodeURIComponent('Contacto desde web - Teorema 21');
-      const body = encodeURIComponent(`Nombre: ${name}\nCorreo: ${email}\n\n${msg}`);
-      window.location.href = `mailto:info@teorema21.pe?subject=${subject}&body=${body}`;
-    }
+function uid(){ return 'LR-' + Date.now().toString(36); }
 
-    // Accessibility: focus outline visible on keyboard
-    (function(){
-      function handleFirstTab(e){
-        if(e.key === 'Tab'){
-          document.documentElement.classList.add('user-is-tabbing');
-          window.removeEventListener('keydown', handleFirstTab);
-        }
-      }
-      window.addEventListener('keydown', handleFirstTab);
-    })();
-  </script>
+function today(){ 
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function nowTime(){
+  const d = new Date();
+  return d.toTimeString().slice(0,5);
+}
+
+/* cargar defaults en form */
+document.getElementById('fecha').value = today();
+document.getElementById('hora').value = nowTime();
+document.getElementById('num_reclamo').value = uid();
+
+/* manejo de storage local */
+function loadRecords(){
+  try{
+    const txt = localStorage.getItem(LS_KEY);
+    return txt ? JSON.parse(txt) : [];
+  }catch(e){ return [];}
+}
+function saveRecords(arr){
+  localStorage.setItem(LS_KEY, JSON.stringify(arr));
+}
+
+/* guardar registro desde formulario */
+function collectForm(){
+  return {
+    id: document.getElementById('num_reclamo').value || uid(),
+    fecha: document.getElementById('fecha').value,
+    hora: document.getElementById('hora').value,
+    tipo_cliente: document.getElementById('tipo_cliente').value,
+    documento: document.getElementById('documento').value.trim(),
+    nombre: document.getElementById('nombre').value.trim(),
+    telefono: document.getElementById('telefono').value.trim(),
+    correo: document.getElementById('correo').value.trim(),
+    direccion: document.getElementById('direccion').value.trim(),
+    producto: document.getElementById('producto').value.trim(),
+    fecha_compra: document.getElementById('fecha_compra').value,
+    monto: document.getElementById('monto').value,
+    descripcion: document.getElementById('descripcion').value.trim(),
+    resolucion_solicitada: document.getElementById('resolucion_solicitada').value,
+    sucursal: document.getElementById('sucursal').value.trim(),
+    firma: document.getElementById('firma').value.trim(),
+    created_at: new Date().toISOString(),
+    respuesta: null // para que admin pueda completar
+  };
+}
+
+function validateForm(){
+  const doc = document.getElementById('documento').value.trim();
+  const nombre = document.getElementById('nombre').value.trim();
+  const desc = document.getElementById('descripcion').value.trim();
+  const firma = document.getElementById('firma').value.trim();
+  if(!doc || !nombre || !desc || !firma) return false;
+  return true;
+}
+
+/* imprimir ticket */
+function renderTicket(record){
+  const el = document.getElementById('ticketContent');
+  el.innerHTML = `
+    <div style="text-align:center;margin-bottom:10px">
+      <div style="font-weight:700;font-size:18px">CONSTANCIA DE RECLAMO</div>
+      <div style="font-size:13px;color:#666;margin-top:6px">Libro de Reclamaciones · Empresa / Comercio</div>
+    </div>
+
+    <table style="width:100%;font-size:13px;border-collapse:collapse;margin-bottom:10px">
+      <tr><td style="padding:6px;border:1px solid #eee"><strong>N° Reclamo:</strong> ${escapeHtml(record.id)}</td><td style="padding:6px;border:1px solid #eee"><strong>Fecha:</strong> ${escapeHtml(record.fecha)} ${escapeHtml(record.hora)}</td></tr>
+      <tr><td style="padding:6px;border:1px solid #eee"><strong>Tipo:</strong> ${escapeHtml(record.tipo_cliente)}</td><td style="padding:6px;border:1px solid #eee"><strong>Documento:</strong> ${escapeHtml(record.documento)}</td></tr>
+      <tr><td colspan="2" style="padding:6px;border:1px solid #eee"><strong>Reclamante:</strong> ${escapeHtml(record.nombre)} — ${escapeHtml(record.telefono || '')} ${record.correo? '· ' + escapeHtml(record.correo) : ''}</td></tr>
+      <tr><td colspan="2" style="padding:6px;border:1px solid #eee"><strong>Producto / Servicio:</strong> ${escapeHtml(record.producto || '')} ${record.monto ? ' · S/ ' + escapeHtml(record.monto) : ''}</td></tr>
+    </table>
+
+    <div style="font-weight:700;margin-bottom:6px">Descripción del reclamo</div>
+    <div style="white-space:pre-wrap;border:1px dashed #e6eef8;padding:8px;border-radius:6px;margin-bottom:8px">${escapeHtml(record.descripcion)}</div>
+
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <div style="flex:1">
+        <div style="font-weight:700">Resolución solicitada</div>
+        <div class="small" style="margin-top:6px">${escapeHtml(record.resolucion_solicitada)}</div>
+      </div>
+      <div style="width:260px">
+        <div style="font-weight:700">Firma</div>
+        <div style="margin-top:20px">${escapeHtml(record.firma)}</div>
+        <div class="small" style="color:#666;margin-top:6px">Firma recibida al momento del reclamo</div>
+      </div>
+    </div>
+
+    <hr style="margin:12px 0">
+
+    <div style="font-size:12px;color:#444">
+      <strong>Proceso:</strong> Su reclamo ha sido registrado. El negocio debe responder en un plazo razonable y entregarle la solución. Guarde este comprobante.
+    </div>
+
+    <div style="margin-top:12px;font-size:12px;color:#666">
+      <em>Nota: Esta constancia es una evidencia del reclamo. Se recomienda al negocio consignar la respuesta aquí y entregarle una copia al cliente.</em>
+    </div>
+  `;
+}
+
+/* escapar HTML básico */
+function escapeHtml(str){
+  if(!str && str !== 0) return '';
+  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+/* evento submit */
+document.getElementById('reclamoForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  if(!validateForm()){ alert('Por favor completa los campos obligatorios.'); return; }
+  const rec = collectForm();
+  // save
+  const arr = loadRecords();
+  arr.unshift(rec); // último arriba
+  saveRecords(arr);
+  // preparar impresión
+  renderTicket(rec);
+  // abrir en nueva ventana imprimible
+  const w = window.open('', '_blank', 'noopener');
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Constancia de Reclamo</title><style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111} .ticket{max-width:720px;margin:0 auto}</style></head><body><div class="ticket">' + document.getElementById('ticketContent').innerHTML + '</div><script>window.onload=function(){window.print();setTimeout(()=>window.close(),500);}</script></body></html>');
+  w.document.close();
+  alert('Reclamo guardado y ventana de impresión abierta. Entrega la constancia al cliente.');
+  resetForm();
+  refreshListUI();
+});
+
+/* guardar sin imprimir */
+document.getElementById('btnSave').addEventListener('click', ()=>{
+  if(!validateForm()){ alert('Por favor completa los campos obligatorios.'); return; }
+  const rec = collectForm();
+  const arr = loadRecords();
+  arr.unshift(rec);
+  saveRecords(arr);
+  alert('Reclamo guardado localmente.');
+  resetForm();
+  refreshListUI();
+});
+
+/* reset form */
+function resetForm(){
+  document.getElementById('reclamoForm').reset();
+  document.getElementById('fecha').value = today();
+  document.getElementById('hora').value = nowTime();
+  document.getElementById('num_reclamo').value = uid();
+}
+
+/* mostrar lista */
+document.getElementById('btnList').addEventListener('click', ()=>{
+  const sec = document.getElementById('lista');
+  sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+  refreshListUI();
+});
+
+function refreshListUI(){
+  const wrap = document.getElementById('reclamosTableWrap');
+  const data = loadRecords();
+  if(data.length === 0){
+    wrap.innerHTML = '<div class="small muted">No hay reclamos guardados.</div>';
+    return;
+  }
+  let html = '<table><thead><tr><th>N°</th><th>Fecha</th><th>Documento</th><th>Reclamante</th><th>Producto</th><th>Resolución</th><th>Acciones</th></tr></thead><tbody>';
+  data.forEach((r, i)=>{
+    html += `<tr>
+      <td><span class="badge">${escapeHtml(r.id)}</span></td>
+      <td>${escapeHtml(r.fecha)} ${escapeHtml(r.hora)}</td>
+      <td>${escapeHtml(r.documento)}</td>
+      <td>${escapeHtml(r.nombre)}</td>
+      <td>${escapeHtml(r.producto || '')}</td>
+      <td>${r.respuesta ? '<strong>Respondido</strong>' : '<span class="small muted">Pendiente</span>'}</td>
+      <td>
+        <button class="ghost" onclick="viewRecord('${r.id}')">Ver</button>
+        <button class="ghost" onclick="printRecord('${r.id}')">Imprimir</button>
+        <button class="ghost" onclick="deleteRecord('${r.id}')">Eliminar</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+/* ver registro en modal (usa impresión popup) */
+function viewRecord(id){
+  const rec = loadRecords().find(r=>r.id===id);
+  if(!rec){ alert('Registro no encontrado'); return; }
+  renderTicket(rec);
+  const w = window.open('', '_blank', 'noopener');
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Ver Reclamo</title><style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111}</style></head><body>' + document.getElementById('ticketContent').innerHTML + '</body></html>');
+  w.document.close();
+}
+
+/* imprimir un registro */
+function printRecord(id){
+  const rec = loadRecords().find(r=>r.id===id);
+  if(!rec){ alert('Registro no encontrado'); return; }
+  renderTicket(rec);
+  const w = window.open('', '_blank', 'noopener');
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Imprimir Reclamo</title><style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111}</style></head><body>' + document.getElementById('ticketContent').innerHTML + '<script>window.onload=function(){window.print();setTimeout(()=>window.close(),500);}</script></body></html>');
+  w.document.close();
+}
+
+/* eliminar registro */
+function deleteRecord(id){
+  if(!confirm('¿Eliminar este reclamo? Esta acción no se puede deshacer.')) return;
+  let arr = loadRecords();
+  arr = arr.filter(r=>r.id!==id);
+  saveRecords(arr);
+  refreshListUI();
+}
+
+/* export CSV */
+function toCSV(arr){
+  if(!arr || arr.length===0) return '';
+  const cols = ['id','fecha','hora','tipo_cliente','documento','nombre','telefono','correo','direccion','producto','fecha_compra','monto','descripcion','resolucion_solicitada','sucursal','firma','created_at','respuesta'];
+  const esc = v => '"' + String(v===null||v===undefined ? '' : v).replace(/"/g,'""') + '"';
+  let csv = cols.join(',') + '\n';
+  arr.forEach(r=>{
+    csv += cols.map(c => esc(r[c])).join(',') + '\n';
+  });
+  return csv;
+}
+
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const arr = loadRecords();
+  if(arr.length===0){ alert('No hay datos para exportar.'); return; }
+  const csv = toCSV(arr);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'reclamos_export_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* clear all */
+document.getElementById('btnClear').addEventListener('click', ()=>{
+  if(confirm('Borrar todos los registros locales?')){ localStorage.removeItem(LS_KEY); refreshListUI(); alert('Registros eliminados.'); }
+});
+
+/* ADMIN PANEL */
+document.getElementById('btnAdmin').addEventListener('click', ()=>{
+  const sec = document.getElementById('admin');
+  sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById('btnUnlock').addEventListener('click', ()=>{
+  const entered = document.getElementById('adminPin').value;
+  const saved = localStorage.getItem(LS_PIN_KEY) || '1234';
+  if(entered === saved){
+    document.getElementById('adminArea').style.display = 'block';
+    loadAdminList();
+  } else {
+    alert('PIN incorrecto.');
+  }
+});
+
+function loadAdminList(){
+  const wrap = document.getElementById('adminList');
+  const arr = loadRecords();
+  if(arr.length===0){ wrap.innerHTML = '<div class="small muted">No hay reclamos.</div>'; return; }
+  let html = '<table><thead><tr><th>N°</th><th>Fecha</th><th>Cliente</th><th>Documento</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+  arr.forEach(r=>{
+    html += `<tr>
+      <td>${escapeHtml(r.id)}</td>
+      <td>${escapeHtml(r.fecha)} ${escapeHtml(r.hora)}</td>
+      <td>${escapeHtml(r.nombre)}</td>
+      <td>${escapeHtml(r.documento)}</td>
+      <td>${r.respuesta ? 'Respondido' : 'Pendiente'}</td>
+      <td>
+        <button class="ghost" onclick="openResponder('${r.id}')">Responder</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+/* responder reclamo: abre prompt simple para registrar respuesta y fecha */
+window.openResponder = function(id){
+  const arr = loadRecords();
+  const rec = arr.find(r=>r.id===id);
+  if(!rec) return alert('Registro no encontrado.');
+  const respuesta = prompt('Escribe la respuesta o resolución para el reclamo (incluye fecha y responsable):', rec.respuesta || '');
+  if(respuesta === null) return;
+  rec.respuesta = respuesta;
+  rec.respuesta_at = new Date().toISOString();
+  saveRecords(arr);
+  alert('Respuesta guardada. Puedes imprimir la ficha con la respuesta desde la lista.');
+  loadAdminList();
+  refreshListUI();
+};
+
+/* export CSV desde admin */
+document.getElementById('btnExportCSV2').addEventListener('click', ()=>{
+  const arr = loadRecords();
+  if(arr.length===0){ alert('No hay datos para exportar.'); return; }
+  const csv = toCSV(arr);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'reclamos_export_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* print all */
+document.getElementById('btnPrintAll').addEventListener('click', ()=>{
+  const arr = loadRecords();
+  if(arr.length===0){ alert('No hay registros para imprimir.'); return; }
+  const w = window.open('', '_blank', 'noopener');
+  let body = '<!doctype html><html><head><meta charset="utf-8"><title>Reclamos</title><style>body{font-family:Arial;padding:20px;color:#111} .rec{border-bottom:1px solid #eee;padding:10px 0;margin-bottom:8px}</style></head><body>';
+  arr.forEach(r=>{
+    body += `<div class="rec"><h3>N° ${escapeHtml(r.id)}</h3><div><strong>Fecha:</strong> ${escapeHtml(r.fecha)} ${escapeHtml(r.hora)}</div><div><strong>Cliente:</strong> ${escapeHtml(r.nombre)} — ${escapeHtml(r.documento)}</div><div style="margin-top:6px"><strong>Descripción:</strong><div style="white-space:pre-wrap">${escapeHtml(r.descripcion)}</div></div><div style="margin-top:6px"><strong>Respuesta:</strong> ${escapeHtml(r.respuesta || '')}</div></div>`;
+  });
+  body += '<script>window.onload=function(){window.print();}</script></body></html>';
+  w.document.write(body);
+  w.document.close();
+});
+
+/* borrar todo desde admin */
+document.getElementById('btnClearAll').addEventListener('click', ()=>{
+  if(confirm('Borrar todos los reclamos (local)?')){ localStorage.removeItem(LS_KEY); loadAdminList(); refreshListUI(); alert('Eliminado.'); }
+});
+
+/* util: set default PIN (si no hay) */
+if(!localStorage.getItem(LS_PIN_KEY)) localStorage.setItem(LS_PIN_KEY, '1234');
+
+/* inicializar lista si visible */
+refreshListUI();
+
+/* helper: delete all (button top) implemented above */
+
+/* FIN */
+</script>
 </body>
 </html>
-
