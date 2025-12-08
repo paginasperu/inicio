@@ -2,263 +2,348 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mi Puntos App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Catálogos PRO</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
         /* =========================================
-           DISEÑO TIPO APP NATIVA (MODERNO)
+           1. ESTILOS DE LA INTERFAZ (EDITOR)
            ========================================= */
         :root {
-            --primary: #2563eb; /* Azul Eléctrico */
-            --primary-dark: #1e40af;
-            --success: #10b981;
-            --bg: #f3f4f6;
-            --surface: #ffffff;
-            --text: #1f2937;
-            --radius: 16px;
+            --sidebar-width: 400px;
+            --primary: #2563eb;
+            --bg-editor: #f1f5f9;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #525659; /* Gris oscuro tipo Acrobat */
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* PANEL IZQUIERDO (EDITOR) */
+        .editor-panel {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100%;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .editor-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        .editor-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
         
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; }
-
-        /* Contenedor tipo Móvil */
-        .app-container {
-            width: 100%; max-width: 450px; background: var(--surface);
-            min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column;
-        }
-
-        /* Header */
-        header {
-            background: var(--primary); color: white; padding: 20px;
-            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
-            text-align: center; position: relative;
-        }
-        .logo-area { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; }
-        .subtitle { font-size: 0.9rem; opacity: 0.9; }
-        
-        /* Botón secreto admin (Candado) */
-        .admin-trigger { position: absolute; top: 15px; right: 15px; opacity: 0.3; cursor: pointer; font-size: 1.2rem; }
-
-        /* Cuerpo */
-        main { flex: 1; padding: 25px; }
-
-        /* Inputs */
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #4b5563; }
-        input {
-            width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px;
-            font-size: 1.1rem; outline: none; transition: 0.2s; text-align: center; letter-spacing: 1px;
-        }
-        input:focus { border-color: var(--primary); }
-
-        /* Botones */
-        .btn {
-            width: 100%; padding: 16px; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.1s;
-            background: var(--primary); color: white; margin-bottom: 10px;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        
-        /* Tarjeta de Puntos (Resultado) */
-        .points-card {
-            background: #fff; border: 1px solid #e5e7eb; border-radius: 20px;
-            padding: 25px; text-align: center; margin-top: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); animation: slideUp 0.4s ease;
-            display: none; /* Oculto por defecto */
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 5px; }
+        input, textarea, select {
+            width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;
+            margin-bottom: 15px; font-family: inherit; font-size: 0.9rem;
         }
         
-        .points-big { font-size: 3.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin: 10px 0; }
-        .label-pts { font-size: 1rem; color: #6b7280; font-weight: 500; }
-
-        /* Barra de Progreso */
-        .progress-wrapper { background: #f3f4f6; height: 12px; border-radius: 6px; margin: 20px 0 10px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, var(--primary), #60a5fa); height: 100%; width: 0%; transition: width 1s ease; border-radius: 6px; }
-        
-        .next-reward { font-size: 0.85rem; color: #4b5563; background: #eff6ff; padding: 8px; border-radius: 8px; display: inline-block; }
-
-        /* Panel Admin */
-        .admin-panel {
-            display: none; background: #fff; position: absolute; inset: 0; z-index: 100;
-            padding: 20px; flex-direction: column;
+        .btn-action {
+            width: 100%; background: var(--primary); color: white; padding: 12px;
+            border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+            transition: 0.2s; display: flex; justify-content: center; items-align: center; gap: 8px;
         }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .grid-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-add { background: var(--success); }
-        .btn-sub { background: #ef4444; }
+        .btn-action:hover { background: #1d4ed8; }
+        .btn-secondary { background: white; border: 2px solid #e2e8f0; color: #334155; }
+        .btn-secondary:hover { border-color: #cbd5e1; }
+        .btn-danger { background: #ef4444; margin-top: 5px; }
 
-        /* Animaciones */
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .hidden { display: none !important; }
+        /* VISTA PREVIA (DERECHA) */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* LA HOJA A4 (El Lienzo) */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            /* Aquí empieza la magia del diseño */
+        }
+
+        /* =========================================
+           2. PLANTILLAS DE DISEÑO (THEMES)
+           ========================================= */
+        
+        /* GENERALES */
+        .catalog-header { padding: 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .logo-img { max-height: 80px; max-width: 200px; object-fit: contain; }
+        .catalog-grid { display: grid; gap: 20px; padding: 40px; }
+        .product-item { page-break-inside: avoid; /* Evita que se corte al imprimir */ }
+        .product-img { width: 100%; height: 200px; object-fit: cover; background: #f8fafc; }
+        
+        /* TEMA 1: MINIMALIST (Clean, Apple Style) */
+        .theme-minimalist .a4-page { font-family: 'Inter', sans-serif; color: #111; }
+        .theme-minimalist .catalog-header { border-bottom: 2px solid #111; padding-bottom: 20px; margin: 40px; align-items: center; }
+        .theme-minimalist h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; line-height: 1; }
+        .theme-minimalist .subtitle { font-family: 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
+        .theme-minimalist .catalog-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+        .theme-minimalist .product-item { text-align: left; }
+        .theme-minimalist .product-name { font-weight: 700; font-size: 1.1rem; margin-top: 15px; }
+        .theme-minimalist .product-price { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-top: 5px; }
+        .theme-minimalist .footer { position: absolute; bottom: 0; left: 0; width: 100%; text-align: center; padding: 20px; border-top: 1px solid #eee; font-size: 0.8rem; }
+
+        /* TEMA 2: BOLD AGENCY (Modern, High Contrast) */
+        .theme-bold .a4-page { font-family: 'Inter', sans-serif; background: #111; color: white; }
+        .theme-bold .catalog-header { background: #facc15; color: #111; margin: 0; padding: 60px 40px; }
+        .theme-bold h1 { font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 4rem; line-height: 0.9; margin: 0; }
+        .theme-bold .catalog-grid { grid-template-columns: 1fr 1fr 1fr; gap: 15px; padding: 20px; }
+        .theme-bold .product-item { background: #222; border-radius: 0px; padding-bottom: 15px; }
+        .theme-bold .product-img { height: 180px; filter: grayscale(20%); transition: 0.3s; }
+        .theme-bold .product-info { padding: 15px; }
+        .theme-bold .product-name { font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .theme-bold .product-price { color: #facc15; font-weight: 700; font-size: 1.2rem; margin-top: 5px; display: block;}
+        .theme-bold .footer { background: #222; color: #777; position: absolute; bottom: 0; width: 100%; padding: 20px; text-align: center; }
+
+        /* TEMA 3: ELEGANT (Luxury, Serif) */
+        .theme-elegant .a4-page { font-family: 'Playfair Display', serif; color: #4a4a4a; border: 20px solid white; outline: 1px solid #ddd; }
+        .theme-elegant .catalog-header { text-align: center; display: block; padding-top: 60px; }
+        .theme-elegant h1 { font-size: 3.5rem; font-style: italic; color: #1a1a1a; margin-bottom: 10px; }
+        .theme-elegant .line { width: 50px; height: 1px; background: #d4af37; margin: 20px auto; }
+        .theme-elegant .catalog-grid { grid-template-columns: 1fr; padding: 40px 80px; } /* Lista vertical */
+        .theme-elegant .product-item { display: flex; gap: 30px; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 30px; margin-bottom: 30px; }
+        .theme-elegant .product-img { width: 150px; height: 150px; border-radius: 50%; /* Círculo */ object-fit: cover; }
+        .theme-elegant .product-name { font-size: 1.5rem; color: #1a1a1a; margin-bottom: 5px; }
+        .theme-elegant .product-desc { font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #888; font-style: normal; }
+        .theme-elegant .product-price { font-size: 1.3rem; color: #d4af37; font-weight: 700; margin-left: auto; }
+
+        /* =========================================
+           3. ESTILOS DE IMPRESIÓN (PDF)
+           ========================================= */
+        @media print {
+            body { background: white; height: auto; overflow: visible; display: block; }
+            .editor-panel { display: none; } /* Ocultar editor */
+            .preview-area { padding: 0; display: block; }
+            .a4-page {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                page-break-after: always;
+                -webkit-print-color-adjust: exact; /* Forzar colores de fondo */
+                print-color-adjust: exact;
+            }
+            /* Quitar márgenes automáticos del navegador */
+            @page { margin: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <header>
-            <div class="admin-trigger" onclick="toggleAdmin()">🔒</div>
-            <div class="logo-area" id="nombreNegocio">TU NEGOCIO</div>
-            <div class="subtitle">Programa de Fidelización</div>
-        </header>
+    <div class="editor-panel">
+        <h2 style="margin-top:0;">Configuración</h2>
+        
+        <div class="editor-section">
+            <div class="editor-title"><i class="fa-solid fa-paintbrush"></i> Diseño</div>
+            <label>Elige una Plantilla</label>
+            <select id="themeSelector" onchange="changeTheme()">
+                <option value="theme-minimalist">Minimalista (Apple Style)</option>
+                <option value="theme-bold">Bold Agency (Moderno Oscuro)</option>
+                <option value="theme-elegant">Elegant Luxury (Serif & Gold)</option>
+            </select>
+        </div>
 
-        <main id="vistaCliente">
-            <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
-                <h2 style="font-size: 1.4rem; margin-bottom: 10px;">Consulta tu saldo</h2>
-                <p style="color: #6b7280;">Ingresa tu DNI o celular para ver tus puntos y premios.</p>
-            </div>
-
-            <div class="input-group">
-                <input type="tel" id="dniCliente" placeholder="Ej: 77554433">
-            </div>
+        <div class="editor-section">
+            <div class="editor-title"><i class="fa-solid fa-building"></i> Datos de Portada</div>
+            <label>Nombre de la Empresa</label>
+            <input type="text" id="companyName" value="MI MARCA" oninput="updateUI()">
             
-            <button class="btn" onclick="consultarPuntos()">Ver mis Puntos</button>
-
-            <div id="resultadoCard" class="points-card">
-                <div class="label-pts">Tienes acumulados</div>
-                <div class="points-big" id="displayPuntos">0</div>
-                
-                <div class="progress-wrapper">
-                    <div class="progress-fill" id="barraProgreso"></div>
-                </div>
-                
-                <div class="next-reward" id="mensajeMeta">
-                    🎯 Te faltan 50 pts para un Descuento
-                </div>
-            </div>
-        </main>
-
-        <div id="vistaAdmin" class="admin-panel">
-            <div class="admin-header">
-                <h2>Panel de Caja</h2>
-                <button onclick="toggleAdmin()" style="background:none; border:none; font-size:1.5rem;">✕</button>
-            </div>
-
-            <p style="margin-bottom: 15px; color: #6b7280;">Ingresa el DNI del cliente para sumar puntos por su compra.</p>
-
-            <div class="input-group">
-                <label>DNI del Cliente</label>
-                <input type="tel" id="dniAdmin" placeholder="DNI / Celular">
-            </div>
-
-            <div class="grid-actions">
-                <button class="btn btn-add" onclick="sumarPuntos(10)">+10 Pts</button>
-                <button class="btn btn-add" onclick="sumarPuntos(50)">+50 Pts</button>
-                <button class="btn btn-add" onclick="sumarPuntos(100)">+100 Pts</button>
-                <button class="btn btn-sub" onclick="sumarPuntos(-100)">Canjear (-100)</button>
-            </div>
+            <label>Subtítulo / Slogan</label>
+            <input type="text" id="companySlogan" value="Catálogo 2025" oninput="updateUI()">
             
-            <div style="margin-top: 20px; padding: 15px; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb;">
-                <strong>Última acción:</strong> <span id="logAdmin">Ninguna</span>
-            </div>
+            <label>Logo (URL o Archivo)</label>
+            <input type="file" id="logoInput" accept="image/*" onchange="loadImage(this, 'logoPreview')">
+            
+            <label>Datos de Contacto (Pie de página)</label>
+            <input type="text" id="companyContact" value="www.mimarca.com | +51 999 999 999" oninput="updateUI()">
+        </div>
+
+        <div class="editor-section">
+            <div class="editor-title"><i class="fa-solid fa-box-open"></i> Agregar Producto</div>
+            
+            <label>Nombre del Producto</label>
+            <input type="text" id="prodName" placeholder="Ej: Zapatillas Urbanas">
+            
+            <label>Precio</label>
+            <input type="text" id="prodPrice" placeholder="Ej: S/ 150.00">
+            
+            <label>Descripción</label>
+            <textarea id="prodDesc" rows="2" placeholder="Detalles cortos..."></textarea>
+            
+            <label>Imagen del Producto</label>
+            <input type="file" id="prodImgInput" accept="image/*">
+            
+            <button class="btn-action" onclick="addProduct()">
+                <i class="fa-solid fa-plus"></i> Agregar al Catálogo
+            </button>
+        </div>
+
+        <div class="editor-section">
+            <div class="editor-title">Acciones</div>
+            <button class="btn-action btn-secondary" onclick="window.print()">
+                <i class="fa-solid fa-file-pdf"></i> Exportar a PDF
+            </button>
+            <p style="font-size:0.75rem; color:#666; margin-top:10px;">
+                *Al imprimir, selecciona "Guardar como PDF", Margenes: "Ninguno" y activa "Gráficos de fondo".
+            </p>
         </div>
     </div>
 
-    <script>
-        /* =========================================
-           CONFIGURACIÓN DEL NEGOCIO (¡EDITA ESTO!)
-           ========================================= */
-        const CONFIG = {
-            nombre: "Cafetería Aroma", // Nombre que sale arriba
-            meta: 500,                 // Puntos para llenar la barra
-            premio: "un Café Gratis"   // Texto del premio meta
-        };
-
-        // Cargar configuración visual
-        document.getElementById('nombreNegocio').textContent = CONFIG.nombre;
-
-        /* =========================================
-           LÓGICA DEL SISTEMA (LocalStorage)
-           ========================================= */
+    <div class="preview-area" id="previewArea">
         
-        // 1. Obtener base de datos local
-        function getDB() {
-            return JSON.parse(localStorage.getItem('puntosDB')) || {};
-        }
-
-        // 2. Guardar base de datos local
-        function saveDB(db) {
-            localStorage.setItem('puntosDB', JSON.stringify(db));
-        }
-
-        // --- FUNCIONES CLIENTE ---
-        function consultarPuntos() {
-            const dni = document.getElementById('dniCliente').value.trim();
-            if (!dni) return alert("Por favor ingresa un DNI");
-
-            const db = getDB();
-            const puntos = db[dni] || 0; // Si no existe, tiene 0 puntos
-
-            // Actualizar UI
-            document.getElementById('displayPuntos').innerText = puntos;
+        <div id="pageContent" class="a4-page">
             
-            // Barra de progreso
-            let porcentaje = (puntos / CONFIG.meta) * 100;
-            if (porcentaje > 100) porcentaje = 100;
-            document.getElementById('barraProgreso').style.width = porcentaje + '%';
+            <div class="catalog-header">
+                <div>
+                    <h1 id="viewTitle">MI MARCA</h1>
+                    <div class="line"></div> <div id="viewSlogan" class="subtitle">Catálogo 2025</div>
+                </div>
+                <img id="logoPreview" class="logo-img" src="" style="display:none;">
+            </div>
 
-            // Mensaje meta
-            const falta = CONFIG.meta - puntos;
-            const msgDiv = document.getElementById('mensajeMeta');
+            <div class="catalog-grid" id="productGrid">
+                </div>
+
+            <div class="footer">
+                <span id="viewContact">www.mimarca.com | +51 999 999 999</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // ESTADO GLOBAL
+        let products = [];
+        let currentLogo = "";
+
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar productos de ejemplo
+            products = [
+                { name: "Cámara Pro X", price: "S/ 1,200", desc: "Resolución 4K y lente 50mm.", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=500&q=80" },
+                { name: "Auriculares Noise", price: "S/ 350", desc: "Cancelación de ruido activa.", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80" },
+                { name: "Reloj Smart", price: "S/ 280", desc: "Monitor cardíaco y GPS.", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80" },
+                { name: "Lentes de Sol", price: "S/ 120", desc: "Protección UV400 polarizados.", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80" }
+            ];
+            changeTheme(); // Aplicar tema por defecto
+            renderProducts();
+        });
+
+        // 1. CAMBIAR TEMA
+        function changeTheme() {
+            const theme = document.getElementById('themeSelector').value;
+            const container = document.getElementById('previewArea');
             
-            if (falta <= 0) {
-                msgDiv.innerHTML = `🎉 ¡Felicidades! Ya puedes canjear <b>${CONFIG.premio}</b>`;
-                msgDiv.style.background = "#dcfce7";
-                msgDiv.style.color = "#166534";
-            } else {
-                msgDiv.innerHTML = `🎯 Te faltan <b>${falta} pts</b> para ${CONFIG.premio}`;
-                msgDiv.style.background = "#eff6ff";
-                msgDiv.style.color = "#4b5563";
-            }
-
-            // Mostrar tarjeta con animación
-            const card = document.getElementById('resultadoCard');
-            card.style.display = 'none'; // Reinicio para animar
-            setTimeout(() => card.style.display = 'block', 10);
+            // Remover clases anteriores
+            container.className = 'preview-area ' + theme;
         }
 
-        // --- FUNCIONES ADMIN ---
-        function toggleAdmin() {
-            const panel = document.getElementById('vistaAdmin');
-            if (panel.style.display === 'flex') {
-                panel.style.display = 'none';
-            } else {
-                // Pedir contraseña simple
-                const pass = prompt("Ingrese contraseña de administrador:");
-                if (pass === "1234") { // CLAVE POR DEFECTO
-                    panel.style.display = 'flex';
-                } else if (pass !== null) {
-                    alert("Contraseña incorrecta");
+        // 2. ACTUALIZAR TEXTOS EN TIEMPO REAL
+        function updateUI() {
+            document.getElementById('viewTitle').innerText = document.getElementById('companyName').value;
+            document.getElementById('viewSlogan').innerText = document.getElementById('companySlogan').value;
+            document.getElementById('viewContact').innerText = document.getElementById('companyContact').value;
+        }
+
+        // 3. CARGAR IMÁGENES LOCALES
+        function loadImage(input, targetId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(targetId);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    
+                    // Si es el input de producto, guardamos temporalmente
+                    if(targetId === 'tempProdImg') { 
+                        // Lógica auxiliar si fuera necesario vista previa
+                    }
                 }
+                reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function sumarPuntos(cantidad) {
-            const dni = document.getElementById('dniAdmin').value.trim();
-            if (!dni) return alert("Escribe el DNI del cliente primero");
+        // 4. AGREGAR PRODUCTO
+        function addProduct() {
+            const name = document.getElementById('prodName').value;
+            const price = document.getElementById('prodPrice').value;
+            const desc = document.getElementById('prodDesc').value;
+            const imgInput = document.getElementById('prodImgInput');
 
-            const db = getDB();
-            const saldoActual = db[dni] || 0;
-            const nuevoSaldo = saldoActual + cantidad;
-
-            // Evitar negativos
-            if (nuevoSaldo < 0) {
-                alert("El cliente no tiene suficientes puntos para canjear.");
+            if(!name || !price) {
+                alert("Ingresa al menos nombre y precio");
                 return;
             }
 
-            db[dni] = nuevoSaldo;
-            saveDB(db);
-
-            // Feedback
-            const accion = cantidad > 0 ? "Sumado" : "Canjeado";
-            const color = cantidad > 0 ? "green" : "red";
-            document.getElementById('logAdmin').innerHTML = 
-                `<span style="color:${color}">${accion} ${Math.abs(cantidad)} pts</span> al DNI ${dni}. Total: ${nuevoSaldo}`;
+            // Procesar imagen
+            let imgSrc = "https://via.placeholder.com/300?text=Sin+Imagen";
             
-            alert(`✅ Éxito: El cliente ahora tiene ${nuevoSaldo} puntos.`);
+            if (imgInput.files && imgInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Guardamos el producto y renderizamos DENTRO del callback para asegurar que tenemos la imagen
+                    products.push({ name, price, desc, img: e.target.result });
+                    renderProducts();
+                    clearForm();
+                }
+                reader.readAsDataURL(imgInput.files[0]);
+            } else {
+                products.push({ name, price, desc, img: imgSrc });
+                renderProducts();
+                clearForm();
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('prodImgInput').value = '';
+        }
+
+        // 5. RENDERIZAR LISTA
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            products.forEach((prod, index) => {
+                const itemHTML = `
+                    <div class="product-item">
+                        <img src="${prod.img}" class="product-img">
+                        <div class="product-info">
+                            <div class="product-name">${prod.name}</div>
+                            <div class="product-desc">${prod.desc}</div>
+                            <div class="product-price">${prod.price}</div>
+                            <button onclick="removeProduct(${index})" class="btn-action btn-danger" style="margin-top:10px; padding:5px; font-size:0.7rem; width:auto; display:inline-block;">Borrar (Solo editor)</button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += itemHTML;
+            });
+        }
+
+        function removeProduct(index) {
+            products.splice(index, 1);
+            renderProducts();
         }
 
     </script>
