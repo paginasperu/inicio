@@ -3,371 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Libro de Reclamaciones Virtual - Tu Empresa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Premios.pe | Programa de Lealtad</title>
     
     <style>
         /* =========================================
-           ESTILOS (CSS)
+           DISEÑO PROFESIONAL (MINIMALISTA)
            ========================================= */
         :root {
-            --primary: #b91c1c; /* Rojo Indecopi/Libro */
-            --dark: #1e293b;
-            --light: #f1f5f9;
-            --border: #cbd5e1;
-            --text: #334155;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --primary: #4f46e5;       /* Azul Índigo */
+            --primary-dark: #4338ca;
+            --whatsapp: #10b981;      /* Verde Elegante */
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Roboto', sans-serif; background-color: #f8fafc; color: var(--text); padding: 20px; }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* HEADER */
-        header {
-            background: var(--dark);
-            color: white;
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
             padding: 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--primary);
         }
-        .header-title { font-size: 1.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        .header-legal { font-size: 0.9rem; opacity: 0.8; margin-top: 5px; }
-        .empresa-info { background: #f8fafc; padding: 15px; border-bottom: 1px solid var(--border); text-align: center; color: var(--dark); }
-        .empresa-info h3 { font-size: 1.2rem; margin-bottom: 5px; }
-        .fecha-info { font-weight: bold; color: var(--primary); margin-top: 10px; }
 
-        /* FORMULARIO */
-        form { padding: 30px; }
+        /* --- HEADER & BUSCADOR --- */
+        .header-container {
+            width: 100%; max-width: 600px;
+            text-align: center; margin-top: 40px; margin-bottom: 30px;
+            animation: fadeIn 0.6s ease-out;
+        }
 
-        fieldset {
-            border: 1px solid var(--border);
-            border-radius: 6px;
+        .brand { font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 20px; }
+        .brand span { color: var(--primary); }
+
+        .search-wrapper { position: relative; width: 100%; }
+        .search-box {
+            width: 100%; padding: 16px 24px; padding-left: 50px;
+            border-radius: 50px; border: 1px solid var(--border);
+            font-size: 1rem; outline: none; background: var(--surface);
+            box-shadow: var(--shadow); transition: all 0.2s;
+        }
+        .search-box:focus { ring: 2px solid var(--primary); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1); border-color: var(--primary); }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+
+        /* --- LISTA DE NEGOCIOS --- */
+        .grid-container {
+            width: 100%; max-width: 600px;
+            display: flex; flex-direction: column; gap: 16px;
+            padding-bottom: 40px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
             padding: 20px;
-            margin-bottom: 25px;
-            background-color: #fff;
+            display: flex; align-items: center; gap: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: slideUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--border); }
+
+        .card-img {
+            width: 80px; height: 80px; border-radius: 12px;
+            object-fit: cover; background: #f1f5f9; flex-shrink: 0;
         }
 
-        legend {
-            font-weight: 700;
-            color: var(--primary);
-            padding: 0 10px;
-            font-size: 1.1rem;
-            background: white;
-            border-radius: 4px;
-            border: 1px solid var(--border);
+        .card-info { flex-grow: 1; min-width: 0; }
+        .card-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-cat { font-size: 0.85rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+        .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn {
+            padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+            text-decoration: none; cursor: pointer; border: none; transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 6px;
         }
+        .btn-puntos { background: #eef2ff; color: var(--primary); }
+        .btn-puntos:hover { background: #e0e7ff; }
+        
+        .btn-whatsapp { background: #ecfdf5; color: var(--whatsapp); }
+        .btn-whatsapp:hover { background: #d1fae5; }
 
-        .row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px; }
-        .col { flex: 1; min-width: 250px; }
-        .col-full { flex: 100%; }
-
-        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: var(--dark); }
-        label span { color: var(--primary); } /* Asterisco rojo */
-
-        input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: border 0.2s;
+        /* --- MODAL (EL CEREBRO) --- */
+        .modal-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 100;
+            opacity: 0; transition: opacity 0.3s; padding: 20px;
         }
+        .modal-backdrop.show { opacity: 1; }
 
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
-        }
-
-        /* RADIOS BIEN/SERVICIO */
-        .radio-group { display: flex; gap: 20px; align-items: center; padding: 10px 0; }
-        .radio-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-
-        /* DEFINICIONES */
-        .info-box {
-            background-color: #fff7ed;
-            border-left: 4px solid #f97316;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: #7c2d12;
-        }
-        .info-box strong { display: block; margin-bottom: 4px; }
-
-        /* CHECKBOX LEGAL */
-        .checkbox-legal { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; font-size: 0.9rem; }
-        .checkbox-legal input { margin-top: 4px; }
-
-        /* BOTONES */
-        .btn-submit {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s;
-            text-transform: uppercase;
-        }
-        .btn-submit:hover { background-color: #991b1b; }
-
-        /* MODAL ÉXITO */
         .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;
+            background: var(--surface); width: 100%; max-width: 420px;
+            border-radius: 24px; padding: 30px; position: relative;
+            transform: scale(0.95); transition: transform 0.3s;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
         }
-        .modal-content {
-            background-color: white; padding: 40px; border-radius: 10px; text-align: center;
-            max-width: 500px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .icon-check { color: #16a34a; font-size: 4rem; margin-bottom: 20px; }
-        .modal h2 { margin-bottom: 10px; color: var(--dark); }
-        .modal p { color: var(--text); margin-bottom: 20px; }
-        .btn-close { background: var(--dark); color: white; border: none; padding: 10px 25px; border-radius: 4px; cursor: pointer; }
+        .modal-backdrop.show .modal { transform: scale(1); }
 
-        @media (max-width: 600px) {
-            .row { flex-direction: column; gap: 15px; }
-            form { padding: 20px; }
+        .close-btn {
+            position: absolute; top: 15px; right: 20px; font-size: 1.5rem;
+            color: var(--text-light); cursor: pointer; padding: 5px;
+        }
+
+        .modal-logo { width: 80px; height: 80px; border-radius: 50%; margin: -60px auto 15px; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: white; object-fit: cover;}
+        
+        .input-group { display: flex; gap: 8px; margin: 20px 0; }
+        .modal-input { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; text-align: center; outline: none; transition: 0.2s; }
+        .modal-input:focus { border-color: var(--primary); }
+        .btn-search { background: var(--primary); color: white; padding: 0 20px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; }
+
+        /* GAMIFICACIÓN (Barra) */
+        .gamification-box { margin-top: 20px; background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid var(--border); display: none; animation: fadeIn 0.4s; }
+        .points-big { font-size: 2.5rem; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .points-label { color: var(--text-light); font-size: 0.9rem; font-weight: 500; }
+        
+        .progress-container { height: 10px; background: #e2e8f0; border-radius: 5px; margin: 15px 0 8px; overflow: hidden; position: relative; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), #818cf8); width: 0%; transition: width 1s ease-out; border-radius: 5px; }
+        
+        .message { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
+
+        /* Animaciones */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Móvil */
+        @media (max-width: 480px) {
+            .card { flex-direction: row; padding: 15px; } /* Mantiene fila en móvil */
+            .card-img { width: 60px; height: 60px; }
+            .btn { padding: 6px 12px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="header-title">Libro de Reclamaciones</div>
-            <div class="header-legal">Conforme al Código de Protección y Defensa del Consumidor</div>
-        </header>
-
-        <div class="empresa-info">
-            <h3 id="nombreEmpresa">MI EMPRESA S.A.C.</h3>
-            <p>RUC: <span id="rucEmpresa">20123456789</span></p>
-            <p>Dirección: Av. Ejemplo 123, Lima, Perú</p>
-            
-            <div class="fecha-info">
-                Hoja de Reclamación N°: <span id="numeroHoja">000001-2025</span> | Fecha: <span id="fechaActual">--/--/----</span>
-            </div>
+    <div class="header-container">
+        <h1 class="brand">Premios<span>.pe</span></h1>
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-box" placeholder="Busca tu tienda favorita...">
         </div>
-
-        <form id="libroReclamaciones" onsubmit="enviarReclamo(event)">
-            
-            <fieldset>
-                <legend>1. Identificación del Consumidor Reclamante</legend>
-                
-                <div class="row">
-                    <div class="col">
-                        <label>Tipo de Documento <span>*</span></label>
-                        <select name="tipo_doc" required>
-                            <option value="DNI">DNI</option>
-                            <option value="CE">Carnet Extranjería</option>
-                            <option value="RUC">RUC</option>
-                            <option value="Pasaporte">Pasaporte</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label>N° Documento <span>*</span></label>
-                        <input type="text" name="numero_doc" required pattern="[0-9A-Za-z]{8,15}" title="Ingrese un número válido">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-full">
-                        <label>Nombres y Apellidos / Razón Social <span>*</span></label>
-                        <input type="text" name="nombre" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-full">
-                        <label>Domicilio <span>*</span></label>
-                        <input type="text" name="direccion" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <label>Teléfono / Celular <span>*</span></label>
-                        <input type="tel" name="telefono" required>
-                    </div>
-                    <div class="col">
-                        <label>Email <span>*</span></label>
-                        <input type="email" name="email" required>
-                    </div>
-                </div>
-
-                <div class="checkbox-legal" style="margin-bottom: 10px;">
-                    <input type="checkbox" id="esMenor" onchange="toggleApoderado()">
-                    <label for="esMenor" style="display:inline; font-weight:400;">Soy menor de edad</label>
-                </div>
-
-                <div class="row" id="campoApoderado" style="display:none;">
-                    <div class="col-full">
-                        <label>Nombre del Padre o Apoderado</label>
-                        <input type="text" name="apoderado">
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>2. Identificación del Bien Contratado</legend>
-                
-                <div class="row">
-                    <div class="col">
-                        <label>Tipo de Bien <span>*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-item">
-                                <input type="radio" name="tipo_bien" value="Producto" required> Producto
-                            </label>
-                            <label class="radio-item">
-                                <input type="radio" name="tipo_bien" value="Servicio"> Servicio
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <label>Monto Reclamado (S/)</label>
-                        <input type="number" step="0.01" name="monto">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-full">
-                        <label>Descripción del Producto o Servicio <span>*</span></label>
-                        <textarea name="descripcion_bien" rows="2" placeholder="Ej: Zapatillas Nike talla 42 / Servicio de delivery..." required></textarea>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>3. Detalle de la Reclamación y Pedido</legend>
-
-                <div class="info-box">
-                    <strong>RECLAMO:</strong> Disconformidad relacionada a los productos o servicios.
-                    <br>
-                    <strong>QUEJA:</strong> Disconformidad no relacionada a los productos o servicios; o malestar o descontento respecto a la atención al público.
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <label>Tipo de Reclamación <span>*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-item">
-                                <input type="radio" name="tipo_reclamacion" value="Reclamo" required> Reclamo
-                            </label>
-                            <label class="radio-item">
-                                <input type="radio" name="tipo_reclamacion" value="Queja"> Queja
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-full">
-                        <label>Detalle del Reclamo o Queja <span>*</span></label>
-                        <textarea name="detalle_reclamacion" rows="4" placeholder="Describa los hechos..." required></textarea>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-full">
-                        <label>Pedido del Consumidor <span>*</span></label>
-                        <textarea name="pedido" rows="3" placeholder="¿Qué solución espera? (Ej: Cambio de producto, devolución, etc.)" required></textarea>
-                    </div>
-                </div>
-            </fieldset>
-
-            <div class="checkbox-legal">
-                <input type="checkbox" id="declaracion" required>
-                <label for="declaracion" style="display:inline; font-weight:400; cursor:pointer;">
-                    Declaro ser el consumidor y que los datos consignados son verdaderos. Acepto que la respuesta a mi reclamo o queja sea enviada al correo electrónico proporcionado.
-                </label>
-            </div>
-
-            <button type="submit" class="btn-submit">Enviar Hoja de Reclamación</button>
-
-        </form>
     </div>
 
-    <div id="modalExito" class="modal">
-        <div class="modal-content">
-            <div class="icon-check">✓</div>
-            <h2>¡Reclamo Registrado!</h2>
-            <p>Se ha enviado una copia a tu correo electrónico.</p>
-            <p><strong>N° de Hoja: <span id="modalNumero">000001-2025</span></strong></p>
-            <p style="font-size: 0.8rem; color:#666;">La empresa tiene un plazo legal de hasta 15 días hábiles para responder.</p>
-            <button class="btn-close" onclick="cerrarModal()">Cerrar</button>
+    <div class="grid-container" id="gridList">
+        <p style="text-align: center; color: #999;">Cargando directorio...</p>
+    </div>
+
+    <div id="modalPuntos" class="modal-backdrop">
+        <div class="modal">
+            <div class="close-btn" onclick="cerrarModal()">×</div>
+            <img id="modalImg" src="" class="modal-logo">
+            <h2 id="modalTitle" style="margin:0 0 5px;">Negocio</h2>
+            <p style="color:var(--text-light); font-size:0.9rem;">Programa de Lealtad</p>
+
+            <div class="input-group">
+                <input type="tel" id="inputDNI" class="modal-input" placeholder="Ingresa tu DNI" maxlength="8">
+                <button id="btnBuscar" class="btn-search">Ver</button>
+            </div>
+
+            <div id="resultado" class="gamification-box">
+                <div class="points-label">Tu Saldo Actual</div>
+                <div class="points-big"><span id="txtPuntos">0</span></div>
+                
+                <div class="progress-container">
+                    <div id="bar" class="progress-bar"></div>
+                </div>
+                
+                <p id="txtMensaje" class="message">¡Te falta poco para canjear!</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // 1. FECHA AUTOMÁTICA
-        document.addEventListener('DOMContentLoaded', () => {
-            const fecha = new Date();
-            const opciones = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            document.getElementById('fechaActual').textContent = fecha.toLocaleDateString('es-PE', opciones);
-            
-            // Generar número aleatorio para simular folio
-            const randomId = Math.floor(100000 + Math.random() * 900000);
-            const folio = `${randomId}-${fecha.getFullYear()}`;
-            document.getElementById('numeroHoja').textContent = folio;
-            document.getElementById('modalNumero').textContent = folio;
-        });
+        /* =========================================
+           LÓGICA SIMPLE (SIN CONFIGURAR NADA)
+           ========================================= */
 
-        // 2. TOGGLE APODERADO
-        function toggleApoderado() {
-            const check = document.getElementById('esMenor');
-            const campo = document.getElementById('campoApoderado');
-            if (check.checked) {
-                campo.style.display = 'flex';
-                campo.querySelector('input').required = true;
-            } else {
-                campo.style.display = 'none';
-                campo.querySelector('input').required = false;
-            }
+        // DATOS DE EJEMPLO (Para que la demo funcione YA)
+        // Cuando tengas el Google Sheet, borras esto y usas el fetch.
+        const NEGOCIOS_DEMO = [
+            { nombre: "Nike Store", categoria: "Deporte", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/100px-Logo_NIKE.svg.png", catalogo: "https://wa.me/c/123", meta: 2000 },
+            { nombre: "Pardos Chicken", categoria: "Restaurante", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Pardos_Chicken_logo.png", catalogo: "https://wa.me/c/123", meta: 1000 },
+            { nombre: "I.E. Augusto Salazar", categoria: "Educación", logo: "https://ui-avatars.com/api/?name=AS&background=047857&color=fff&size=100&bold=true", catalogo: "", meta: 500 },
+            { nombre: "Saga Falabella", categoria: "Retail", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Falabella.svg/100px-Falabella.svg.png", catalogo: "https://wa.me/c/123", meta: 5000 },
+            { nombre: "Café Aroma", categoria: "Cafetería", logo: "https://ui-avatars.com/api/?name=Cafe+Aroma&background=ea580c&color=fff&size=100&bold=true", catalogo: "https://wa.me/c/123", meta: 300 }
+        ];
+
+        // --- 1. RENDERIZAR LISTA ---
+        const grid = document.getElementById('gridList');
+        
+        function renderizar(lista) {
+            grid.innerHTML = '';
+            lista.forEach((item, index) => {
+                // Animación escalonada (delay)
+                const delay = index * 0.1; 
+                
+                const html = `
+                <div class="card" style="animation-delay: ${delay}s">
+                    <img src="${item.logo}" class="card-img">
+                    <div class="card-info">
+                        <div class="card-name">${item.nombre}</div>
+                        <div class="card-cat">${item.categoria}</div>
+                        <div class="card-actions">
+                            <button onclick="abrirModal('${item.nombre}', '${item.logo}', ${item.meta})" class="btn btn-puntos">
+                                🎁 Mis Puntos
+                            </button>
+                            ${item.catalogo ? `<a href="${item.catalogo}" target="_blank" class="btn btn-whatsapp">🛒 Catálogo</a>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+                grid.innerHTML += html;
+            });
         }
 
-        // 3. ENVÍO DEL FORMULARIO
-        function enviarReclamo(e) {
-            e.preventDefault(); // Evita que la página se recargue
+        // Carga inicial
+        renderizar(NEGOCIOS_DEMO);
 
-            // Aquí normalmente conectarías con un Backend o EmailService
-            // Ejemplo: Formspree, EmailJS, o tu base de datos PHP/Node.
+        // --- 2. BUSCADOR ---
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtrados = NEGOCIOS_DEMO.filter(n => n.nombre.toLowerCase().includes(term));
+            renderizar(filtrados);
+        });
+
+        // --- 3. MODAL & LÓGICA DE PUNTOS ---
+        const modal = document.getElementById('modalPuntos');
+        const modalBackdrop = document.getElementById('modalPuntos');
+        let metaActual = 1000; // Meta por defecto
+
+        function abrirModal(nombre, logo, meta) {
+            document.getElementById('modalTitle').innerText = nombre;
+            document.getElementById('modalImg').src = logo;
+            metaActual = meta || 1000;
             
-            // Simulamos tiempo de carga
-            const btn = document.querySelector('.btn-submit');
-            const textoOriginal = btn.textContent;
-            btn.textContent = "Enviando...";
-            btn.disabled = true;
-
-            setTimeout(() => {
-                // Mostrar Modal de éxito
-                document.getElementById('modalExito').style.display = 'flex';
-                
-                // Resetear botón
-                btn.textContent = textoOriginal;
-                btn.disabled = false;
-                
-                // Limpiar formulario (Opcional)
-                document.getElementById('libroReclamaciones').reset();
-            }, 1500);
+            // Reset
+            document.getElementById('inputDNI').value = '';
+            document.getElementById('resultado').style.display = 'none';
+            
+            modalBackdrop.style.display = 'flex';
+            setTimeout(() => modalBackdrop.classList.add('show'), 10);
         }
 
         function cerrarModal() {
-            document.getElementById('modalExito').style.display = 'none';
+            modalBackdrop.classList.remove('show');
+            setTimeout(() => modalBackdrop.style.display = 'none', 300);
         }
-    </script>
 
+        // SIMULACIÓN DE CONSULTA (DEMO MODE)
+        document.getElementById('btnBuscar').addEventListener('click', () => {
+            const dni = document.getElementById('inputDNI').value;
+            if(dni.length < 8) { alert("DNI inválido"); return; }
+
+            // SIMULAMOS UNA RESPUESTA DE LA BASE DE DATOS
+            // Generamos puntos aleatorios basados en el DNI para que parezca real
+            const puntosSimulados = Math.floor(Math.random() * metaActual); 
+            
+            mostrarResultado(puntosSimulados);
+        });
+
+        function mostrarResultado(puntos) {
+            document.getElementById('resultado').style.display = 'block';
+            
+            // Efecto contador
+            let current = 0;
+            const timer = setInterval(() => {
+                current += Math.ceil(puntos / 20);
+                if(current >= puntos) {
+                    current = puntos;
+                    clearInterval(timer);
+                }
+                document.getElementById('txtPuntos').innerText = current;
+            }, 20);
+
+            // Barra de progreso
+            const porcentaje = (puntos / metaActual) * 100;
+            setTimeout(() => {
+                document.getElementById('bar').style.width = `${Math.min(porcentaje, 100)}%`;
+            }, 100);
+
+            // Mensaje inteligente
+            const msg = document.getElementById('txtMensaje');
+            if(porcentaje < 20) msg.innerText = "¡Acabas de empezar, sigue así!";
+            else if(porcentaje < 50) msg.innerText = "¡Ya tienes un buen avance!";
+            else if(porcentaje < 80) msg.innerText = "¡Wow! Estás muy cerca de la meta.";
+            else msg.innerText = "¡Felicidades! Ya puedes canjear.";
+        }
+
+        window.onclick = (e) => { if(e.target == modalBackdrop) cerrarModal(); }
+
+    </script>
 </body>
 </html>
