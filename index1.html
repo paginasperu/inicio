@@ -269,168 +269,177 @@
 </div>
 
 <script>
-    // 1. DATOS (Simulación de tu Google Sheets o JSON)
-    const products = [
-        {
-            id: 1,
-            nombre: "Ácido Sulfúrico Industrial",
-            categoria: "Ácidos",
-            pureza: "98%",
-            presentacion: "Cilindro 250kg",
-            cas: "7664-93-9",
-            precio: 150.00,
-            moneda: "USD",
-            // Busca fotos de 'quimica' o 'laboratorio'
-            foto: "https://loremflickr.com/300/300/chemistry,laboratory?random=1"
-        },
-        {
-            id: 2,
-            nombre: "Alcohol Isopropílico",
-            categoria: "Solventes",
-            pureza: "99.9%",
-            presentacion: "Galon 3.5L",
-            cas: "67-63-0",
-            precio: 25.50,
-            moneda: "USD",
-            // Busca fotos de 'ciencia'
-            foto: "https://loremflickr.com/300/300/science,liquid?random=2"
-        },
-        {
-            id: 3,
-            nombre: "Soda Cáustica en Escamas",
-            categoria: "Bases",
-            pureza: "99%",
-            presentacion: "Saco 25kg",
-            cas: "1310-73-2",
-            precio: 45.00,
-            moneda: "USD",
-            // Busca fotos industriales
-            foto: "https://loremflickr.com/300/300/industrial,factory?random=3"
-        },
-        {
-            id: 4,
-            nombre: "Peróxido de Hidrógeno",
-            categoria: "Oxidantes",
-            pureza: "50%",
-            presentacion: "Bidón 30kg",
-            cas: "7722-84-1",
-            precio: 60.00,
-            moneda: "USD",
-            foto: "https://loremflickr.com/300/300/medical,lab?random=4"
-        },
-        {
-            id: 5,
-            nombre: "Glicerina USP",
-            categoria: "Alcoholes",
-            pureza: "99.7%",
-            presentacion: "Cilindro 250kg",
-            cas: "56-81-5",
-            precio: 320.00,
-            moneda: "USD",
-            foto: "https://loremflickr.com/300/300/medicine,glass?random=5"
-        }
-    ];
 
-    // 2. REFERENCIAS DOM
-    const catalogContainer = document.getElementById('catalog');
+    // --- 1. CONFIGURACIÓN ---
+    // PEGA AQUÍ TU ENLACE DE GOOGLE SHEETS (Debe terminar en ...output=csv)
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR67aoFMPN7IdCJuST7JW3lweWiT_aUucVi8qO1IztTDNLCxThrGbzu4NoQ8LZoDknfzq_l8opyzcEr/pub?gid=0&single=true&output=csv'; 
+    
+    const CACHE_KEY = 'catalogo_quimico_db';
+    const CACHE_TIME = 'catalogo_quimico_time';
+    const CACHE_HORAS = 1; // ¿Cuántas horas guardar los datos en el celular?
+
+    // --- 2. REFERENCIAS DOM ---
+    const grid = document.getElementById('grid');
     const searchInput = document.getElementById('search');
-    const sortInput = document.getElementById('sortFilter');
-    const viewBtns = document.querySelectorAll('.view-btn');
+    const sortInput = document.getElementById('sort'); // Asegúrate que tu HTML tenga este ID o cámbialo aquí
 
-    // 3. ESTADO
-    let currentData = [...products];
+    // --- 3. ESTADO GLOBAL ---
+    let products = [];
 
-    // 4. FUNCIONES
-    function init() {
-        renderProducts(currentData);
-        setupEventListeners();
+    // --- 4. INICIALIZACIÓN ---
+    async function init() {
+        grid.innerHTML = '<p class="loading" style="grid-column:1/-1; text-align:center">Cargando catálogo en tiempo real...</p>';
+        
+        try {
+            // Obtenemos datos (ya sea del caché o de Google)
+            products = await getSmartData();
+            
+            // Renderizamos
+            render(products);
+            
+            // Activamos los "listeners" para buscar y ordenar
+            setupListeners();
+            
+        } catch (e) {
+            console.error("Error grave:", e);
+            grid.innerHTML = '<p class="error" style="color:red; text-align:center">Hubo un error cargando los datos. Por favor recarga la página.</p>';
+        }
     }
 
-    function renderProducts(data) {
-        catalogContainer.innerHTML = '';
+    // --- 5. LÓGICA DE DATOS INTELIGENTE (Smart Data) ---
+    async function getSmartData() {
+        const now = new Date().getTime();
+        const storedTime = localStorage.getItem(CACHE_TIME);
+        const storedData = localStorage.getItem(CACHE_KEY);
+        const maxTime = CACHE_HORAS * 60 * 60 * 1000;
+
+        // A. REVISAR CACHÉ: Si existe y es reciente, úsalo.
+        if (storedData && storedTime && (now - storedTime < maxTime)) {
+            console.log("⚡ Usando datos guardados (Sin consumo de red)");
+            return JSON.parse(storedData);
+        }
+
+        // B. DESCARGAR: Si no hay caché o es viejo, ve a Google.
+        console.log("🌐 Descargando datos frescos de Google Sheets...");
+        const response = await fetch(CSV_URL);
         
+        if (!response.ok) throw new Error("No se pudo conectar con Google Sheets");
+        
+        const text = await response.text(); // Google nos da texto plano (CSV)
+        const data = csvToJson(text);       // Lo convertimos a Objetos
+        
+        // C. GUARDAR: Actualizamos el caché local
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        localStorage.setItem(CACHE_TIME, now);
+        
+        return data;
+    }
+
+    // --- 6. CONVERTIDOR CSV A JSON (El motor) ---
+    function csvToJson(csv) {
+        const lines = csv.split('\n').filter(line => line.trim() !== '');
+        if (lines.length < 2) return []; // Si no hay datos
+
+        // Extraer cabeceras y limpiarlas (quitamos comillas y espacios)
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toLowerCase());
+        
+        const result = [];
+
+        for (let i = 1; i < lines.length; i++) {
+            // Esta expresión regular maneja comas dentro de comillas (ej: "Producto, Rojo")
+            const row = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+            
+            if (row) {
+                let obj = {};
+                headers.forEach((header, index) => {
+                    // Limpiamos comillas extra del valor
+                    let val = row[index] ? row[index].replace(/^"|"$/g, '').trim() : '';
+                    obj[header] = val;
+                });
+                result.push(obj);
+            }
+        }
+        return result;
+    }
+
+    // --- 7. RENDERIZADO (Diseño) ---
+    function render(data) {
         if (data.length === 0) {
-            catalogContainer.innerHTML = `<div class="empty-state"><h3>No encontramos insumos con ese criterio.</h3></div>`;
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center">No se encontraron productos.</p>';
             return;
         }
 
-        data.forEach(p => {
-            // Creamos el mensaje de WhatsApp dinámico
-            const waMsg = `Hola, me interesa cotizar: ${p.nombre} (${p.presentacion})`;
-            const waLink = `https://wa.me/51999999999?text=${encodeURIComponent(waMsg)}`;
+        grid.innerHTML = data.map(p => `
+            <article class="card">
+                <div class="img-box">
+                    <img src="${p.imagen || 'https://placehold.co/400x300?text=Sin+Foto'}" alt="${p.nombre}" loading="lazy">
+                    ${p.categoria ? `<span class="badge">${p.categoria}</span>` : ''}
+                </div>
+                <div class="card-body">
+                    <h3 class="title">${p.nombre}</h3>
+                    
+                    <p style="font-size:0.85rem; color:#666; line-height:1.4; margin-bottom:10px;">
+                        ${p.descripcion || 'Sin descripción disponible.'}
+                    </p>
 
-            const cardHTML = `
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${p.foto}" alt="${p.nombre}">
-                    </div>
-                    <div class="card-body">
-                        <div class="info-block">
-                            <div class="badge-cat">${p.categoria}</div>
-                            <h3 class="card-title">${p.nombre}</h3>
-                            <div class="specs">
-                                <div class="spec-row"><strong>Pureza:</strong> <span>${p.pureza}</span></div>
-                                <div class="spec-row"><strong>Presentación:</strong> <span>${p.presentacion}</span></div>
-                                <div class="spec-row"><strong>CAS:</strong> <span>${p.cas}</span></div>
-                            </div>
+                    <div class="price-section">
+                        <div>
+                            <div class="price">$${parseFloat(p.precio || 0).toFixed(2)}</div>
                         </div>
-                        <div class="price-row">
-                            <div>
-                                <div class="price">${p.moneda} ${p.precio.toFixed(2)}</div>
-                                <div class="unit">x ${p.presentacion}</div>
-                            </div>
-                            <a href="${waLink}" target="_blank" class="btn-cta">
-                                <span>💬</span> Cotizar
-                            </a>
-                        </div>
+                        <button class="btn" onclick="cotizar('${p.nombre}')">Cotizar</button>
                     </div>
                 </div>
-            `;
-            catalogContainer.insertAdjacentHTML('beforeend', cardHTML);
-        });
+            </article>
+        `).join('');
     }
 
-    function setupEventListeners() {
+    // --- 8. FUNCIONALIDADES EXTRA ---
+    function setupListeners() {
         // Buscador
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             const filtered = products.filter(p => 
-                p.nombre.toLowerCase().includes(term) || 
-                p.cas.includes(term) ||
-                p.categoria.toLowerCase().includes(term)
+                (p.nombre && p.nombre.toLowerCase().includes(term)) || 
+                (p.descripcion && p.descripcion.toLowerCase().includes(term)) ||
+                (p.categoria && p.categoria.toLowerCase().includes(term))
             );
-            currentData = filtered;
-            applySort(); // Mantener orden al filtrar
+            
+            // Aplicar ordenamiento actual a la búsqueda
+            applySort(filtered);
         });
 
         // Ordenar
-        sortInput.addEventListener('change', applySort);
+        if(sortInput) {
+            sortInput.addEventListener('change', () => applySort(getCurrentList()));
+        }
     }
 
-    function applySort() {
-        const criteria = sortInput.value;
-        let sorted = [...currentData];
-
-        if (criteria === 'priceAsc') sorted.sort((a,b) => a.precio - b.precio);
-        if (criteria === 'priceDesc') sorted.sort((a,b) => b.precio - a.precio);
-        if (criteria === 'name') sorted.sort((a,b) => a.nombre.localeCompare(b.nombre));
-
-        renderProducts(sorted);
+    // Helper para obtener lista actual (filtrada o completa)
+    function getCurrentList() {
+        const term = searchInput.value.toLowerCase();
+        if(!term) return [...products];
+        return products.filter(p => 
+            p.nombre.toLowerCase().includes(term) || 
+            p.descripcion.toLowerCase().includes(term)
+        );
     }
 
-    // Toggle Vista (Grid/List)
-    window.setView = function(type) {
-        // Actualizar botones
-        viewBtns.forEach(btn => btn.classList.remove('active'));
-        if(type === 'grid') viewBtns[0].classList.add('active');
-        else viewBtns[1].classList.add('active');
-
-        // Actualizar contenedor
-        if(type === 'list') catalogContainer.classList.add('list-view');
-        else catalogContainer.classList.remove('list-view');
+    function applySort(lista) {
+        const criteria = sortInput ? sortInput.value : 'rel';
+        
+        if (criteria === 'asc') lista.sort((a, b) => parseFloat(a.precio) - parseFloat(b.precio));
+        if (criteria === 'desc') lista.sort((a, b) => parseFloat(b.precio) - parseFloat(a.precio));
+        
+        render(lista);
     }
 
-    // Iniciar
+    // Función simple para el botón
+    function cotizar(nombre) {
+        const msg = `Hola, me interesa: ${nombre}`;
+        window.open(`https://wa.me/TU_NUMERO?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // ¡ARRANCAMOS!
     init();
 
 </script>
