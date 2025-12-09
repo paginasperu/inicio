@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MerchCatalog | Productos Personalizados</title>
+    
+    <meta name="description" content="Catálogo exclusivo de merchandising: Polos, Tazas, Llaveros y más.">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo vibrante
+                        secondary: '#10B981', // Esmeralda para acciones positivas
+                        surface: '#F9FAFB',
+                        dark: '#111827'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F3F4F6; }
+        /* Transiciones suaves */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="bg-primary text-white p-2 rounded-lg">
+                        <i class="ri-store-2-fill text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-dark tracking-tight">MerchPro</h1>
+                        <p class="text-xs text-gray-500">Personalización Premium</p>
+                    </div>
+                </div>
+                <a href="#" class="hidden sm:flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition">
+                    <i class="ri-whatsapp-line text-lg"></i> Contacto Directo
+                </a>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+            
+            <div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                    
+                    <div class="md:col-span-5 relative">
+                        <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input 
+                            v-model="search" 
+                            type="text" 
+                            placeholder="Buscar polos, tazas..." 
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+                        >
+                    </div>
+
+                    <div class="md:col-span-4">
+                        <div class="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+                            <button 
+                                @click="filterCategory = ''"
+                                :class="filterCategory === '' ? 'bg-dark text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                                class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition"
+                            >Todo</button>
+                            <button 
+                                v-for="cat in categories" 
+                                :key="cat"
+                                @click="filterCategory = cat"
+                                :class="filterCategory === cat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                                class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition"
+                            >{{ cat }}</button>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-3 flex justify-end">
+                        <select v-model="sortBy" class="w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+                            <option value="relevance">Relevancia</option>
+                            <option value="price_asc">Precio: Menor a Mayor</option>
+                            <option value="price_desc">Precio: Mayor a Menor</option>
+                            <option value="alpha">A-Z</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div v-for="n in 8" :key="n" class="bg-white rounded-2xl p-4 shadow-sm animate-pulse">
+                    <div class="h-48 bg-gray-200 rounded-xl mb-4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div class="h-10 bg-gray-200 rounded-lg"></div>
+                </div>
+            </div>
+
+            <div v-else-if="filteredProducts.length === 0" class="text-center py-20">
+                <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="ri-search-eye-line text-3xl text-gray-400"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-700">No encontramos productos</h3>
+                <p class="text-gray-500">Intenta cambiar los filtros o tu búsqueda.</p>
+                <button @click="resetFilters" class="mt-4 text-primary font-medium hover:underline">Ver todo el catálogo</button>
+            </div>
+
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div 
+                    v-for="product in filteredProducts" 
+                    :key="product.id" 
+                    class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transition-all duration-300"
+                >
+                    <div class="relative group h-64 overflow-hidden bg-gray-100">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-bold px-2 py-1 rounded-md shadow-sm text-dark uppercase tracking-wider z-10">
+                            {{ product.category }}
+                        </span>
+                        <img 
+                            :src="product.image" 
+                            :alt="product.name" 
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                        >
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <button @click="openImage(product.image)" class="bg-white text-dark p-2 rounded-full mx-1 hover:bg-primary hover:text-white transition">
+                                <i class="ri-zoom-in-line"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="font-bold text-gray-800 text-lg mb-1 line-clamp-1">{{ product.name }}</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-grow">{{ product.description }}</p>
+                        
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-400 uppercase">Precio</span>
+                                <span class="text-xl font-bold text-primary">${{ formatPrice(product.price) }}</span>
+                            </div>
+                            <a 
+                                :href="getWhatsAppLink(product)" 
+                                target="_blank"
+                                class="bg-dark hover:bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
+                            >
+                                <i class="ri-whatsapp-fill"></i> Cotizar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-gray-500 text-sm">© 2024 MerchPro. Especialistas en Merchandising.</p>
+            </div>
+        </footer>
+
+        <div v-if="modalImage" class="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4" @click="modalImage = null">
+            <img :src="modalImage" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl animate-fade-in" @click.stop>
+            <button class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300" @click="modalImage = null">&times;</button>
+        </div>
+
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                // --- CONFIGURACIÓN ---
+                // Para usar Google Sheet: Archivo -> Compartir -> Publicar en la web -> CSV
+                // Pega tu link aquí. Si está vacío, se usará el modo DEMO.
+                const googleSheetUrl = ""; 
+                
+                // --- ESTADO ---
+                const products = ref([]);
+                const loading = ref(true);
+                const search = ref("");
+                const filterCategory = ref("");
+                const sortBy = ref("relevance");
+                const modalImage = ref(null);
+
+                // Categorías Definidas
+                const categories = ["POLOS", "TAZAS", "LLAVEROS", "LAPICES", "CUADROS"];
+
+                // --- GENERADOR DE DATOS SIMULADOS (DEMO) ---
+                const generateDemoData = () => {
+                    const demoProducts = [];
+                    const adjectives = ["Premium", "Personalizado", "Ecológico", "Vintage", "Minimalista", "Full Color"];
+                    
+                    // Imágenes temáticas de LoremFlickr
+                    const images = {
+                        "POLOS": "t-shirt",
+                        "TAZAS": "coffee mug",
+                        "LLAVEROS": "keychain",
+                        "LAPICES": "pencils",
+                        "CUADROS": "wall art"
+                    };
+
+                    for (let i = 1; i <= 24; i++) {
+                        const cat = categories[Math.floor(Math.random() * categories.length)];
+                        const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+                        
+                        demoProducts.push({
+                            id: i,
+                            name: `${cat.slice(0, -1)} ${adj} #${i}`, // Ejemplo: POLO Premium #1
+                            category: cat,
+                            price: Math.floor(Math.random() * (50 - 5 + 1) + 5), // Precio random entre 5 y 50
+                            description: `Diseño exclusivo para este ${cat.toLowerCase()} con acabados de alta calidad. Ideal para regalos corporativos o personales.`,
+                            // Usamos un random lock para que la imagen sea consistente
+                            image: `https://loremflickr.com/400/400/${images[cat].replace(' ', ',')}?lock=${i}`
+                        });
+                    }
+                    return demoProducts;
+                };
+
+                // --- CARGAR DATOS ---
+                const fetchData = async () => {
+                    loading.value = true;
+                    
+                    if (googleSheetUrl) {
+                        try {
+                            // Usamos PapaParse para leer el CSV de Google
+                            Papa.parse(googleSheetUrl, {
+                                download: true,
+                                header: true,
+                                complete: (results) => {
+                                    // Mapeamos los datos del CSV a nuestra estructura
+                                    // El CSV debe tener cabeceras: Nombre, Categoria, Precio, Descripcion, ImagenURL
+                                    products.value = results.data
+                                        .filter(item => item.Nombre) // Filtrar filas vacías
+                                        .map((item, index) => ({
+                                            id: index,
+                                            name: item.Nombre,
+                                            category: item.Categoria,
+                                            price: parseFloat(item.Precio),
+                                            description: item.Descripcion,
+                                            image: item.ImagenURL || `https://loremflickr.com/400/400/merch?lock=${index}`
+                                        }));
+                                    loading.value = false;
+                                },
+                                error: (err) => {
+                                    console.error("Error CSV:", err);
+                                    products.value = generateDemoData(); // Fallback a demo
+                                    loading.value = false;
+                                }
+                            });
+                        } catch (e) {
+                            products.value = generateDemoData();
+                            loading.value = false;
+                        }
+                    } else {
+                        // Simular retardo de red para mostrar skeleton
+                        setTimeout(() => {
+                            products.value = generateDemoData();
+                            loading.value = false;
+                        }, 1500);
+                    }
+                };
+
+                // --- PROPIEDADES COMPUTADAS (Filtros y Orden) ---
+                const filteredProducts = computed(() => {
+                    let result = products.value;
+
+                    // 1. Filtro por Categoría
+                    if (filterCategory.value) {
+                        result = result.filter(p => p.category === filterCategory.value);
+                    }
+
+                    // 2. Filtro por Búsqueda
+                    if (search.value) {
+                        const q = search.value.toLowerCase();
+                        result = result.filter(p => 
+                            p.name.toLowerCase().includes(q) || 
+                            p.description.toLowerCase().includes(q)
+                        );
+                    }
+
+                    // 3. Ordenamiento
+                    // Nota: .slice() crea una copia para no mutar el array original
+                    if (sortBy.value === 'price_asc') {
+                        result = result.slice().sort((a, b) => a.price - b.price);
+                    } else if (sortBy.value === 'price_desc') {
+                        result = result.slice().sort((a, b) => b.price - a.price);
+                    } else if (sortBy.value === 'alpha') {
+                        result = result.slice().sort((a, b) => a.name.localeCompare(b.name));
+                    }
+
+                    return result;
+                });
+
+                // --- UTILIDADES ---
+                const formatPrice = (val) => val.toFixed(2);
+                
+                const getWhatsAppLink = (product) => {
+                    const phone = "51999999999"; // TU NUMERO AQUÍ
+                    const text = `Hola, estoy interesado en el producto: ${product.name} (Precio: $${product.price}). ¿Me das más info?`;
+                    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+                };
+
+                const resetFilters = () => {
+                    search.value = "";
+                    filterCategory.value = "";
+                };
+                
+                const openImage = (url) => {
+                    modalImage.value = url;
+                };
+
+                // --- CICLO DE VIDA ---
+                onMounted(() => {
+                    fetchData();
+                });
+
+                return {
+                    products,
+                    loading,
+                    search,
+                    filterCategory,
+                    categories,
+                    sortBy,
+                    filteredProducts,
+                    formatPrice,
+                    getWhatsAppLink,
+                    resetFilters,
+                    modalImage,
+                    openImage
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
