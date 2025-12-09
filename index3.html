@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Químico | Productos Industriales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        /* Variables y reset */
+        :root {
+            --primary: #0066cc;
+            --primary-dark: #004d99;
+            --secondary: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --gray: #636e72;
+            --border: #dfe6e9;
+            --shadow: 0 8px 30px rgba(0,0,0,0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+        }
+
+        /* Sistema de búsqueda avanzado */
+        .search-system {
+            flex: 1;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            background: white;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .search-system:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--gray);
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: none;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+        }
+
+        #searchInput::placeholder {
+            color: var(--gray);
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 102, 204, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #f1f3f4;
+        }
+
+        /* Controles de filtrado */
+        .controls-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-select {
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23636e72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+
+        .control-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        /* Grid de productos */
+        .products-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .results-info {
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+
+        .results-info strong {
+            color: var(--primary);
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Tarjeta de producto moderna */
+        .product-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .badge-danger { background: var(--danger); color: white; }
+        .badge-warning { background: var(--warning); color: var(--dark); }
+        .badge-success { background: var(--secondary); color: white; }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .product-content {
+            padding: 1.5rem;
+        }
+
+        .product-header {
+            margin-bottom: 1rem;
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .product-formula {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: var(--primary);
+            background: var(--light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .spec-icon {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .product-unit {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-icon-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal de detalle */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Estado vacío */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .search-system {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .products-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-atom logo-icon"></i>
+                    <span>ChemiCatalog</span>
+                </div>
+                
+                <div class="search-system">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Buscar productos químicos, fórmulas, CAS..."
+                            autocomplete="off"
+                        >
+                    </div>
+                    
+                    <div class="search-actions">
+                        <button class="action-btn btn-secondary" id="clearFilters">
+                            <i class="fas fa-filter-circle-xmark"></i>
+                            Limpiar
+                        </button>
+                        <button class="action-btn btn-primary" id="applyFilters">
+                            <i class="fas fa-search"></i>
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Controles de filtrado -->
+    <div class="container">
+        <div class="controls-container">
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-filter"></i>
+                        Filtro por Categoría
+                    </label>
+                    <select id="categoryFilter" class="control-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="acidos">Ácidos</option>
+                        <option value="bases">Bases</option>
+                        <option value="solventes">Solventes</option>
+                        <option value="sales">Sales</option>
+                        <option value="reactivos">Reactivos</option>
+                        <option value="especiales">Especiales</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-flask-vial"></i>
+                        Filtro por Pureza
+                    </label>
+                    <select id="purityFilter" class="control-select">
+                        <option value="">Todas las purezas</option>
+                        <option value="analitico">Grado Analítico (≥99.9%)</option>
+                        <option value="hplc">Grado HPLC (≥99.8%)</option>
+                        <option value="reactivo">Grado Reactivo (≥98%)</option>
+                        <option value="tecnico">Grado Técnico (≥95%)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-arrow-down-wide-short"></i>
+                        Ordenar por
+                    </label>
+                    <select id="sortSelect" class="control-select">
+                        <option value="nombre_asc">Nombre (A-Z)</option>
+                        <option value="nombre_desc">Nombre (Z-A)</option>
+                        <option value="precio_asc">Precio (Menor a Mayor)</option>
+                        <option value="precio_desc">Precio (Mayor a Menor)</option>
+                        <option value="peligrosidad">Nivel de Peligrosidad</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor de productos -->
+        <div class="products-container">
+            <div class="products-header">
+                <div class="results-info">
+                    Mostrando <strong id="resultsCount">0</strong> de <strong id="totalCount">0</strong> productos
+                </div>
+                
+                <div class="view-options">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-grid"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="products-grid" id="productsGrid">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+            </div>
+            
+            <!-- Paginación -->
+            <div class="pagination" id="pagination">
+                <!-- Los botones de paginación se generarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de detalle -->
+    <div class="modal" id="productModal">
+        <div class="modal-content" id="modalContent">
+            <!-- Contenido del modal se generará dinámicamente -->
+        </div>
+        <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script>
+        // Base de datos de productos químicos simulados
+        const chemicalProducts = [
+            {
+                id: 1,
+                name: "Ácido Clorhídrico Concentrado",
+                formula: "HCl",
+                cas: "7647-01-0",
+                category: "acidos",
+                purity: "analitico",
+                purityValue: "37%",
+                density: "1.18 g/mL",
+                price: 28.50,
+                unit: "L",
+                dangerLevel: "high",
+                description: "Ácido mineral fuerte, corrosivo. Utilizado en procesos industriales, control de pH y síntesis química.",
+                hazards: ["Corrosivo", "Tóxico"],
+                imageTag: "laboratory,chemistry"
+            },
+            {
+                id: 2,
+                name: "Metanol HPLC",
+                formula: "CH₃OH",
+                cas: "67-56-1",
+                category: "solventes",
+                purity: "hplc",
+                purityValue: "99.9%",
+                density: "0.791 g/mL",
+                price: 15.80,
+                unit: "L",
+                dangerLevel: "high",
+                description: "Solvente polar utilizado en cromatografía líquida de alta resolución (HPLC) y síntesis orgánica.",
+                hazards: ["Inflamable", "Tóxico"],
+                imageTag: "science,chemical"
+            },
+            {
+                id: 3,
+                name: "Sulfato de Cobre Pentahidratado",
+                formula: "CuSO₄·5H₂O",
+                cas: "7758-99-8",
+                category: "sales",
+                purity: "reactivo",
+                purityValue: "99%",
+                density: "2.28 g/cm³",
+                price: 4.20,
+                unit: "kg",
+                dangerLevel: "medium",
+                description: "Sal inorgánica de color azul utilizada en agricultura, tratamiento de aguas y síntesis química.",
+                hazards: ["Nocivo"],
+                imageTag: "crystals,blue"
+            },
+            {
+                id: 4,
+                name: "Hidróxido de Sodio Perlas",
+                formula: "NaOH",
+                cas: "1310-73-2",
+                category: "bases",
+                purity: "reactivo",
+                purityValue: "98%",
+                density: "2.13 g/cm³",
+                price: 2.85,
+                unit: "kg",
+                dangerLevel: "high",
+                description: "Base fuerte, higroscópica. Utilizada en fabricación de jabones, papel y tratamiento de aguas.",
+                hazards: ["Corrosivo"],
+                imageTag: "industry,chemical"
+            },
+            {
+                id: 5,
+                name: "Acetona Grado Analítico",
+                formula: "C₃H₆O",
+                cas: "67-64-1",
+                category: "solventes",
+                purity: "analitico",
+                purityValue: "99.5%",
+                density: "0.791 g/mL",
+                price: 12.40,
+                unit: "L",
+                dangerLevel: "medium",
+                description: "Solvente orgánico polar utilizado en extracciones, limpieza y como reactivo en síntesis.",
+                hazards: ["Inflamable"],
+                imageTag: "laboratory,science"
+            },
+            {
+                id: 6,
+                name: "Cloruro de Sodio USP",
+                formula: "NaCl",
+                cas: "7647-14-5",
+                category: "sales",
+                purity: "analitico",
+                purityValue: "99.9%",
+                density: "2.16 g/cm³",
+                price: 0.85,
+                unit: "kg",
+                dangerLevel: "low",
+                description: "Sal de grado farmacéutico utilizada en preparaciones médicas, alimentación y procesos industriales.",
+                hazards: [],
+                imageTag: "salt,crystals"
+            },
+            {
+                id: 7,
+                name: "Ácido Sulfúrico 98%",
+                formula: "H₂SO₄",
+                cas: "7664-93-9",
+                category: "acidos",
+                purity: "tecnico",
+                purityValue: "98%",
+                density: "1.84 g/mL",
+                price: 18.90,
+                unit: "L",
+                dangerLevel: "high",
+                description: "Ácido mineral fuerte, oxidante. Utilizado en baterías, fertilizantes y procesos químicos.",
+                hazards: ["Corrosivo", "Oxidante"],
+                imageTag: "industry,chemistry"
+            },
+            {
+                id: 8,
+                name: "Etanol Absoluto",
+                formula: "C₂H₅OH",
+                cas: "64-17-5",
+                category: "solventes",
+                purity: "hplc",
+                purityValue: "99.8%",
+                density: "0.789 g/mL",
+                price: 22.50,
+                unit: "L",
+                dangerLevel: "medium",
+                description: "Alcohol utilizado como solvente, desinfectante y en preparación de reactivos de laboratorio.",
+                hazards: ["Inflamable"],
+                imageTag: "alcohol,laboratory"
+            },
+            {
+                id: 9,
+                name: "Permanganato de Potasio",
+                formula: "KMnO₄",
+                cas: "7722-64-7",
+                category: "reactivos",
+                purity: "analitico",
+                purityValue: "99%",
+                density: "2.7 g/cm³",
+                price: 35.20,
+                unit: "kg",
+                dangerLevel: "high",
+                description: "Agente oxidante fuerte utilizado en análisis químico, tratamiento de aguas y síntesis orgánica.",
+                hazards: ["Oxidante", "Nocivo"],
+                imageTag: "crystals,purple"
+            },
+            {
+                id: 10,
+                name: "Carbonato de Sodio Anhidro",
+                formula: "Na₂CO₃",
+                cas: "497-19-8",
+                category: "sales",
+                purity: "tecnico",
+                purityValue: "99%",
+                density: "2.54 g/cm³",
+                price: 1.25,
+                unit: "kg",
+                dangerLevel: "low",
+                description: "Sal alcalina utilizada en fabricación de vidrio, detergentes y tratamiento de aguas.",
+                hazards: [],
+                imageTag: "powder,white"
+            },
+            {
+                id: 11,
+                name: "Cloroformo Estabilizado",
+                formula: "CHCl₃",
+                cas: "67-66-3",
+                category: "solventes",
+                purity: "reactivo",
+                purityValue: "99%",
+                density: "1.48 g/mL",
+                price: 42.30,
+                unit: "L",
+                dangerLevel: "high",
+                description: "Solvente orgánico utilizado en extracciones, cromatografía y como anestésico en el pasado.",
+                hazards: ["Tóxico", "Cancerígeno"],
+                imageTag: "chemical,laboratory"
+            },
+            {
+                id: 12,
+                name: "Ácido Nítrico 65%",
+                formula: "HNO₃",
+                cas: "7697-37-2",
+                category: "acidos",
+                purity: "analitico",
+                purityValue: "65%",
+                density: "1.40 g/mL",
+                price: 31.75,
+                unit: "L",
+                dangerLevel: "high",
+                description: "Ácido mineral fuerte, oxidante. Utilizado en fabricación de explosivos, fertilizantes y metalurgia.",
+                hazards: ["Corrosivo", "Oxidante"],
+                imageTag: "chemistry,industry"
+            }
+        ];
+
+        // Variables de estado
+        let currentProducts = [...chemicalProducts];
+        let currentPage = 1;
+        const productsPerPage = 6;
+        let currentView = 'grid';
+        let isLoading = false;
+
+        // Elementos del DOM
+        const productsGrid = document.getElementById('productsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const purityFilter = document.getElementById('purityFilter');
+        const sortSelect = document.getElementById('sortSelect');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const resultsCount = document.getElementById('resultsCount');
+        const totalCount = document.getElementById('totalCount');
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const productModal = document.getElementById('productModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalClose = document.getElementById('modalClose');
+        const pagination = document.getElementById('pagination');
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            setupEventListeners();
+            updateResultsInfo();
+            renderPagination();
+        });
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Búsqueda en tiempo real con debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterAndSortProducts();
+                }, 300);
+            });
+
+            // Filtros
+            categoryFilter.addEventListener('change', filterAndSortProducts);
+            purityFilter.addEventListener('change', filterAndSortProducts);
+            sortSelect.addEventListener('change', filterAndSortProducts);
+            
+            // Botones de acción
+            applyFiltersBtn.addEventListener('click', filterAndSortProducts);
+            clearFiltersBtn.addEventListener('click', clearAllFilters);
+            
+            // Vista
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentView = btn.dataset.view;
+                    renderProducts();
+                });
+            });
+            
+            // Modal
+            modalClose.addEventListener('click', () => {
+                productModal.style.display = 'none';
+            });
+            
+            // Cerrar modal al hacer clic fuera
+            productModal.addEventListener('click', (e) => {
+                if (e.target === productModal) {
+                    productModal.style.display = 'none';
+                }
+            });
+            
+            // Cerrar con Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    productModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Filtrar y ordenar productos
+        function filterAndSortProducts() {
+            currentPage = 1;
+            
+            let filtered = [...chemicalProducts];
+            
+            // Búsqueda por texto
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm) ||
+                    product.formula.toLowerCase().includes(searchTerm) ||
+                    product.cas.includes(searchTerm) ||
+                    product.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Filtro por categoría
+            const category = categoryFilter.value;
+            if (category) {
+                filtered = filtered.filter(product => product.category === category);
+            }
+            
+            // Filtro por pureza
+            const purity = purityFilter.value;
+            if (purity) {
+                filtered = filtered.filter(product => product.purity === purity);
+            }
+            
+            // Ordenación
+            const sortValue = sortSelect.value;
+            filtered.sort((a, b) => {
+                switch(sortValue) {
+                    case 'nombre_asc':
+                        return a.name.localeCompare(b.name);
+                    case 'nombre_desc':
+                        return b.name.localeCompare(a.name);
+                    case 'precio_asc':
+                        return a.price - b.price;
+                    case 'precio_desc':
+                        return b.price - a.price;
+                    case 'peligrosidad':
+                        const dangerOrder = { high: 3, medium: 2, low: 1 };
+                        return dangerOrder[b.dangerLevel] - dangerOrder[a.dangerLevel];
+                    default:
+                        return 0;
+                }
+            });
+            
+            currentProducts = filtered;
+            renderProducts();
+            updateResultsInfo();
+            renderPagination();
+        }
+
+        // Limpiar todos los filtros
+        function clearAllFilters() {
+            searchInput.value = '';
+            categoryFilter.value = '';
+            purityFilter.value = '';
+            sortSelect.value = 'nombre_asc';
+            filterAndSortProducts();
+        }
+
+        // Renderizar productos
+        function renderProducts() {
+            // Calcular productos para la página actual
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const productsToShow = currentProducts.slice(startIndex, endIndex);
+            
+            // Limpiar grid
+            productsGrid.innerHTML = '';
+            
+            // Mostrar estado vacío si no hay productos
+            if (productsToShow.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-flask"></i>
+                        <h3>No se encontraron productos</h3>
+                        <p>Intenta ajustar los filtros o términos de búsqueda</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Renderizar productos
+            productsToShow.forEach(product => {
+                const productCard = createProductCard(product);
+                productsGrid.appendChild(productCard);
+            });
+            
+            // Aplicar clase de vista
+            productsGrid.className = currentView === 'grid' ? 'products-grid' : 'products-grid list-view';
+        }
+
+        // Crear tarjeta de producto
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.id = product.id;
+            
+            // Determinar color de badge según peligrosidad
+            let badgeClass = '';
+            let badgeText = '';
+            switch(product.dangerLevel) {
+                case 'high':
+                    badgeClass = 'badge-danger';
+                    badgeText = 'Alto Riesgo';
+                    break;
+                case 'medium':
+                    badgeClass = 'badge-warning';
+                    badgeText = 'Riesgo Moderado';
+                    break;
+                case 'low':
+                    badgeClass = 'badge-success';
+                    badgeText = 'Bajo Riesgo';
+                    break;
+            }
+            
+            // Generar URL de imagen de loremflickr con la etiqueta
+            const imageUrl = `https://loremflickr.com/400/200/${product.imageTag}?random=${product.id}`;
+            
+            card.innerHTML = `
+                ${badgeText ? `<div class="product-badge ${badgeClass}">${badgeText}</div>` : ''}
+                
+                <img src="${imageUrl}" 
+                     alt="${product.name}" 
+                     class="product-image"
+                     loading="lazy"
+                     onerror="this.src='https://loremflickr.com/400/200/chemistry?random=${product.id}'">
+                
+                <div class="product-content">
+                    <div class="product-header">
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-formula">${product.formula}</div>
+                    </div>
+                    
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="product-specs">
+                        <div class="spec-item">
+                            <i class="fas fa-vial spec-icon"></i>
+                            <span>CAS: ${product.cas}</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-percentage spec-icon"></i>
+                            <span>${product.purityValue} pureza</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-weight-hanging spec-icon"></i>
+                            <span>${product.density}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-footer">
+                        <div>
+                            <span class="product-price">$${product.price.toFixed(2)}</span>
+                            <span class="product-unit">/${product.unit}</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="action-icon-btn view-detail" data-id="${product.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-icon-btn add-to-cart" data-id="${product.id}">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Agregar event listeners a los botones
+            card.querySelector('.view-detail').addEventListener('click', (e) => {
+                e.stopPropagation();
+                showProductDetail(product.id);
+            });
+            
+            card.querySelector('.add-to-cart').addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToCart(product.id);
+            });
+            
+            // Hacer clickeable toda la tarjeta para ver detalles
+            card.addEventListener('click', () => {
+                showProductDetail(product.id);
+            });
+            
+            return card;
+        }
+
+        // Mostrar detalle del producto
+        function showProductDetail(productId) {
+            const product = chemicalProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Generar imagen de detalle más grande
+            const detailImageUrl = `https://loremflickr.com/600/300/${product.imageTag}?random=${product.id}_detail`;
+            
+            // Generar etiquetas de peligro
+            const hazardTags = product.hazards.map(hazard => 
+                `<span class="product-badge badge-danger" style="margin-right: 0.5rem;">${hazard}</span>`
+            ).join('');
+            
+            modalContent.innerHTML = `
+                <div style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                        <div>
+                            <img src="${detailImageUrl}" 
+                                 alt="${product.name}" 
+                                 style="width: 100%; height: 300px; object-fit: cover; border-radius: var(--radius);"
+                                 onerror="this.src='https://loremflickr.com/600/300/chemistry?random=${product.id}_detail'">
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--dark);">${product.name}</h2>
+                            <div style="font-family: 'Courier New', monospace; font-size: 1.5rem; color: var(--primary); margin-bottom: 1rem;">
+                                ${product.formula}
+                            </div>
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                                ${hazardTags}
+                            </div>
+                            
+                            <div style="background: var(--light); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                    <div>
+                                        <div style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.25rem;">Número CAS</div>
+                                        <div style="font-weight: 600;">${product.cas}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.25rem;">Pureza</div>
+                                        <div style="font-weight: 600;">${product.purityValue}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.25rem;">Densidad</div>
+                                        <div style="font-weight: 600;">${product.density}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.25rem;">Categoría</div>
+                                        <div style="font-weight: 600;">${getCategoryName(product.category)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary);">
+                                        $${product.price.toFixed(2)}
+                                    </div>
+                                    <div style="color: var(--gray);">por ${product.unit}</div>
+                                </div>
+                                <button class="action-btn btn-primary" style="padding: 1rem 2rem;">
+                                    <i class="fas fa-cart-plus"></i>
+                                    Solicitar Cotización
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--dark);">Descripción</h3>
+                        <p style="color: var(--gray); line-height: 1.8;">${product.description}</p>
+                    </div>
+                    
+                    <div>
+                        <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--dark);">Precauciones de Seguridad</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            ${product.hazards.map(hazard => `
+                                <div style="background: #fff5f5; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--danger);">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                                        <span style="font-weight: 600;">${hazard}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            productModal.style.display = 'flex';
+        }
+
+        // Agregar al carrito (simulación)
+        function addToCart(productId) {
+            const product = chemicalProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Mostrar notificación
+            showNotification(`"${product.name}" agregado al carrito`, 'success');
+            
+            // En una implementación real, aquí se agregaría al carrito
+            console.log('Producto agregado al carrito:', product);
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                background: ${type === 'success' ? 'var(--secondary)' : 'var(--primary)'};
+                color: white;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                z-index: 3000;
+                animation: slideIn 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+            
+            // Agregar estilos de animación si no existen
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Actualizar información de resultados
+        function updateResultsInfo() {
+            resultsCount.textContent = currentProducts.length;
+            totalCount.textContent = chemicalProducts.length;
+        }
+
+        // Renderizar paginación
+        function renderPagination() {
+            const totalPages = Math.ceil(currentProducts.length / productsPerPage);
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = `
+                <button class="pagination-btn" id="prevPage" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+            
+            // Mostrar máximo 5 páginas
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            paginationHTML += `
+                <button class="pagination-btn" id="nextPage" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            pagination.innerHTML = paginationHTML;
+            
+            // Agregar event listeners a los botones de paginación
+            document.getElementById('prevPage')?.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderProducts();
+                    renderPagination();
+                    window.scrollTo({ top: productsGrid.offsetTop - 100, behavior: 'smooth' });
+                }
+            });
+            
+            document.getElementById('nextPage')?.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderProducts();
+                    renderPagination();
+                    window.scrollTo({ top: productsGrid.offsetTop - 100, behavior: 'smooth' });
+                }
+            });
+            
+            document.querySelectorAll('.pagination-btn[data-page]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentPage = parseInt(btn.dataset.page);
+                    renderProducts();
+                    renderPagination();
+                    window.scrollTo({ top: productsGrid.offsetTop - 100, behavior: 'smooth' });
+                });
+            });
+        }
+
+        // Helper functions
+        function getCategoryName(category) {
+            const categories = {
+                'acidos': 'Ácidos',
+                'bases': 'Bases',
+                'solventes': 'Solventes',
+                'sales': 'Sales',
+                'reactivos': 'Reactivos',
+                'especiales': 'Especiales'
+            };
+            return categories[category] || category;
+        }
+
+        // Estilo para vista de lista
+        const listViewStyle = document.createElement('style');
+        listViewStyle.textContent = `
+            .products-grid.list-view {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid.list-view .product-card {
+                display: grid;
+                grid-template-columns: 200px 1fr auto;
+                gap: 1.5rem;
+            }
+            
+            .products-grid.list-view .product-image {
+                height: 100%;
+                border-radius: var(--radius) 0 0 var(--radius);
+            }
+            
+            .products-grid.list-view .product-content {
+                padding: 1.5rem 0;
+            }
+            
+            .products-grid.list-view .product-footer {
+                padding: 1.5rem;
+                border-top: none;
+                border-left: 1px solid var(--border);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-width: 150px;
+            }
+            
+            @media (max-width: 1024px) {
+                .products-grid.list-view .product-card {
+                    grid-template-columns: 150px 1fr;
+                }
+                
+                .products-grid.list-view .product-footer {
+                    grid-column: 1 / -1;
+                    border-left: none;
+                    border-top: 1px solid var(--border);
+                    flex-direction: row;
+                    min-width: auto;
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .products-grid.list-view .product-card {
+                    grid-template-columns: 1fr;
+                }
+                
+                .products-grid.list-view .product-image {
+                    height: 200px;
+                    border-radius: var(--radius) var(--radius) 0 0;
+                }
+            }
+        `;
+        document.head.appendChild(listViewStyle);
+    </script>
+</body>
+</html>
