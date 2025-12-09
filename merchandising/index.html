@@ -252,13 +252,16 @@
                     
                     if (googleSheetUrl) {
                         try {
-                            // Usamos PapaParse para leer el CSV de Google
-                            Papa.parse(googleSheetUrl, {
+                            // TRUCO ANTI-CACHÉ:
+                            // Agregamos '&v=' + la hora actual. 
+                            // Esto engaña al navegador para que crea que es un archivo nuevo y no use la memoria vieja.
+                            const urlSinCache = googleSheetUrl + '&v=' + Date.now();
+
+                            Papa.parse(urlSinCache, {
                                 download: true,
                                 header: true,
                                 complete: (results) => {
                                     // Mapeamos los datos del CSV a nuestra estructura
-                                    // El CSV debe tener cabeceras: Nombre, Categoria, Precio, Descripcion, ImagenURL
                                     products.value = results.data
                                         .filter(item => item.Nombre) // Filtrar filas vacías
                                         .map((item, index) => ({
@@ -273,7 +276,7 @@
                                 },
                                 error: (err) => {
                                     console.error("Error CSV:", err);
-                                    products.value = generateDemoData(); // Fallback a demo
+                                    products.value = generateDemoData(); // Fallback a demo si falla
                                     loading.value = false;
                                 }
                             });
@@ -282,7 +285,7 @@
                             loading.value = false;
                         }
                     } else {
-                        // Simular retardo de red para mostrar skeleton
+                        // Simular retardo de red si no hay URL
                         setTimeout(() => {
                             products.value = generateDemoData();
                             loading.value = false;
