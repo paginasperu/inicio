@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Insumos Químicos | Profesional</title>
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --primary: #004e92; /* Azul Industrial */
+            --secondary: #000428; /* Azul Oscuro */
+            --accent: #eef2f3; /* Gris muy claro */
+            --text-dark: #333;
+            --text-light: #666;
+            --danger: #d32f2f;
+            --success: #2e7d32;
+            --border: #ddd;
+            --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+        
+        body { background-color: #f8f9fa; color: var(--text-dark); }
+
+        /* --- HEADER & CONTROLS --- */
+        header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .brand h1 { font-size: 1.5rem; color: var(--secondary); letter-spacing: 1px; }
+        .brand span { color: var(--primary); font-weight: 300; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        /* Inputs Estilizados */
+        input#search {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            width: 300px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        input#search:focus { border-color: var(--primary); }
+
+        select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Toggle Buttons */
+        .view-toggle {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .view-btn {
+            background: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: 0.2s;
+        }
+        .view-btn.active { background: var(--primary); color: white; }
+
+        /* --- CATALOG GRID SYSTEM --- */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        #catalog {
+            display: grid;
+            gap: 20px;
+            /* Default: GRID VIEW */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+
+        /* --- PRODUCT CARD DESIGN (GRID) --- */
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .card-img {
+            height: 180px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 10px;
+        }
+        .card-img img { max-height: 100%; max-width: 100%; object-fit: contain; }
+
+        .card-body { padding: 15px; display: flex; flex-direction: column; flex: 1; }
+
+        .badge-cat {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-title { font-size: 1.1rem; margin-bottom: 10px; color: var(--secondary); font-weight: 600; }
+        
+        /* Specs Table Mini */
+        .specs {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .spec-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .spec-row strong { color: var(--text-dark); }
+
+        .price-row {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .price { font-size: 1.2rem; font-weight: bold; color: var(--text-dark); }
+        .unit { font-size: 0.8rem; font-weight: normal; color: var(--text-light); }
+
+        .btn-cta {
+            background: var(--success);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-cta:hover { background: #1b5e20; }
+
+        /* --- LIST VIEW OVERRIDES --- */
+        #catalog.list-view {
+            grid-template-columns: 1fr; /* Una sola columna */
+        }
+
+        #catalog.list-view .card {
+            flex-direction: row; /* Horizontal */
+            height: auto;
+            align-items: center;
+        }
+
+        #catalog.list-view .card-img {
+            width: 120px;
+            height: 120px;
+            border-bottom: none;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        #catalog.list-view .card-body {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        #catalog.list-view .info-block { flex: 2; }
+        #catalog.list-view .price-row { 
+            border-top: none; 
+            flex-direction: column; 
+            align-items: flex-end; 
+            gap: 10px;
+            padding-top: 0;
+            flex: 1;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .top-bar { flex-direction: column; align-items: stretch; }
+            input#search { width: 100%; }
+            .controls { flex-wrap: wrap; }
+            /* Force Grid on mobile even if list is selected for better UX */
+            #catalog.list-view .card { flex-direction: column; }
+            #catalog.list-view .card-img { width: 100%; height: 180px; border-right: none; border-bottom: 1px solid #f0f0f0; }
+            #catalog.list-view .card-body { flex-direction: column; align-items: stretch; }
+            #catalog.list-view .price-row { flex-direction: row; align-items: center; border-top: 1px solid #f0f0f0; padding-top: 15px;}
+        }
+
+        .empty-state { text-align: center; padding: 50px; color: var(--text-light); width: 100%; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="top-bar">
+        <div class="brand">
+            <h1>QUIMICA<span>PRO</span></h1>
+        </div>
+        <div class="controls">
+            <input type="text" id="search" placeholder="Buscar por nombre, CAS o uso...">
+            <select id="sortFilter">
+                <option value="name">Nombre A-Z</option>
+                <option value="priceAsc">Precio: Bajo a Alto</option>
+                <option value="priceDesc">Precio: Alto a Bajo</option>
+            </select>
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="setView('grid')">☒</button>
+                <button class="view-btn" onclick="setView('list')">☰</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div id="catalog">
+        </div>
+</div>
+
+<script>
+    // 1. DATOS (Simulación de tu Google Sheets o JSON)
+    const products = [
+        {
+            id: 001,
+            nombre: "Ácido Sulfúrico Industrial",
+            categoria: "Ácidos",
+            pureza: "98%",
+            presentacion: "Cilindro 250kg",
+            cas: "7664-93-9",
+            precio: 150.00,
+            moneda: "USD",
+            foto: "https://via.placeholder.com/300x300/eef2f3/004e92?text=H2SO4"
+        },
+        {
+            id: 002,
+            nombre: "Alcohol Isopropílico",
+            categoria: "Solventes",
+            pureza: "99.9%",
+            presentacion: "Galon 3.5L",
+            cas: "67-63-0",
+            precio: 25.50,
+            moneda: "USD",
+            foto: "https://via.placeholder.com/300x300/eef2f3/004e92?text=IPA"
+        },
+        {
+            id: 003,
+            nombre: "Soda Cáustica en Escamas",
+            categoria: "Bases",
+            pureza: "99%",
+            presentacion: "Saco 25kg",
+            cas: "1310-73-2",
+            precio: 45.00,
+            moneda: "USD",
+            foto: "https://via.placeholder.com/300x300/eef2f3/004e92?text=NaOH"
+        },
+        {
+            id: 004,
+            nombre: "Peróxido de Hidrógeno",
+            categoria: "Oxidantes",
+            pureza: "50%",
+            presentacion: "Bidón 30kg",
+            cas: "7722-84-1",
+            precio: 60.00,
+            moneda: "USD",
+            foto: "https://via.placeholder.com/300x300/eef2f3/004e92?text=H2O2"
+        },
+        {
+            id: 005,
+            nombre: "Glicerina USP",
+            categoria: "Alcoholes",
+            pureza: "99.7%",
+            presentacion: "Cilindro 250kg",
+            cas: "56-81-5",
+            precio: 320.00,
+            moneda: "USD",
+            foto: "https://via.placeholder.com/300x300/eef2f3/004e92?text=GLY"
+        }
+    ];
+
+    // 2. REFERENCIAS DOM
+    const catalogContainer = document.getElementById('catalog');
+    const searchInput = document.getElementById('search');
+    const sortInput = document.getElementById('sortFilter');
+    const viewBtns = document.querySelectorAll('.view-btn');
+
+    // 3. ESTADO
+    let currentData = [...products];
+
+    // 4. FUNCIONES
+    function init() {
+        renderProducts(currentData);
+        setupEventListeners();
+    }
+
+    function renderProducts(data) {
+        catalogContainer.innerHTML = '';
+        
+        if (data.length === 0) {
+            catalogContainer.innerHTML = `<div class="empty-state"><h3>No encontramos insumos con ese criterio.</h3></div>`;
+            return;
+        }
+
+        data.forEach(p => {
+            // Creamos el mensaje de WhatsApp dinámico
+            const waMsg = `Hola, me interesa cotizar: ${p.nombre} (${p.presentacion})`;
+            const waLink = `https://wa.me/51999999999?text=${encodeURIComponent(waMsg)}`;
+
+            const cardHTML = `
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${p.foto}" alt="${p.nombre}">
+                    </div>
+                    <div class="card-body">
+                        <div class="info-block">
+                            <div class="badge-cat">${p.categoria}</div>
+                            <h3 class="card-title">${p.nombre}</h3>
+                            <div class="specs">
+                                <div class="spec-row"><strong>Pureza:</strong> <span>${p.pureza}</span></div>
+                                <div class="spec-row"><strong>Presentación:</strong> <span>${p.presentacion}</span></div>
+                                <div class="spec-row"><strong>CAS:</strong> <span>${p.cas}</span></div>
+                            </div>
+                        </div>
+                        <div class="price-row">
+                            <div>
+                                <div class="price">${p.moneda} ${p.precio.toFixed(2)}</div>
+                                <div class="unit">x ${p.presentacion}</div>
+                            </div>
+                            <a href="${waLink}" target="_blank" class="btn-cta">
+                                <span>💬</span> Cotizar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            catalogContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    }
+
+    function setupEventListeners() {
+        // Buscador
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.nombre.toLowerCase().includes(term) || 
+                p.cas.includes(term) ||
+                p.categoria.toLowerCase().includes(term)
+            );
+            currentData = filtered;
+            applySort(); // Mantener orden al filtrar
+        });
+
+        // Ordenar
+        sortInput.addEventListener('change', applySort);
+    }
+
+    function applySort() {
+        const criteria = sortInput.value;
+        let sorted = [...currentData];
+
+        if (criteria === 'priceAsc') sorted.sort((a,b) => a.precio - b.precio);
+        if (criteria === 'priceDesc') sorted.sort((a,b) => b.precio - a.precio);
+        if (criteria === 'name') sorted.sort((a,b) => a.nombre.localeCompare(b.nombre));
+
+        renderProducts(sorted);
+    }
+
+    // Toggle Vista (Grid/List)
+    window.setView = function(type) {
+        // Actualizar botones
+        viewBtns.forEach(btn => btn.classList.remove('active'));
+        if(type === 'grid') viewBtns[0].classList.add('active');
+        else viewBtns[1].classList.add('active');
+
+        // Actualizar contenedor
+        if(type === 'list') catalogContainer.classList.add('list-view');
+        else catalogContainer.classList.remove('list-view');
+    }
+
+    // Iniciar
+    init();
+
+</script>
+</body>
+</html>
