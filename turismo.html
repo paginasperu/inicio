@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizonte Travel | Agencia de Turismo</title>
+    <meta name="description" content="Los mejores paquetes turísticos y full days.">
+    
+    <style>
+        /* --- 1. VARIABLES (Tema Viajes) --- */
+        :root {
+            --primary: #0891B2; /* Turquesa Viajero */
+            --primary-dark: #155E75;
+            --accent: #D97706; /* Ocre/Dorado para botones de acción */
+            --bg: #F0F9FF; /* Fondo muy suave azul cielo */
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-hover: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            
+            --font-head: 'Montserrat', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        /* Fuentes Google */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        /* --- 2. HEADER --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(5px);
+            position: sticky; top: 0; z-index: 100;
+            padding: 15px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+
+        .logo {
+            font-family: var(--font-head);
+            font-size: 1.6rem; font-weight: 800; color: var(--primary-dark);
+            display: flex; align-items: center; gap: 8px; text-transform: uppercase;
+        }
+        .logo span { color: var(--accent); }
+
+        .cart-trigger {
+            position: relative; cursor: pointer; padding: 10px;
+            background: #E0F2FE; border-radius: 50%; color: var(--primary);
+            transition: var(--transition);
+        }
+        .cart-trigger:hover { background: var(--primary); color: white; }
+        
+        .cart-count {
+            position: absolute; top: -5px; right: -5px;
+            background: var(--accent); color: white;
+            font-size: 0.75rem; font-weight: bold;
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* --- 3. HERO (Inmersivo) --- */
+        .hero {
+            position: relative;
+            text-align: center; padding: 80px 20px;
+            /* Fondo de paisaje */
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://loremflickr.com/1200/500/landscape,mountain/all') center/cover;
+            color: white; border-radius: 0 0 30px 30px; margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .hero h1 { 
+            font-family: var(--font-head); font-size: 2.8rem; margin-bottom: 10px; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero p { 
+            font-size: 1.2rem; max-width: 700px; margin: 0 auto; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); font-weight: 600;
+        }
+
+        /* --- 4. CONTROLS --- */
+        .controls { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        
+        .search-box { flex: 1; min-width: 280px; }
+        .search-box input {
+            width: 100%; padding: 14px 25px;
+            border: none; border-radius: 50px;
+            box-shadow: var(--shadow);
+            font-size: 1rem; outline: none; transition: var(--transition);
+        }
+        .search-box input:focus { box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2); }
+
+        .sort-select {
+            padding: 0 25px; border-radius: 50px; border: none;
+            box-shadow: var(--shadow); background: white; cursor: pointer;
+            color: var(--text-main); font-weight: 600;
+        }
+
+        .filters-container {
+            display: flex; gap: 12px; overflow-x: auto;
+            padding: 5px 5px 20px 5px; margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+        
+        .filter-btn {
+            background: white; border: 1px solid transparent;
+            padding: 10px 20px; border-radius: 12px;
+            cursor: pointer; font-size: 0.95rem; font-weight: 600;
+            color: var(--text-light); transition: var(--transition);
+            box-shadow: var(--shadow); white-space: nowrap;
+        }
+        .filter-btn:hover { transform: translateY(-2px); }
+        .filter-btn.active { 
+            background: var(--primary); color: white; 
+            box-shadow: 0 4px 10px rgba(8, 145, 178, 0.4);
+        }
+
+        /* --- 5. GRID & CARDS (Tipo Postal) --- */
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: var(--card-bg); border-radius: var(--radius);
+            overflow: hidden; transition: var(--transition);
+            display: flex; flex-direction: column;
+            box-shadow: var(--shadow); position: relative;
+        }
+        .product-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+
+        .img-container {
+            width: 100%; height: 200px; background: #e2e8f0;
+            position: relative; overflow: hidden;
+        }
+        .img-container img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .product-card:hover .img-container img { transform: scale(1.1); }
+
+        .category-badge {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(255,255,255,0.95); color: var(--primary-dark);
+            padding: 5px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px;
+        }
+
+        .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+
+        .product-title { 
+            font-family: var(--font-head); font-size: 1.1rem; 
+            font-weight: 700; margin-bottom: 8px; color: var(--text-main);
+        }
+        
+        .product-desc { 
+            font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px; 
+            flex-grow: 1; line-height: 1.5;
+        }
+
+        .price-row {
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: auto;
+        }
+
+        .price { 
+            font-family: var(--font-head); font-size: 1.4rem; 
+            font-weight: 800; color: var(--primary-dark);
+        }
+        .price span { font-size: 0.8rem; font-weight: 400; color: var(--text-light); }
+
+        .btn-add {
+            background: var(--accent); color: white; border: none;
+            padding: 10px 18px; border-radius: 8px; font-weight: 700;
+            cursor: pointer; transition: var(--transition);
+        }
+        .btn-add:hover { background: #b45309; }
+
+        /* --- 6. CART SIDEBAR (Itinerario) --- */
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .cart-sidebar {
+            position: fixed; top: 0; right: 0; width: 100%; max-width: 420px;
+            height: 100%; background: white; z-index: 1000;
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+        .cart-sidebar.open { transform: translateX(0); }
+
+        .cart-header { 
+            padding: 25px; background: var(--bg); border-bottom: 1px solid #e2e8f0; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .cart-items { flex-grow: 1; overflow-y: auto; padding: 20px; }
+        
+        .cart-item { 
+            display: flex; gap: 15px; margin-bottom: 20px; padding: 10px; 
+            border: 1px solid #e2e8f0; border-radius: 10px; 
+        }
+        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+        
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .qty-btn { 
+            width: 28px; height: 28px; background: #f1f5f9; border: none; border-radius: 50%;
+            cursor: pointer; font-weight: bold; color: var(--primary-dark);
+        }
+
+        .cart-footer { padding: 25px; border-top: 1px solid #e2e8f0; }
+        .btn-whatsapp {
+            background: #25D366; color: white; width: 100%; padding: 16px;
+            border-radius: 50px; font-weight: 700; border: none; cursor: pointer;
+            font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.2s; padding: 20px; backdrop-filter: blur(2px);
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: white; padding: 0; border-radius: 20px;
+            max-width: 600px; width: 100%; position: relative; overflow: hidden;
+            box-shadow: var(--shadow-hover);
+        }
+        .modal-img { width: 100%; height: 250px; object-fit: cover; }
+        .modal-body { padding: 30px; }
+
+        .loader { text-align: center; padding: 50px; color: var(--text-light); }
+        .hidden { display: none !important; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .products-grid { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12h20M2 12l5-5m-5 5l5 5M12 2a10 10 0 0 1 10 10"/></svg>
+                Horizonte<span>Travel</span>
+            </div>
+            <div class="cart-trigger" onclick="toggleCart()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <div class="cart-count" id="cartCount">0</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Descubre tu Próxima Aventura</h1>
+            <p>Paquetes turísticos, Full Days y experiencias inolvidables a los mejores destinos.</p>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="¿A dónde quieres ir? (ej: Cusco, Selva)...">
+            </div>
+            <select id="sortSelect" class="sort-select" onchange="applyFilters()">
+                <option value="default">Recomendados</option>
+                <option value="price-asc">Precio: Menor a Mayor</option>
+                <option value="price-desc">Precio: Mayor a Menor</option>
+            </select>
+        </div>
+
+        <div class="filters-container" id="categoryFilters"></div>
+
+        <div id="loading" class="loader">Buscando destinos increíbles...</div>
+        <div id="productsGrid" class="products-grid"></div>
+        <div id="noResults" class="loader hidden">No encontramos tours con ese nombre. ✈️</div>
+    </main>
+
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Mi Itinerario</h3>
+            <span onclick="toggleCart()" style="cursor:pointer; font-size: 1.5rem;">&times;</span>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:1.2rem; font-weight:800; color:var(--text-main);">
+                <span>Total Estimado</span>
+                <span id="cartTotal">S/ 0.00</span>
+            </div>
+            <button class="btn-whatsapp" onclick="checkoutWhatsApp()">
+                Solicitar Reserva
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()" style="position:absolute; right:15px; top:15px; background:white; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);">&times;</span>
+            <img id="modalImg" class="modal-img" src="" alt="">
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG ---
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSo_RHRp3S6YQrxkEzhrcn18DKuoWEr4pjOKFHsiE1sBtqBKAgoeKoJuobcmG3Cn9dI4ts9yaZeRYJJ/pub?gid=0&single=true&output=csv"; 
+        const GOOGLE_SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/1PtgKUdq7cpQFgUc5k_vu8p9oj-jJ0mNRxT_9qMrtjTo/edit?gid=0#gid=0"; 
+        const WHATSAPP_PHONE = "51914964676"; 
+
+        // --- ADMIN ---
+        function checkAdmin() {
+            if (window.location.hash === '#admin') window.location.href = GOOGLE_SHEET_EDIT_URL;
+        }
+        checkAdmin();
+        window.addEventListener('hashchange', checkAdmin);
+
+        // --- DATA MOCK (Turismo) ---
+        const MOCK_DATA = [
+            { id: 401, nombre: "Machu Picchu Full Day", precio: 280.00, categoria: "Cusco", descripcion: "Tren turístico, guiado profesional y entrada a la maravilla.", img: "https://loremflickr.com/400/300/machupicchu,ruins?lock=1" },
+            { id: 402, nombre: "Laguna Humantay", precio: 90.00, categoria: "Cusco", descripcion: "Caminata a la laguna turquesa, incluye desayuno y almuerzo buffet.", img: "https://loremflickr.com/400/300/lake,mountain?lock=2" },
+            { id: 403, nombre: "Montaña de 7 Colores", precio: 100.00, categoria: "Cusco", descripcion: "Vinicunca, la montaña arcoíris. Full day con alimentación.", img: "https://loremflickr.com/400/300/mountain,rainbow?lock=3" },
+            { id: 404, nombre: "Paracas y Huacachina", precio: 120.00, categoria: "Ica", descripcion: "Islas Ballestas, tubulares y sandboarding en el oasis.", img: "https://loremflickr.com/400/300/desert,oasis?lock=4" },
+            { id: 405, nombre: "Selva Central 3D/2N", precio: 450.00, categoria: "Selva", descripcion: "Oxapampa y Pozuzo. Hospedaje, tours y desayunos incluidos.", img: "https://loremflickr.com/400/300/jungle,river?lock=5" },
+            { id: 406, nombre: "Máncora Relax", precio: 550.00, categoria: "Playas", descripcion: "Paquete 4D/3N en hotel con piscina frente al mar.", img: "https://loremflickr.com/400/300/beach,palm?lock=6" },
+        ];
+
+        let allProducts = [];
+        let cart = JSON.parse(localStorage.getItem('horizonTravelCart')) || []; 
+        let activeCategory = 'all';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+            updateCartUI();
+            document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+        });
+
+        async function loadData() {
+            try {
+                if (GOOGLE_SHEET_CSV_URL) {
+                    const response = await fetch(GOOGLE_SHEET_CSV_URL);
+                    const text = await response.text();
+                    allProducts = parseCSV(text);
+                } else { allProducts = MOCK_DATA; }
+            } catch (error) { allProducts = MOCK_DATA; }
+            
+            renderCategories();
+            applyFilters();
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        function parseCSV(text) {
+            const result = [];
+            const lines = text.split('\n');
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                const row = [];
+                let currentVal = '';
+                let insideQuotes = false;
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') {
+                        if (insideQuotes && line[j+1] === '"') { currentVal += '"'; j++; } 
+                        else { insideQuotes = !insideQuotes; }
+                    } else if (char === ',' && !insideQuotes) {
+                        row.push(currentVal.trim()); currentVal = '';
+                    } else { currentVal += char; }
+                }
+                row.push(currentVal.trim());
+                if (row.length >= 3) { 
+                    result.push({
+                        id: i,
+                        nombre: row[0].replace(/^"|"$/g, '') || "Tour",
+                        precio: parseFloat(row[1].replace(/[^\d.-]/g, '')) || 0,
+                        categoria: row[2].replace(/^"|"$/g, '') || "General",
+                        descripcion: row[3] ? row[3].replace(/^"|"$/g, '') : "",
+                        imagen: row[4] ? row[4].replace(/^"|"$/g, '') : "https://via.placeholder.com/300"
+                    });
+                }
+            }
+            return result;
+        }
+
+        function renderCategories() {
+            const categories = ['all', ...new Set(allProducts.map(p => p.categoria))];
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                if(!cat) return;
+                const btn = document.createElement('button');
+                btn.className = `filter-btn ${cat === 'all' ? 'active' : ''}`;
+                btn.innerText = cat === 'all' ? 'Todos los Destinos' : cat;
+                btn.onclick = (e) => filterCategory(cat, e.target);
+                container.appendChild(btn);
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const sort = document.getElementById('sortSelect').value;
+            let filtered = allProducts.filter(p => {
+                return (p.nombre.toLowerCase().includes(search) || p.descripcion.toLowerCase().includes(search) || p.categoria.toLowerCase().includes(search)) &&
+                       (activeCategory === 'all' || p.categoria === activeCategory);
+            });
+
+            if (sort === 'price-asc') filtered.sort((a,b) => a.precio - b.precio);
+            if (sort === 'price-desc') filtered.sort((a,b) => b.precio - a.precio);
+            renderGrid(filtered);
+        }
+
+        function renderGrid(products) {
+            const grid = document.getElementById('productsGrid');
+            const noRes = document.getElementById('noResults');
+            grid.innerHTML = '';
+            
+            if (products.length === 0) { noRes.classList.remove('hidden'); return; }
+            noRes.classList.add('hidden');
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="img-container">
+                        <img src="${p.imagen}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/300'">
+                        <span class="category-badge">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            ${p.categoria}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-title">${p.nombre}</div>
+                        <div class="product-desc">${p.descripcion}</div>
+                        <div class="price-row">
+                            <div class="price">S/ ${p.precio.toFixed(2)} <span>/ pax</span></div>
+                            <button class="btn-add" onclick="addToCart(${p.id})">Reservar</button>
+                        </div>
+                    </div>
+                `;
+                // Click en la tarjeta abre detalle (excepto botones)
+                card.addEventListener('click', (e) => {
+                   if(e.target.tagName !== 'BUTTON') showDetails(p.id);
+                });
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat, btn) {
+            activeCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilters();
+        }
+
+        function addToCart(id) {
+            const product = allProducts.find(p => p.id === id);
+            const existing = cart.find(i => i.id === id);
+            if (existing) { existing.qty++; } else { cart.push({ ...product, qty: 1 }); }
+            saveCart();
+            toggleCart(true);
+        }
+
+        function removeFromCart(id) { cart = cart.filter(i => i.id !== id); saveCart(); }
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) removeFromCart(id);
+                else saveCart();
+            }
+        }
+        function saveCart() { localStorage.setItem('horizonTravelCart', JSON.stringify(cart)); updateCartUI(); }
+
+        function updateCartUI() {
+            const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            const total = cart.reduce((acc, item) => acc + (item.precio * item.qty), 0);
+            document.getElementById('cartCount').innerText = count;
+            document.getElementById('cartTotal').innerText = `S/ ${total.toFixed(2)}`;
+            
+            const container = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#94A3B8; margin-top:20px;">Tu itinerario está vacío.</p>';
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.imagen}" alt="${item.nombre}">
+                        <div style="flex-grow:1;">
+                            <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">${item.nombre}</div>
+                            <div style="color:var(--text-light); font-size:0.85rem;">S/ ${item.precio.toFixed(2)} x pax</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                                <span style="font-weight:bold; min-width:20px; text-align:center;">${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                                <span style="font-size:0.8rem; color:#64748B; margin-left:5px;">pasajeros</span>
+                            </div>
+                        </div>
+                        <div onclick="removeFromCart(${item.id})" style="cursor:pointer; color:#EF4444;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        function toggleCart(forceOpen = false) {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('cartOverlay');
+            if (forceOpen) { sidebar.classList.add('open'); overlay.classList.add('open'); } 
+            else { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); }
+        }
+        function checkoutWhatsApp() {
+            if (cart.length === 0) return alert("Agrega tours primero.");
+            let msg = "Hola! Estoy interesado en reservar los siguientes tours:%0A%0A";
+            let total = 0;
+            cart.forEach(item => {
+                const subtotal = item.precio * item.qty;
+                msg += `✈️ *${item.nombre}*%0A   ${item.qty} pasajeros - S/ ${subtotal.toFixed(2)}%0A`;
+                total += subtotal;
+            });
+            msg += `%0A*TOTAL ESTIMADO: S/ ${total.toFixed(2)}*`;
+            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${msg}`, '_blank');
+        }
+        function showDetails(id) {
+            const p = allProducts.find(i => i.id === id);
+            const modal = document.getElementById('productModal');
+            document.getElementById('modalImg').src = p.imagen;
+            document.getElementById('modalBody').innerHTML = `
+                <div style="color:var(--accent); font-weight:800; text-transform:uppercase; font-size:0.85rem; margin-bottom:5px;">${p.categoria}</div>
+                <h2 style="color:var(--text-main); font-family:var(--font-head); font-size:1.8rem; line-height:1.2; margin-bottom:15px;">${p.nombre}</h2>
+                <p style="font-size:1rem; line-height:1.7; color:var(--text-main); margin-bottom:25px;">${p.descripcion}</p>
+                
+                <div style="background:#F1F5F9; padding:15px; border-radius:10px; margin-bottom:20px;">
+                    <div style="font-size:0.9rem; color:var(--text-light);">Precio por persona</div>
+                    <div style="font-size:2rem; font-weight:800; color:var(--primary-dark);">S/ ${p.precio.toFixed(2)}</div>
+                </div>
+
+                <button class="btn-add" style="width:100%; padding:15px; font-size:1.1rem; border-radius:50px;" onclick="addToCart(${p.id}); closeModal()">Agregar al Itinerario</button>
+            `;
+            modal.classList.add('active');
+        }
+        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+        document.getElementById('productModal').addEventListener('click', (e) => { if (e.target.id === 'productModal') closeModal(); });
+    </script>
+</body>
+</html>
