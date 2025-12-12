@@ -12,7 +12,7 @@ window.CHAT_CONFIG = {
             nombre: "Gemini (Gratis)",
             tipo: "google",
             // Pega aquí tu llave de Google (Restringida en Cloud Console)
-            apiKey: "AIzaSyAO-BPm8_6pY1bAW38kYYtnEEQGcQUAme4", 
+            apiKey: "", 
             modelo: "gemini-2.5-flash"
         },
         {
