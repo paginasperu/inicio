@@ -1,28 +1,31 @@
 window.CHAT_CONFIG = {
-    // 1. Diseño Visual
+    // === DISEÑO VISUAL ===
     titulo: "Asistente Dra. Ana",
-    colorPrincipal: "#2563eb", // Azul (Cámbialo por el color del cliente)
+    colorPrincipal: "#2563eb",
     saludoInicial: "¡Hola! Soy Ana. ¿En qué puedo ayudarte? 🦷",
     placeholder: "Pregunta precios o horarios...",
 
-    // 2. LISTA DE CEREBROS (Failover Automático)
-    // El sistema intentará con el primero. Si falla (error o cuota), salta al segundo.
+    // === LISTA DE CEREBROS (Failover Automático) ===
     proveedores: [
         {
             nombre: "Gemini (Gratis)",
             tipo: "google",
-            // Pega aquí tu llave de Google (Restringida en Cloud Console)
+            // Pega aquí tu llave de Google
             apiKey: "", 
             modelo: "gemini-2.5-flash"
         },
         {
-            nombre: "DeepSeek (Respaldo)",
+            nombre: "DeepSeek (Proxy Chain)",
             tipo: "openai-compatible",
-            url: "https://api.deepseek.com/chat/completions",
-            // Pega aquí tu llave de DeepSeek (Muy barata)
-            apiKey: "sk-TU_CLAVE_DE_DEEPSEEK", 
-            modelo: "deepseek-chat"
+            modelo: "deepseek-chat",
+            // Tu clave de DeepSeek
+            apiKey: "sk-TU_CLAVE_DEEPSEEK",
+            // LISTA DE PROXIES: El sistema probará uno por uno con timeout
+            proxies: [
+                "https://worker1.tuapp.workers.dev/chat/completions",
+                "https://worker2.tuapp.workers.dev/chat/completions",
+                "https://api.deepseek.com/chat/completions" // Directo como último recurso
+            ]
         }
-        // Puedes agregar un tercero (ChatGPT) si quieres
     ]
 };
