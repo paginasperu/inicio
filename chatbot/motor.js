@@ -1,24 +1,24 @@
-// MOTOR.JS - Lógica Central + Sistema Multi-IA
+// MOTOR.JS - Lógica Central + Sistema Multi-IA + Multi-Proxy
+// Sin dependencias de Firebase
 
-// === DECLARACIÓN DE VARIABLES GLOBALES ===
-// Obtenemos los elementos una sola vez al inicio para que todas las funciones puedan usarlos
+// === VARIABLES GLOBALES ===
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const statusText = document.getElementById('status-text');
-// ===========================================
 
+// === INICIO DEL SISTEMA ===
 async function iniciarSistema() {
     const config = window.CHAT_CONFIG || {};
     
-    // Aplicar Diseño
+    // 1. Aplicar Diseño
     const color = config.colorPrincipal || "#2563eb";
     document.documentElement.style.setProperty('--chat-color', color);
     document.getElementById('header-title').innerText = config.titulo || "Asistente";
     document.getElementById('bot-welcome-text').innerText = config.saludoInicial || "Hola";
-    userInput.placeholder = config.placeholder || "Escribe aquí..."; // Usa la variable global 'userInput'
+    userInput.placeholder = config.placeholder || "Escribe aquí...";
 
     try {
-        // Cargar Archivos de Texto
+        // 2. Cargar Archivos de Texto (Contexto)
         const [resDatos, resInstrucciones] = await Promise.all([
             fetch('datos.txt'),
             fetch('instrucciones.txt')
@@ -29,30 +29,20 @@ async function iniciarSistema() {
         window.CTX_DATOS = await resDatos.text();
         window.CTX_INSTRUCCIONES = await resInstrucciones.text();
 
-        // Activar Chat
-        userInput.disabled = false; // Usa la variable global 'userInput'
-        sendBtn.disabled = false;   // Usa la variable global 'sendBtn'
-        statusText.innerText = "En línea"; // Usa la variable global 'statusText'
+        // 3. Activar Chat
+        userInput.disabled = false;
+        sendBtn.disabled = false;
+        statusText.innerText = "En línea";
         statusText.classList.remove('animate-pulse');
-        console.log("Sistema cargado.");
+        console.log("Sistema cargado correctamente.");
 
-        // =========================================================
-        // === CÓDIGO PARA DETECTAR LA TECLA ENTER (INICIO) ===
-        // =========================================================
-
+        // 4. Detectar tecla ENTER
         userInput.addEventListener('keydown', function(event) {
-            // Verificamos si la tecla presionada es 'Enter'
             if (event.key === 'Enter') {
-                // Prevenimos un salto de línea si el input fuera un textarea
                 event.preventDefault(); 
-                // Llamamos a la función principal de envío
                 enviarMensaje();
             }
         });
-
-        // =======================================================
-        // === CÓDIGO PARA DETECTAR LA TECLA ENTER (FIN) ===
-        // =======================================================
 
     } catch (error) {
         console.error(error);
@@ -61,85 +51,130 @@ async function iniciarSistema() {
     }
 }
 
-// Lógica de Reintento (Failover)
+// === FUNCIÓN AUXILIAR: FETCH CON TIMEOUT ===
+// Esto evita que el chat se quede "pensando" infinitamente si un proxy muere.
+async function fetchWithTimeout(resource, options = {}) {
+    const { timeout = 10000 } = options; // 10 segundos por defecto
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    const response = await fetch(resource, {
+        ...options,
+        signal: controller.signal  
+    });
+    clearTimeout(id);
+    return response;
+}
+
+// === LÓGICA DE REINTENTO (FAILOVER + MULTI-PROXY) ===
 async function llamarIA(prompt) {
-    // Usamos el operador de encadenamiento opcional para evitar errores si config.js no carga
     const proveedores = window.CHAT_CONFIG?.proveedores; 
     if (!proveedores || proveedores.length === 0) {
-        throw new Error("No hay proveedores de IA configurados en config.js.");
+        throw new Error("No hay proveedores configurados.");
     }
 
     let ultimoError = null;
 
+    // BUCLE 1: Recorre los proveedores (Gemini -> DeepSeek -> etc.)
     for (let i = 0; i < proveedores.length; i++) {
         const prov = proveedores[i];
-        console.log(`Intentando con: ${prov.nombre}...`);
+        console.log(`🤖 Intentando con Proveedor: ${prov.nombre}...`);
 
         try {
             let respuesta = "";
 
             if (prov.tipo === "google") {
-                // GEMINI
+                // --- LÓGICA GEMINI ---
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${prov.modelo}:generateContent?key=${prov.apiKey}`;
-                const res = await fetch(url, {
+                const res = await fetchWithTimeout(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                    timeout: 10000 // 10s timeout
                 });
+                
                 if (!res.ok) throw new Error(`Gemini Error: ${res.status}`);
                 const data = await res.json();
-                respuesta = data.candidates[0].content.parts[0].text;
+                respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
             } else if (prov.tipo === "openai-compatible") {
-                // DEEPSEEK / OPENAI
-                const res = await fetch(prov.url, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${prov.apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: prov.modelo,
-                        messages: [
-                            { role: "system", content: "Eres un asistente útil." },
-                            { role: "user", content: prompt }
-                        ]
-                    })
-                });
-                if (!res.ok) throw new Error(`${prov.nombre} Error: ${res.status}`);
-                const data = await res.json();
-                respuesta = data.choices[0].message.content;
+                // --- LÓGICA OPENAI/DEEPSEEK CON PROXIES ---
+                // Si hay lista de 'proxies', la usa. Si no, usa 'url' única, si no, array vacío.
+                const listaProxies = prov.proxies?.length ? prov.proxies : (prov.url ? [prov.url] : []);
+                
+                if (listaProxies.length === 0) throw new Error(`El proveedor ${prov.nombre} no tiene URLs configuradas.`);
+
+                let errorProxy = null;
+
+                // BUCLE 2: Recorre los Proxies de este proveedor
+                for (let p = 0; p < listaProxies.length; p++) {
+                    const currentUrl = listaProxies[p];
+                    console.log(`   ↳ 🌐 Probando Proxy ${p + 1}: ${currentUrl}`);
+
+                    try {
+                        const res = await fetchWithTimeout(currentUrl, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${prov.apiKey}`
+                            },
+                            body: JSON.stringify({
+                                model: prov.modelo,
+                                messages: [
+                                    { role: "system", content: "Eres un asistente útil." },
+                                    { role: "user", content: prompt }
+                                ]
+                            }),
+                            timeout: 12000 // 12s timeout para proxies (suelen ser más lentos)
+                        });
+
+                        if (!res.ok) throw new Error(`Status ${res.status}`);
+
+                        const data = await res.json();
+                        respuesta = data.choices?.[0]?.message?.content;
+                        
+                        if (respuesta) {
+                            console.log(`   ✅ Éxito con Proxy ${p + 1}`);
+                            break; // ¡Funciona! Rompemos el bucle de proxies
+                        }
+                    } catch (e) {
+                        console.warn(`   ❌ Falló Proxy ${p + 1} (${currentUrl}):`, e.name === 'AbortError' ? 'Tiempo de espera agotado' : e.message);
+                        errorProxy = e;
+                        // Continúa al siguiente proxy...
+                    }
+                }
+
+                if (!respuesta) throw errorProxy || new Error("Todos los proxies fallaron.");
             }
 
-            return respuesta; // ¡Éxito! Salimos del bucle
+            if (respuesta) return respuesta; // Si tenemos respuesta, retornamos y termina todo.
 
         } catch (e) {
-            console.warn(`Falló ${prov.nombre}:`, e);
+            console.warn(`⚠️ Falló Proveedor ${prov.nombre}. Saltando al siguiente...`);
             ultimoError = e;
-            // Si falla, el bucle 'for' continúa automáticamente al siguiente proveedor
+            // Continúa al siguiente proveedor...
         }
     }
-    throw ultimoError || new Error("Todos los proveedores fallaron.");
+
+    throw ultimoError || new Error("Todos los sistemas fallaron.");
 }
 
-// Función Principal
+// === FUNCIÓN PRINCIPAL ===
 async function enviarMensaje() {
-    // Usamos las variables globales
     const trampa = document.getElementById('honeypot');
-    
-    if (trampa && trampa.value !== "") return; // Bot detectado
+    if (trampa && trampa.value !== "") return; 
 
     const pregunta = userInput.value.trim();
     if (!pregunta) return;
 
     if (!checkSpam()) {
-        agregarBurbuja("⏳ Límite de mensajes alcanzado.", 'bot');
+        agregarBurbuja("⏳ Has enviado demasiados mensajes. Por favor espera un poco.", 'bot');
         return;
     }
 
     agregarBurbuja(pregunta, 'user');
     userInput.value = '';
     userInput.disabled = true;
+    sendBtn.disabled = true; // OPTIMIZACIÓN: Deshabilitar el botón de envío
     const loadingId = mostrarLoading();
 
     try {
@@ -153,34 +188,57 @@ async function enviarMensaje() {
 
         const respuestaIA = await llamarIA(promptFinal);
         
-        document.getElementById(loadingId).remove();
+        document.getElementById(loadingId)?.remove();
         const contenido = (typeof marked !== 'undefined') ? marked.parse(respuestaIA) : respuestaIA;
         agregarBurbuja(contenido, 'bot');
 
     } catch (error) {
         document.getElementById(loadingId)?.remove();
         console.error(error);
-        agregarBurbuja("😔 Error de conexión con todos los sistemas.", 'bot');
+        agregarBurbuja("😔 Lo siento, tengo problemas de conexión en este momento.", 'bot');
     } finally {
         userInput.disabled = false;
+        sendBtn.disabled = false; // OPTIMIZACIÓN: Re-habilitar el botón de envío
         userInput.focus();
     }
 }
 
-// Anti-Spam (30 mensajes/hora)
+// === ANTI-SPAM (LocalStorage Seguro) ===
 function checkSpam() {
     const LIMITE = 30; 
     const TIEMPO = 3600000; // 1 hora
     const ahora = Date.now();
-    let log = JSON.parse(localStorage.getItem('chat_logs') || '[]');
+    let log = [];
+
+    // Intentamos leer localStorage con seguridad
+    try {
+        const stored = localStorage.getItem('chat_logs');
+        if (stored) log = JSON.parse(stored);
+    } catch (e) {
+        console.warn("LocalStorage no disponible, usando memoria temporal.");
+        // Si falla (ej. navegación privada estricta), usamos array en memoria
+        if (!window.tempSpamLog) window.tempSpamLog = [];
+        log = window.tempSpamLog;
+    }
+
+    // Filtrar antiguos
     log = log.filter(t => ahora - t < TIEMPO);
+
     if (log.length >= LIMITE) return false;
+
+    // Guardar nuevo
     log.push(ahora);
-    localStorage.setItem('chat_logs', JSON.stringify(log));
+
+    try {
+        localStorage.setItem('chat_logs', JSON.stringify(log));
+    } catch (e) {
+        window.tempSpamLog = log; // Fallback a memoria
+    }
+    
     return true;
 }
 
-// UI Auxiliares
+// === INTERFAZ GRÁFICA ===
 function agregarBurbuja(html, tipo) {
     const container = document.getElementById('chat-container');
     const div = document.createElement('div');
@@ -204,7 +262,11 @@ function mostrarLoading() {
     const div = document.createElement('div');
     div.id = id;
     div.className = "p-3 max-w-[85%] shadow-sm bg-white border border-gray-200 rounded-2xl rounded-tl-none self-start flex gap-1";
-    div.innerHTML = '<div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-gray-400 rounded-full typing-dot" style="animation-delay:0.2s"></div><div class="w-2 h-2 bg-gray-400 rounded-full typing-dot" style="animation-delay:0.4s"></div>';
+    div.innerHTML = `
+        <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+        <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot" style="animation-delay:0.2s"></div>
+        <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot" style="animation-delay:0.4s"></div>
+    `;
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
     return id;
