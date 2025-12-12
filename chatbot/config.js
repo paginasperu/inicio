@@ -1,9 +1,9 @@
 window.CHAT_CONFIG = {
     // === DISEÑO VISUAL ===
-    titulo: "Asistente Dra. Ana",
-    colorPrincipal: "#2563eb",
-    saludoInicial: "¡Hola! Soy Ana. ¿En qué puedo ayudarte? 🦷",
-    placeholder: "Pregunta precios o horarios...",
+    titulo: "Asistente Frankos",
+    colorPrincipal: "#d73618",
+    saludoInicial: "¡Hola! Soy Frankos. ¿En qué puedo ayudarte? 🍗",
+    placeholder: "Pregunta precios u horarios...",
 
     // === LISTA DE CEREBROS (Failover Automático) ===
     proveedores: [
