@@ -1,10 +1,11 @@
 // MOTOR.JS - Sistema Modular de Carga Única (Reglas + Personalidad)
 // Carga todo el conocimiento desde UNA SOLA URL externa y lo clasifica.
 
-// === VARIABLES GLOBALES ===
+// === VARIABLES GLOBALES Y REFERENCIAS AL DOM ===
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const sugerenciasContainer = document.getElementById('sugerencias-container');
+const chatContainer = document.getElementById('chat-container'); // FIX: Se obtiene la referencia global aquí
 
 let fuseEngine; // Motor de búsqueda Fuse.js
 // INICIALIZACIÓN ROBUSTA: Garantizamos que estos arrays siempre existan.
@@ -93,7 +94,6 @@ function parseTotalData(rawData) {
         // 1. CLASIFICAR COMO PERSONALIDAD
         if (personalidadTipos.includes(id)) {
             if (respuesta) {
-                // FIX: El array ya existe gracias a la inicialización global en el top
                 personalidadData[id].push(respuesta); 
             }
             continue; 
@@ -146,6 +146,7 @@ async function procesarMensaje() {
 
     document.getElementById(loadingId)?.remove();
     
+    // El texto final se renderiza con Marked (soporte para Markdown)
     const contenidoHTML = (typeof marked !== 'undefined') 
         ? marked.parse(respuestaFinal) 
         : respuestaFinal.replace(/\n/g, '<br>');
@@ -210,7 +211,7 @@ function mostrarBotonesSugeridos(sugerencias) {
         wrapper.appendChild(button);
     });
     sugerenciasContainer.appendChild(wrapper);
-    container.scrollTop = container.scrollHeight;
+    chatContainer.scrollTop = chatContainer.scrollHeight; // FIX: Cambio a 'chatContainer'
 }
 
 // === UTILIDADES ===
@@ -226,7 +227,8 @@ function toggleInput(estado) {
 }
 
 function agregarBurbuja(html, tipo) {
-    const container = document.getElementById('chat-container');
+    // FIX: Se usa la variable global chatContainer
+    const container = chatContainer; 
     const div = document.createElement('div');
     const colorCliente = window.CHAT_CONFIG.colorPrincipal;
     
@@ -245,7 +247,8 @@ function agregarBurbuja(html, tipo) {
 }
 
 function mostrarLoading() {
-    const container = document.getElementById('chat-container');
+    // FIX: Se usa la variable global chatContainer
+    const container = chatContainer;
     const id = 'load-' + Date.now();
     const div = document.createElement('div');
     div.id = id;
@@ -257,6 +260,7 @@ function mostrarLoading() {
     `;
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
+    return id;
 }
 
 window.onload = iniciarSistema;
