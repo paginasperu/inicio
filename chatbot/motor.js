@@ -1,28 +1,26 @@
-// MOTOR.JS - Lógica Central + Sistema Multi-IA + Multi-Proxy
-// Código optimizado, limpio y con lógica de failover robusta.
+// MOTOR.JS - Lógica Central + Sistema Multi-IA
+// Versión optimizada para Gemini 1.5 Flash con Failover robusto.
 
 // === VARIABLES GLOBALES ===
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const statusText = document.getElementById('status-text');
 
-let pageLoadedAt = Date.now(); // Captura el tiempo de inicio de la carga de la página.
-let isProcessing = false; // Bandera para prevenir llamadas duplicadas (Bloqueo de seguridad)
+let pageLoadedAt = Date.now(); // Para evitar bots que cargan y envían al instante
+let isProcessing = false; // Semáforo para evitar doble envío
 // ==========================
 
 // === INICIO DEL SISTEMA ===
 async function iniciarSistema() {
     const config = window.CHAT_CONFIG || {};
     
-    // 1. Aplicar Diseño
-    const color = config.colorPrincipal || "#2563eb";
-    document.documentElement.style.setProperty('--chat-color', color);
+    // 1. Aplicar Textos (El color lo maneja index.html para evitar parpadeos)
     document.getElementById('header-title').innerText = config.titulo || "Asistente";
     document.getElementById('bot-welcome-text').innerText = config.saludoInicial || "Hola";
     userInput.placeholder = config.placeholder || "Escribe aquí...";
 
     try {
-        // 2. Cargar Archivos de Texto (Contexto)
+        // 2. Cargar Archivos de Texto (Contexto del negocio)
         const [resDatos, resInstrucciones] = await Promise.all([
             fetch('datos.txt'),
             fetch('instrucciones.txt')
@@ -38,7 +36,7 @@ async function iniciarSistema() {
         sendBtn.disabled = false;
         statusText.innerText = "En línea";
         statusText.classList.remove('animate-pulse');
-        console.log("Sistema cargado correctamente.");
+        console.log("Sistema cargado y listo.");
 
         // 4. Detectar tecla ENTER
         userInput.addEventListener('keydown', function(event) {
@@ -56,6 +54,7 @@ async function iniciarSistema() {
 }
 
 // === FUNCIÓN AUXILIAR: FETCH CON TIMEOUT ===
+// Si la API tarda más de 10s, abortamos para probar el siguiente proveedor
 async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 10000 } = options; 
     const controller = new AbortController();
@@ -68,7 +67,7 @@ async function fetchWithTimeout(resource, options = {}) {
     return response;
 }
 
-// === LÓGICA DE REINTENTO (FAILOVER + MULTI-PROXY) ===
+// === LÓGICA DE REINTENTO (FAILOVER) ===
 async function llamarIA(prompt) {
     const proveedores = window.CHAT_CONFIG?.proveedores; 
     if (!proveedores || proveedores.length === 0) {
@@ -77,7 +76,7 @@ async function llamarIA(prompt) {
 
     let ultimoError = null;
 
-    // BUCLE 1: Recorre los proveedores (Gemini -> DeepSeek -> etc.)
+    // BUCLE: Recorre los proveedores (1.5 Flash -> 1.5 Pro -> 1.0 Pro)
     for (let i = 0; i < proveedores.length; i++) {
         const prov = proveedores[i];
         console.log(`🤖 Intentando con Proveedor: ${prov.nombre}...`);
@@ -95,25 +94,25 @@ async function llamarIA(prompt) {
                     timeout: 10000 // 10s timeout
                 });
                 
-                if (!res.ok) throw new Error(`Gemini Error: ${res.status}`);
+                if (!res.ok) throw new Error(`Gemini Error: ${res.status} (${res.statusText})`);
                 const data = await res.json();
-                respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                // Validación extra por si la respuesta viene vacía
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+                    throw new Error("Gemini devolvió una respuesta vacía o bloqueada.");
+                }
+                
+                respuesta = data.candidates[0].content.parts[0].text;
 
             } else if (prov.tipo === "openai-compatible") {
-                // --- LÓGICA OPENAI/DEEPSEEK CON PROXIES ---
+                // --- LÓGICA COMPATIBLE (DeepSeek/Otros) ---
                 const listaProxies = prov.proxies?.length ? prov.proxies : (prov.url ? [prov.url] : []);
-                
-                if (listaProxies.length === 0) throw new Error(`El proveedor ${prov.nombre} no tiene URLs configuradas.`);
+                if (listaProxies.length === 0) throw new Error("Sin URLs de proxy configuradas.");
 
-                let errorProxy = null;
-
-                // BUCLE 2: Recorre los Proxies de este proveedor
+                // Sub-bucle de proxies
                 for (let p = 0; p < listaProxies.length; p++) {
-                    const currentUrl = listaProxies[p];
-                    console.log(`   ↳ 🌐 Probando Proxy ${p + 1}: ${currentUrl}`);
-
                     try {
-                        const res = await fetchWithTimeout(currentUrl, {
+                        const res = await fetchWithTimeout(listaProxies[p], {
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -126,77 +125,61 @@ async function llamarIA(prompt) {
                                     { role: "user", content: prompt }
                                 ]
                             }),
-                            timeout: 12000 // 12s timeout para proxies (suelen ser más lentos)
+                            timeout: 12000 
                         });
-
                         if (!res.ok) throw new Error(`Status ${res.status}`);
-
                         const data = await res.json();
                         respuesta = data.choices?.[0]?.message?.content;
-                        
-                        if (respuesta) {
-                            console.log(`   ✅ Éxito con Proxy ${p + 1}`);
-                            break; // ¡Funciona! Rompemos el bucle de proxies
-                        }
+                        if (respuesta) break; // Éxito con el proxy
                     } catch (e) {
-                        console.warn(`   ❌ Falló Proxy ${p + 1} (${currentUrl}):`, e.name === 'AbortError' ? 'Tiempo de espera agotado' : e.message);
-                        errorProxy = e;
-                        // Continúa al siguiente proxy...
+                        console.warn(`   ❌ Proxy falló: ${e.message}`);
                     }
                 }
-
-                if (!respuesta) throw errorProxy || new Error("Todos los proxies fallaron.");
+                if (!respuesta) throw new Error("Todos los proxies fallaron.");
             }
 
-            if (respuesta) return respuesta; // Si tenemos respuesta, retornamos y termina todo.
+            if (respuesta) return respuesta; // Éxito total, retornamos la respuesta
 
         } catch (e) {
-            console.warn(`⚠️ Falló Proveedor ${prov.nombre}. Saltando al siguiente...`);
+            console.warn(`⚠️ Falló ${prov.nombre}. Saltando al siguiente... Error: ${e.message}`);
             ultimoError = e;
-            // Continúa al siguiente proveedor...
+            // El bucle for continúa automáticamente con el siguiente proveedor
         }
     }
 
     throw ultimoError || new Error("Todos los sistemas fallaron.");
 }
 
-// === FUNCIÓN PRINCIPAL ===
+// === FUNCIÓN PRINCIPAL DE ENVÍO ===
 async function enviarMensaje() {
     
-    // --- FIX: EVITAR RE-ENTRADA (Bloqueo de seguridad) ---
-    if (isProcessing) {
-        return; 
-    }
-    isProcessing = true; // Bloquear nuevas llamadas
+    // 1. BLOQUEO DE SEGURIDAD (Evita doble clic)
+    if (isProcessing) return; 
+    isProcessing = true;
 
+    // 2. HONEYPOT (Anti-Bot)
     const trampa = document.getElementById('honeypot');
-    
-    // 1. HONEYPOT CHECK
     if (trampa && trampa.value !== "") {
-        isProcessing = false; 
-        return; 
+        isProcessing = false; return; 
     } 
 
-    // 2. TIEMPO MÍNIMO DESDE LA CARGA
-    const MIN_DELAY_MS = 2000; // 2 segundos
-    if (Date.now() - pageLoadedAt < MIN_DELAY_MS) {
-        isProcessing = false; 
-        return; 
+    // 3. TIEMPO MÍNIMO (Evita ejecución instantánea al cargar)
+    if (Date.now() - pageLoadedAt < 2000) {
+        isProcessing = false; return; 
     }
 
     const pregunta = userInput.value.trim();
     if (!pregunta) {
-        isProcessing = false; 
-        return;
+        isProcessing = false; return;
     }
 
-    // 3. LÍMITE DE SPAM POR SESIÓN
+    // 4. LÍMITE DE SPAM (Cortesía)
     if (!checkSpam()) {
         agregarBurbuja("⏳ Has enviado demasiados mensajes. Por favor espera un poco.", 'bot');
-        isProcessing = false; 
-        return;
+        isProcessing = false; return;
     }
 
+    // --- INTERFAZ: ENVIANDO ---
     agregarBurbuja(pregunta, 'user');
     userInput.value = '';
     userInput.disabled = true;
@@ -225,46 +208,38 @@ async function enviarMensaje() {
     } finally {
         userInput.disabled = false;
         sendBtn.disabled = false; 
-        isProcessing = false; // DESBLOQUEAR la bandera al finalizar
+        isProcessing = false; // DESBLOQUEAR
         userInput.focus();
     }
 }
 
-// === ANTI-SPAM (LocalStorage Seguro y Configurable) ===
+// === ANTI-SPAM (Memoria + LocalStorage) ===
 function checkSpam() {
     const config = window.CHAT_CONFIG || {};
-    // Usamos los valores de config.js, o un default
     const LIMITE = config.spamLimit || 30; 
-    const DURACION_MINUTOS = config.spamDurationMinutes || 60;
-    const TIEMPO = DURACION_MINUTOS * 60 * 1000; // Convertir minutos a milisegundos
-
+    const TIEMPO = (config.spamDurationMinutes || 60) * 60 * 1000;
     const ahora = Date.now();
     let log = [];
 
-    // Intentamos leer localStorage con seguridad (filtro de cortesía)
     try {
         const stored = localStorage.getItem('chat_logs');
         if (stored) log = JSON.parse(stored);
     } catch (e) {
-        // Fallback a memoria si localStorage falla (ej. modo privado)
         if (!window.tempSpamLog) window.tempSpamLog = [];
         log = window.tempSpamLog;
     }
 
-    // Filtrar antiguos
     log = log.filter(t => ahora - t < TIEMPO);
 
     if (log.length >= LIMITE) return false;
 
-    // Guardar nuevo
     log.push(ahora);
 
     try {
         localStorage.setItem('chat_logs', JSON.stringify(log));
     } catch (e) {
-        window.tempSpamLog = log; // Fallback a memoria
+        window.tempSpamLog = log;
     }
-    
     return true;
 }
 
