@@ -24,7 +24,7 @@ window.CHAT_CONFIG = {
             // RESPALDO: Versión Pro. Más inteligente pero más lenta y con menos cuota (aprox 50/día).
             nombre: "Gemini 1.5 Pro (Respaldo)",
             tipo: "google",
-            apiKey: "TU_CLAVE_ACTIVA_DE_GEMINI", 
+            apiKey: "AIzaSyDSv_H9HytUFYDPmCQX8JJflZ7405HczAE", 
             modelo: "gemini-1.5-pro"
         },
         {
