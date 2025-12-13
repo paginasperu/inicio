@@ -9,21 +9,27 @@ window.CHAT_CONFIG = {
     spamLimit: 30,
     spamDurationMinutes: 60,
 
-    // === LISTA DE CEREBROS (Estrategia: Estabilidad y Cuota Alta) ===
+    // === LISTA DE CEREBROS (Estrategia: Estabilidad Máxima -> 1.5) ===
     proveedores: [
         {
-            // PROVEEDOR PRINCIPAL: Gemini 1.5 Flash
+            // INTENTO 1: Modelo 1.0 Pro (Máxima Compatibilidad).
+            // Si este falla, significa que la clave está totalmente bloqueada.
+            nombre: "Gemini 1.0 Pro (MAX Compatibilidad)",
+            tipo: "google",
+            apiKey: "AIzaSyDSv_H9HytUFYDPmCQX8JJflZ7405HczAE", 
+            modelo: "gemini-1.0-pro"
+        },
+        {
+            // INTENTO 2: 1.5 Flash (El que deseamos usar a largo plazo)
             nombre: "Gemini 1.5 Flash (Alta Disponibilidad)",
             tipo: "google",
-            // 👇 ¡PEGA TU CLAVE AQUÍ ABAJO! (Borra el texto de ejemplo y pon tu AIza...)
             apiKey: "AIzaSyDSv_H9HytUFYDPmCQX8JJflZ7405HczAE", 
             modelo: "gemini-1.5-flash"
         },
         {
-            // RESPALDO: Gemini 1.5 Pro
+            // INTENTO 3: 1.5 Pro (El de mayor razonamiento)
             nombre: "Gemini 1.5 Pro (Respaldo)",
             tipo: "google",
-            // 👇 ¡PEGA TU MISMA CLAVE AQUÍ TAMBIÉN!
             apiKey: "AIzaSyDSv_H9HytUFYDPmCQX8JJflZ7405HczAE", 
             modelo: "gemini-1.5-pro"
         },
