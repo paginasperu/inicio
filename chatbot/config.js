@@ -1,8 +1,8 @@
 window.CHAT_CONFIG = {
     // === DISEÑO VISUAL ===
     titulo: "Asistente Dra. Ana",
-    colorPrincipal: "#2563eb",
-    saludoInicial: "¡Hola! Soy Ana. ¿En qué puedo ayudarte? 🦷",
+    colorPrincipal: "#d73517",
+    saludoInicial: "¡Hola! Soy Francos. ¿En qué puedo ayudarte? 🍗",
     placeholder: "Pregunta precios o horarios...",
 
     // === LÍMITE DE USO (FILTRO DE CORTESÍA DEL CLIENTE) ===
