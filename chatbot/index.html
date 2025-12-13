@@ -3,60 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat IA</title>
+    <title>Frankos Chicken - Pedidos</title>
+    <!-- Librerías -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- MOTOR DE BÚSQUEDA FUZZY MATCHING (Fuse.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script> 
+    
     <style>
-        :root { --chat-color: #2563eb; }
-        body { background-color: #f3f4f6; font-family: sans-serif; }
+        :root { --chat-color: #ea580c; }
+        body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
         .chat-box { height: calc(100vh - 140px); }
         .typing-dot { animation: bounce 1s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         
-        #honeypot {
-            position: absolute; 
-            left: -9999px; 
-            opacity: 0; 
-            pointer-events: none; 
+        /* Estilos para enlaces/botones */
+        .chat-btn { 
+            display: inline-block; 
+            margin-top: 0.5rem; 
+            padding: 0.5rem 1rem; 
+            background-color: #22c55e; 
+            color: white; 
+            border-radius: 0.5rem; 
+            font-weight: bold; 
+            text-decoration: none;
         }
+        .chat-btn:hover { background-color: #16a34a; }
     </style>
 </head>
-<!-- FIX: style="opacity: 0" hace que la página empiece invisible para que no veas el color azul -->
-<body class="flex flex-col h-screen max-w-2xl mx-auto bg-gray-50 shadow-xl" 
-      style="opacity: 0; transition: opacity 0.2s ease-in;">
+<body class="flex flex-col h-screen max-w-2xl mx-auto bg-gray-50 shadow-xl">
 
+    <!-- HEADER -->
     <header class="text-white p-4 flex items-center gap-3 shadow-md transition-colors" 
             style="background-color: var(--chat-color);">
-        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold text-lg">IA</div>
+        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold text-lg">FC</div>
         <div>
             <h1 id="header-title" class="font-bold text-lg leading-tight">...</h1>
-            <p id="status-text" class="text-xs opacity-80 animate-pulse">Cargando...</p>
+            <p id="status-text" class="text-xs opacity-90">Cargando...</p>
         </div>
     </header>
 
+    <!-- ÁREA DE CHAT -->
     <div id="chat-container" class="chat-box overflow-y-auto p-4 space-y-4 flex flex-col scroll-smooth">
+        <!-- Burbuja de Bienvenida -->
         <div class="p-3 max-w-[85%] shadow-sm text-sm bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-tl-none self-start">
             <p id="bot-welcome-text">...</p>
         </div>
+        
+        <!-- CONTENEDOR PARA BOTONES DE SUGERENCIA -->
+        <div id="sugerencias-container"></div>
     </div>
 
+    <!-- ÁREA DE INPUT -->
     <div class="p-4 bg-white border-t border-gray-200">
         <div class="flex gap-2 relative">
-            <input type="text" id="honeypot" tabindex="-1" autocomplete="off" name="email_spam_trap">
-            <input type="text" id="userInput" disabled maxlength="150" 
+            <input type="text" id="userInput" placeholder="Escribe aquí..." maxlength="150" 
                    class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 transition-all"
                    style="focus:ring-color: var(--chat-color);">
-            <button id="sendBtn" onclick="enviarMensaje()" disabled 
-                    class="text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-md active:scale-95 disabled:opacity-50"
+            
+            <button id="sendBtn" 
+                    class="text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-md active:scale-95 hover:opacity-90"
                     style="background-color: var(--chat-color);">
                 ➤
             </button>
         </div>
-        <p class="text-center text-[10px] text-gray-400 mt-2">Hecho por oficial.pe</p>
+        <p class="text-center text-[10px] text-gray-400 mt-2">Tecnología de Respuesta Rápida</p>
     </div>
 
+    <!-- CARGA INTELIGENTE (Anti-Caché) -->
     <script>
         const version = Date.now(); 
+
         function loadScript(src) {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
@@ -69,20 +86,13 @@
 
         loadScript('config.js')
             .then(() => {
-                // 1. Aplicar el color ROJO (o el que tengas en config) MIENTRAS sigue invisible
                 if (window.CHAT_CONFIG && window.CHAT_CONFIG.colorPrincipal) {
                     document.documentElement.style.setProperty('--chat-color', window.CHAT_CONFIG.colorPrincipal);
                 }
-                
-                // 2. AHORA SÍ: Mostrar la página (Fade-in suave)
-                document.body.style.opacity = '1';
-                
                 return loadScript('motor.js');
             })
             .catch(err => {
                 console.error("Error cargando scripts:", err);
-                // Si falla, mostramos la página de todos modos para ver el error
-                document.body.style.opacity = '1';
             });
     </script>
 
