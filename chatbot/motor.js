@@ -1,36 +1,125 @@
-// MOTOR.JS - Sistema de Chat con DeepSeek AI (a través de Cloudflare Proxy)
+// MOTOR.JS - Sistema de Chat con DeepSeek AI
 
-// === VARIABLES GLOBALES ===
-const CHAT_CONFIG = window.CHAT_CONFIG;
+// === 1. CONFIGURACIÓN TÉCNICA (Desarrollador) ===
+const TECH_CONFIG = {
+    // URL del Proxy (Cloudflare Worker, rara vez cambia)
+    deepSeekUrl: "https://deepseek-chat-proxy.precios-com-pe.workers.dev", 
+    
+    // Configuración de la IA (rara vez cambia)
+    modelo: "deepseek-chat",
+    temperatura: 0.7,
+    
+    // Configuraciones de UI y Contacto (Pequeñas, pueden cambiar)
+    color_principal: "#ea580c", // Color naranja de Frankos Chicken
+    whatsapp: "51999999999",    // WhatsApp de contacto
+    placeholder: "Escribe tu consulta (carta, delivery, horario...)",
+};
+
+// === 2. VARIABLES GLOBALES ===
+let CONFIG = {}; // Contendrá los datos cargados de contexto.txt
+let systemInstruction = ""; 
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chat-container'); 
 
-// IMPORTANTE: La clave de API de DeepSeek AHORA está protegida en Cloudflare Workers.
-// La solicitud irá a la URL del Worker, NO a la URL oficial de DeepSeek.
-const apiKey = ""; // Ya no se usa para DeepSeek, pero se mantiene vacía.
-// *** REEMPLAZA ESTA URL CON LA URL DE TU CLOUDFLARE WORKER ***
-const deepSeekUrl = "https://deepseek-chat-proxy.precios-com-pe.workers.dev"; 
+// === 3. LÓGICA DE PARSEO ASÍNCRONO (PARA CONTEXTO.TXT) ===
+async function cargarYAnalizarContexto() {
+    try {
+        document.getElementById('status-text').innerText = "Cargando contexto...";
+        const response = await fetch('contexto.txt');
+        if (!response.ok) throw new Error("No se pudo cargar contexto.txt");
+        const textoContexto = await response.text();
+        
+        const secciones = {};
+        let currentSection = null;
+        
+        const regexSectionHeader = /^\[(\w+)\]$/; 
+        const regexKeyValue = /^(\w+):\s*(.*)$/; 
 
-// Instrucciones del Sistema para la IA (Define el rol y conocimiento)
-const systemInstruction = `Eres Fedeliza, el asistente virtual oficial de Frankos Chicken & Grill.
-1. Tu nombre es Fedeliza. Sé siempre amable, entusiasta y usa emojis de pollo 🍗.
-2. Tu propósito es responder consultas sobre la carta, precios, delivery, y horarios de Frankos Chicken & Grill.
-3. Utiliza la siguiente información simulada:
-   - Carta: Pollo a la Brasa, Parrillas (Bife, Anticuchos), Guarniciones (Papas Fritas, Ensaladas), Postres.
-   - Precios (Simulados, usar Markdown para listas): Pollo Entero S/. 65, 1/2 Pollo S/. 38, Parrilla Bife S/. 45.
-   - Delivery: Costo desde S/. 5 a zonas cercanas (ej. Miraflores, San Isidro). Confirma la zona de cobertura y el costo con la dirección exacta.
-   - Horario: Abierto de Lunes a Domingo, de 12:00 PM a 10:00 PM.
-4. Si no puedes responder o el usuario pide hablar con una persona, invítalo a chatear por WhatsApp usando el número ${CHAT_CONFIG.whatsapp}.
-5. Formatea tus respuestas de manera clara usando Markdown (listas, párrafos) para una buena lectura. Evita el uso excesivo de negritas.
-6. NO busques información externa sobre Frankos Chicken & Grill. Usa únicamente la información que se te proporciona en esta instrucción.`;
+        // Primer paso: Separar el texto en CONFIG (key: value) y Secciones (listas)
+        textoContexto.split('\n').forEach(line => {
+            const trimmedLine = line.trim();
+            if (!trimmedLine || trimmedLine.startsWith('#')) return; 
 
-// === INICIO DEL SISTEMA ===
-function iniciarSistema() {
-    // 1. Aplicar Configuración
-    document.getElementById('header-title').innerText = CHAT_CONFIG.titulo;
-    userInput.placeholder = CHAT_CONFIG.placeholder;
-    document.getElementById('bot-welcome-text').innerText = CHAT_CONFIG.saludoInicial;
+            let match;
+            
+            // 1. Identificar nueva sección de datos ([seccion])
+            if (match = trimmedLine.match(regexSectionHeader)) {
+                currentSection = match[1].toLowerCase();
+                secciones[currentSection] = [];
+            
+            // 2. Identificar pares clave-valor (clave: valor)
+            } else if (currentSection === 'personalidad_y_data' && (match = trimmedLine.match(regexKeyValue))) {
+                // Asignar al objeto CONFIG global
+                CONFIG[match[1].toLowerCase()] = match[2].trim();
+                
+            // 3. Si hay una sección de datos abierta (listas)
+            } else if (currentSection && !currentSection.startsWith('personalidad') && !currentSection.startsWith('instrucciones')) {
+                 secciones[currentSection].push(trimmedLine);
+            } else if (currentSection === 'instrucciones') {
+                secciones['instrucciones'].push(trimmedLine);
+            }
+        });
+
+        // 4. Procesamiento de Secciones Estructuradas (Data de la Empresa)
+
+        // A. Generar Menu en Markdown
+        const menuList = secciones['menu'].map(line => {
+            const [nombre, detalle] = line.split(':').map(s => s.trim());
+            return `- **${nombre}**: ${detalle}`;
+        }).join('\n');
+
+        // B. Generar Precios en Markdown 
+        const priceList = secciones['precios'].map(line => {
+            const [item, precio] = line.split(':').map(s => s.trim().replace(/[^\d.-]/g, ''));
+            return `- ${item}: S/. ${parseFloat(precio).toFixed(2)}`;
+        }).join('\n');
+        
+        // C. Generar General en Markdown
+        const generalData = secciones['general'].map(line => `- ${line}`).join('\n');
+
+
+        // 5. Ensamblar la Instrucción del Sistema
+
+        let instruccionFinal = secciones['instrucciones'].join('\n');
+        
+        // Rellenar Placeholders con datos de CONTEXTO.TXT y TECH_CONFIG
+        instruccionFinal = instruccionFinal.replace(/\[nombre\]/g, CONFIG.nombre);
+        instruccionFinal = instruccionFinal.replace(/\[tono\]/g, CONFIG.tono);
+        instruccionFinal = instruccionFinal.replace(/\[emoji_principal\]/g, CONFIG.emoji_principal);
+        instruccionFinal = instruccionFinal.replace(/\[idioma\]/g, CONFIG.idioma);
+        instruccionFinal = instruccionFinal.replace(/\[moneda\]/g, CONFIG.moneda);
+        instruccionFinal = instruccionFinal.replace(/\[moneda_simbolo\]/g, 'S/.');
+        instruccionFinal = instruccionFinal.replace(/\[whatsapp\]/g, TECH_CONFIG.whatsapp); // De TECH_CONFIG
+        instruccionFinal = instruccionFinal.replace(/\[nombre_empresa\]/g, CONFIG.nombre_empresa); // De CONTEXTO.TXT
+
+
+        // Adjuntar la Data Estructurada
+        instruccionFinal += `\n\n--- INFORMACIÓN DE LA EMPRESA ---\n`;
+        instruccionFinal += `\n**INFO GENERAL:**\n${generalData}`;
+        instruccionFinal += `\n\n**CARTA:**\n${menuList}`;
+        instruccionFinal += `\n\n**PRECIOS (Usar listas de Markdown):**\n${priceList}`;
+
+        return instruccionFinal;
+
+    } catch (error) {
+        console.error("Error al cargar o analizar contexto.txt:", error);
+        document.getElementById('status-text').innerText = "Error de Contexto ⚠️";
+        // Fallback robusto
+        return `Eres un asistente virtual. No se pudo cargar el archivo de configuración. Por favor, usa el WhatsApp ${TECH_CONFIG.whatsapp} para cualquier consulta.`;
+    }
+}
+
+
+// === 4. INICIO DEL SISTEMA ===
+async function iniciarSistema() {
+    // 0. Cargar el contexto (Asíncrono)
+    systemInstruction = await cargarYAnalizarContexto();
+    
+    // 1. Aplicar Estilos y Configuración (Usando CONFIG y TECH_CONFIG)
+    document.documentElement.style.setProperty('--chat-color', TECH_CONFIG.color_principal);
+    document.getElementById('header-title').innerText = CONFIG.nombre_empresa || "Chat AI";
+    document.getElementById('bot-welcome-text').innerText = CONFIG.saludo_inicial || "Hola. ¿En qué puedo ayudarte?";
     document.getElementById('status-text').innerText = "Conectado. Asistente IA 🤖";
     
     toggleInput(true);
@@ -46,7 +135,7 @@ function iniciarSistema() {
 }
 
 
-// === CEREBRO PRINCIPAL (Lógica IA) ===
+// === 5. CEREBRO PRINCIPAL (Lógica IA) ===
 async function procesarMensaje() {
     const textoUsuario = userInput.value.trim();
     if (!textoUsuario) return;
@@ -64,11 +153,9 @@ async function procesarMensaje() {
         
         let contenidoHTML;
         
-        // Si la respuesta es el fallback, no usar marked
         if (respuestaIA.includes("Chatear por WhatsApp")) {
             contenidoHTML = respuestaIA;
         } else {
-            // Usar Marked para el formato
             contenidoHTML = marked.parse(respuestaIA);
         }
         
@@ -78,10 +165,9 @@ async function procesarMensaje() {
         console.error("Error al llamar a la IA de DeepSeek:", error);
         document.getElementById(loadingId)?.remove();
         
-        // Fallback de error
-        const linkWsp = `https://wa.me/${CHAT_CONFIG.whatsapp}?text=${encodeURIComponent("Hola, tuve un problema con el chat IA sobre: " + textoUsuario)}`;
+        const linkWsp = `https://wa.me/${TECH_CONFIG.whatsapp}?text=${encodeURIComponent("Hola, tuve un problema con el chat IA sobre: " + textoUsuario)}`;
         const errorHtml = `
-            ⚠️ Lo siento, no pude comunicarme con el asistente. Revisa la URL del Worker o la clave en Cloudflare.
+            ⚠️ Lo siento, no pude comunicarme con el asistente.
             <a href="${linkWsp}" class="chat-btn">Chatear por WhatsApp 🟢</a>
         `;
         agregarBurbuja(errorHtml, 'bot');
@@ -91,61 +177,47 @@ async function procesarMensaje() {
     }
 }
 
-// Implementación del API de DeepSeek a través del Worker con retries (Exponential Backoff)
+// Implementación del API de DeepSeek
 async function generarRespuestaIA(textoUsuario) {
     const maxRetries = 3;
     let delay = 1000;
 
-    // Estructura de mensaje DeepSeek/OpenAI
     const messages = [
         { role: "system", content: systemInstruction },
         { role: "user", content: textoUsuario }
     ];
     
     const payload = {
-        model: "deepseek-chat", // Modelo DeepSeek 
+        model: TECH_CONFIG.modelo, 
         messages: messages,
-        temperature: 0.7,
+        temperature: TECH_CONFIG.temperatura,
         stream: false
     };
     
     for (let i = 0; i < maxRetries; i++) {
         try {
-            const response = await fetch(deepSeekUrl, {
+            const response = await fetch(TECH_CONFIG.deepSeekUrl, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    // NO se incluye el Authorization header aquí, el Worker lo añade.
                 },
                 body: JSON.stringify(payload)
             });
             
-            if (!response.ok) {
-                // El Worker o el API devolvieron un error
-                throw new Error(`Error en la solicitud al Proxy! Código: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Error en la solicitud al Proxy! Código: ${response.status}`);
             
             const result = await response.json();
-
-            // Formato de respuesta DeepSeek/OpenAI
             const content = result.choices?.[0]?.message?.content;
             
-            if (content) {
-                return content;
-            } else {
-                // Si DeepSeek no pudo generar el contenido
-                const fraseFail = `Lo siento, el modelo DeepSeek no pudo procesar tu solicitud. ¿Podrías reformular tu pregunta? 🧐`;
-                const linkWsp = `https://wa.me/${CHAT_CONFIG.whatsapp}?text=${encodeURIComponent("Consulta no respondida: " + textoUsuario)}`;
+            if (content) return content;
+            
+            const fraseFail = `Lo siento, el modelo IA no pudo procesar tu solicitud. ¿Podrías reformular tu pregunta? 🧐`;
+            const linkWsp = `https://wa.me/${TECH_CONFIG.whatsapp}?text=${encodeURIComponent("Consulta no respondida: " + textoUsuario)}`;
                 
-                return `${fraseFail}\n<a href="${linkWsp}" class="chat-btn">Chatear por WhatsApp 🟢</a>`;
-            }
+            return `${fraseFail}\n<a href="${linkWsp}" class="chat-btn">Chatear por WhatsApp 🟢</a>`;
 
         } catch (error) {
-            if (i === maxRetries - 1) {
-                // Último intento fallido
-                throw error;
-            }
-            // Esperar antes de reintentar (Exponencial Backoff)
+            if (i === maxRetries - 1) throw error;
             await new Promise(resolve => setTimeout(resolve, delay));
             delay *= 2; 
         }
@@ -153,7 +225,7 @@ async function generarRespuestaIA(textoUsuario) {
 }
 
 
-// === UTILIDADES DE UI ===
+// === 6. UTILIDADES DE UI ===
 function toggleInput(estado) {
     userInput.disabled = !estado;
     sendBtn.disabled = !estado;
@@ -163,7 +235,7 @@ function toggleInput(estado) {
 function agregarBurbuja(html, tipo) {
     const container = chatContainer; 
     const div = document.createElement('div');
-    const colorCliente = CHAT_CONFIG.colorPrincipal;
+    const colorCliente = TECH_CONFIG.color_principal; 
     
     if (tipo === 'user') {
         div.className = "p-3 max-w-[85%] shadow-sm text-sm text-white rounded-2xl rounded-tr-none self-end ml-auto";
