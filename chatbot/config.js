@@ -18,13 +18,13 @@ window.CHAT_CONFIG = {
             nombre: "Gemini Flash Lite (Latest)",
             tipo: "google",
             // 👇 TU CLAVE AQUÍ
-            apiKey: "TU_NUEVA_CLAVE_GOOGLE_AQUI", 
+            apiKey: "AIzaSyAT_deiQjOuaiEedotekG2KV5aGsBrFZx4", 
             modelo: "gemini-flash-lite-latest"
         },
         {
             nombre: "Gemini 2.0 Flash Lite",
             tipo: "google",
-            apiKey: "TU_NUEVA_CLAVE_GOOGLE_AQUI", 
+            apiKey: "AIzaSyAT_deiQjOuaiEedotekG2KV5aGsBrFZx4", 
             modelo: "gemini-2.0-flash-lite-preview-02-05"
         },
         {
