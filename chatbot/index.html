@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat IA</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Marked para renderizar Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root { --chat-color: #2563eb; }
@@ -12,6 +14,14 @@
         .chat-box { height: calc(100vh - 140px); }
         .typing-dot { animation: bounce 1s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        /* HONEYPOT: Ocultar el campo de texto para bots */
+        #honeypot {
+            position: absolute; 
+            left: -9999px; 
+            opacity: 0; 
+            pointer-events: none; 
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen max-w-2xl mx-auto bg-gray-50 shadow-xl">
@@ -33,13 +43,16 @@
 
     <div class="p-4 bg-white border-t border-gray-200">
         <div class="flex gap-2 relative">
-            <input type="text" id="honeypot" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px; opacity: 0;">
+            
+            <!-- HONEYPOT (Para la defensa Anti-Bot) -->
+            <input type="text" id="honeypot" tabindex="-1" autocomplete="off" name="email_spam_trap">
+            
             <input type="text" id="userInput" disabled maxlength="150" 
                    class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 transition-all"
                    style="focus:ring-color: var(--chat-color);">
             
             <button id="sendBtn" onclick="enviarMensaje()" disabled 
-                    class="text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-md active:scale-95"
+                    class="text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-md active:scale-95 disabled:opacity-50"
                     style="background-color: var(--chat-color);">
                 ➤
             </button>
