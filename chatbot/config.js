@@ -17,14 +17,14 @@ window.CHAT_CONFIG = {
             nombre: "Gemini 1.0 Pro (MAX Compatibilidad)",
             tipo: "google",
             apiKey: "AIzaSyDSv_H9HytUFYDPmCQX8JJflZ7405HczAE", 
-            modelo: "gemini-1.0-pro"
+            modelo: "gemini-1.5-flash-latest"
         },
         {
             // INTENTO 2: 1.5 Flash (El que deseamos usar a largo plazo)
             nombre: "Gemini 1.5 Flash (Alta Disponibilidad)",
             tipo: "google",
             apiKey: "AIzaSyDSv_H9HytUFYDPmCQX8JJflZ7405HczAE", 
-            modelo: "gemini-1.5-flash"
+            modelo: "gemini-1.5-flash-001"
         },
         {
             // INTENTO 3: 1.5 Pro (El de mayor razonamiento)
