@@ -1,5 +1,5 @@
 // MOTOR.JS - Sistema Modular de Carga Única (Reglas + Personalidad)
-// Implementa caching local para eliminar la latencia de red.
+// Implementa la Búsqueda Avanzada ($OR) y Sugerencias Inteligentes (Did You Mean).
 
 // === VARIABLES GLOBALES ===
 const userInput = document.getElementById('userInput');
@@ -7,62 +7,23 @@ const sendBtn = document.getElementById('sendBtn');
 const sugerenciasContainer = document.getElementById('sugerencias-container');
 const chatContainer = document.getElementById('chat-container'); 
 
-let fuseEngine; 
+let fuseEngine; // Motor de búsqueda Fuse.js
 let personalidadData = { saludo: [], cierre: [], sin_entender: [] }; 
-
-// === FUNCIÓN CRÍTICA: FETCH CON CACHÉ ===
-async function fetchWithCache(url, ttlHours) {
-    const CACHE_KEY = 'chat_kb_cache';
-    const CACHE_TIMESTAMP_KEY = 'chat_kb_ts';
-    const TTL_MS = ttlHours * 60 * 60 * 1000; // Convertir horas a milisegundos
-    
-    // 1. Intentar cargar desde la caché local
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    const cachedTime = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-    const now = Date.now();
-
-    if (cachedData && cachedTime && (now - parseInt(cachedTime) < TTL_MS)) {
-        console.log("✅ Datos cargados desde la caché local (rápido).");
-        return cachedData;
-    }
-
-    // 2. Si no hay caché o está expirada, cargar desde la red
-    console.log("⏳ Cargando datos frescos desde Google Sheets...");
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Error de red al obtener la base de datos.");
-        
-        const data = await response.text();
-        
-        // 3. Guardar en caché antes de devolver
-        localStorage.setItem(CACHE_KEY, data);
-        localStorage.setItem(CACHE_TIMESTAMP_KEY, now.toString());
-        
-        console.log("💾 Base de datos actualizada y guardada en caché.");
-        return data;
-    } catch (error) {
-        console.error("❌ Fallo en la red, intentando usar caché caducada si existe...", error);
-        
-        // 4. Fallback: Si la red falla, usar caché caducada como último recurso
-        if (cachedData) {
-            console.warn("⚠️ Usando datos de caché caducada debido a fallo de red.");
-            return cachedData;
-        }
-        throw error; // Si no hay caché y la red falla, el sistema no puede iniciar.
-    }
-}
 
 // === INICIO DEL SISTEMA ===
 async function iniciarSistema() {
     const config = window.CHAT_CONFIG || {};
     
+    // 1. Aplicar Textos Estáticos
     document.getElementById('header-title').innerText = config.titulo || "Asistente";
     userInput.placeholder = config.placeholder || "Escribe aquí...";
     document.getElementById('status-text').innerText = "Cargando datos...";
     
     try {
-        // 2. Cargar Base de Datos usando el mecanismo de caché
-        const textoBase = await fetchWithCache(config.data_source_url, config.cache_ttl_hours);
+        // 2. Cargar Base de Datos Única
+        const resDatos = await fetch(config.data_source_url);
+        if (!resDatos.ok) throw new Error("Error al cargar la URL del Sheet (Código: " + resDatos.status + ").");
+        const textoBase = await resDatos.text();
         
         // 3. Parsear el texto plano y separar en Reglas y Personalidad
         const conocimiento = parseTotalData(textoBase); 
@@ -79,7 +40,7 @@ async function iniciarSistema() {
     } catch (error) {
         console.error("Error FATAL al iniciar el sistema:", error);
         document.getElementById('status-text').innerText = "ERROR DE CONEXIÓN";
-        agregarBurbuja("⚠️ Error crítico: No pude cargar la base de conocimiento. El chat no puede operar.", 'bot');
+        agregarBurbuja("⚠️ Error crítico: No pude cargar la base de conocimiento. Revise la URL pública y el formato de las cabeceras.", 'bot');
         return;
     }
 
@@ -115,7 +76,6 @@ function parseTotalData(rawData) {
 
     if (idReglaIndex === -1 || palabrasClaveIndex === -1 || respuestaTextoIndex === -1) {
         console.error("Error de formato: Faltan cabeceras obligatorias (id_regla, palabras_clave, respuesta_texto).");
-        // Si hay error en la cabecera, limpiamos personalidadData para evitar errores posteriores
         personalidadData = { saludo: ["Hola."], cierre: ["Adiós."], sin_entender: ["Error."] }; 
         return [];
     }
@@ -161,7 +121,7 @@ function buildFuseEngine(data) {
     const options = {
         keys: ['palabras_clave'],
         includeScore: true,
-        threshold: 0.4, 
+        threshold: 0.6, // FIX: Elevamos el threshold para permitir búsquedas más amplias
         ignoreLocation: true      
     };
     
@@ -194,41 +154,86 @@ async function procesarMensaje() {
     userInput.focus();
 }
 
-// === ALGORITMO DE BÚSQUEDA Y PERSONALIDAD ===
+// === ALGORITMO DE BÚSQUEDA AVANZADA CON SUGERENCIAS ===
 function generarRespuesta(texto) {
     const config = window.CHAT_CONFIG;
     let respuestaBase = null;
     
-    // 1. Búsqueda por Similitud (Fuzzy Matching)
-    const resultados = fuseEngine.search(texto, { limit: 1 }); 
+    // 1. Preprocesar y preparar la búsqueda por Expresión $or (Busca si CUALQUIER palabra coincide)
+    const palabrasUsuario = texto.toLowerCase()
+        .split(/[\s,]+/) 
+        .filter(w => w.length > 2); // Elimina ruido menor a 3 letras
 
+    const orExpression = palabrasUsuario.map(word => ({ palabras_clave: word }));
+
+    let resultados = [];
+    if (orExpression.length > 0) {
+        // Obtenemos los 5 mejores resultados (el motor está configurado con threshold 0.6)
+        resultados = fuseEngine.search({ $or: orExpression }, { limit: 5 });
+    }
+
+    // --- ANÁLISIS DE RESULTADOS EN 3 NIVELES ---
     if (resultados.length > 0) {
         const mejorResultado = resultados[0]; 
         
-        // Solo aceptamos la respuesta si es muy relevante (< 0.35 de error)
-        if (mejorResultado.score < 0.35) {
+        // NIVEL 1: MATCH DIRECTO Y CONFIABLE (Muy buena similitud)
+        if (mejorResultado.score < 0.35) { // Umbral bajo para la respuesta principal
             respuestaBase = mejorResultado.item.respuesta_texto;
+        } 
+        
+        // NIVEL 2: SUGERENCIAS INTELIGENTES (Match aceptable pero ambiguo)
+        else if (mejorResultado.score < 0.6) { // Umbral intermedio para sugerencias
+            const sugerenciasUtiles = resultados
+                .slice(0, 3) // Tomamos las 3 mejores
+                .filter(r => r.score < 0.65) // Filtramos resultados demasiado malos
+                .map(r => r.item.id_regla);
+            
+            if (sugerenciasUtiles.length > 0) {
+                respuestaBase = construirSugerencias(sugerenciasUtiles, texto, config.sugerencias_rapidas);
+            }
         }
     }
     
-    // B) CONSTRUCCIÓN DE LA RESPUESTA (Personalidad)
+    // B) CONSTRUCCIÓN DE LA RESPUESTA FINAL
     if (respuestaBase) {
-        // Usamos la data de personalidadData (cargada dinámicamente)
         const saludo = obtenerAleatorio(personalidadData.saludo);
         const cierre = obtenerAleatorio(personalidadData.cierre);
         
-        // Usamos Math.random() para decidir si incluimos el cierre
         const cierreFinal = Math.random() > 0.3 ? `\n\n${cierre}` : '';
 
-        // El bot siempre da un saludo antes de la respuesta de la regla
+        // Si la respuesta fue una sugerencia, no le ponemos saludo/cierre para que sea directo.
+        if (respuestaBase.includes("Temas Relacionados")) {
+             return respuestaBase; 
+        }
+
         return `${saludo} ${respuestaBase} ${cierreFinal}`;
     }
 
-    // C) FALLBACK (No entendió) -> Botón de WhatsApp
+    // C) NIVEL 3: FALLBACK (NO ENTIENDE NADA)
     const fraseFail = obtenerAleatorio(personalidadData.sin_entender);
     const linkWsp = `https://wa.me/${config.whatsapp}?text=${encodeURIComponent("Hola, tengo una consulta sobre: " + texto)}`;
     
     return `${fraseFail}\n<a href="${linkWsp}" class="chat-btn">Chatear por WhatsApp 🟢</a>`;
+}
+
+// Función auxiliar para construir el mensaje de sugerencias
+function construirSugerencias(idsRelevantes, textoOriginal, sugerenciasIniciales) {
+    const titulos = idsRelevantes.map(id => {
+        // Buscamos el texto del botón inicial para obtener el título legible
+        const sugerencia = sugerenciasIniciales.find(sug => sug.accion === id);
+        return sugerencia ? sugerencia.texto : id; 
+    });
+
+    let mensaje = `No estoy 100% seguro de a qué te refieres con: *"${textoOriginal}"*. 🧐\n\n`;
+    mensaje += `Pero encontré estos **Temas Relacionados** que podrían ayudarte:`;
+    
+    titulos.forEach(titulo => {
+        // Agregamos el título como un botón funcional (simulando la escritura)
+        mensaje += `\n- **${titulo}**`;
+    });
+
+    mensaje += "\n\nIntenta escribir solo una de las palabras clave (ej: 'precios' o 'delivery').";
+    return mensaje;
 }
 
 // === LÓGICA DE BOTONES (Simulan entrada de usuario) ===
