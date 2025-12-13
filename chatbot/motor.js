@@ -33,79 +33,63 @@ async function cargarYAnalizarContexto() {
         const secciones = {};
         let currentSection = null;
         
-        const regexSectionHeader = /^\[(\w+)\]$/; 
+        const regexSectionHeader = /^###\s*(\w+)$/; // Match only ###SECTION_NAME
         const regexKeyValue = /^(\w+):\s*(.*)$/; 
 
-        // Primer paso: Separar el texto en CONFIG (key: value) y Secciones (listas)
+        // Primer paso: Separar el texto por bloques y extraer CONFIG
         textoContexto.split('\n').forEach(line => {
             const trimmedLine = line.trim();
-            if (!trimmedLine || trimmedLine.startsWith('#')) return; 
+            if (!trimmedLine || trimmedLine.startsWith('#') && !trimmedLine.startsWith('###')) return; // Ignorar comentarios
 
             let match;
             
-            // 1. Identificar nueva sección de datos ([seccion])
-            if (match = trimmedLine.match(regexSectionHeader)) {
+            // 1. Identificar nueva sección de datos (###SECCION)
+            if (match = trimmedLine.match(regexSectionHeader)) { 
                 currentSection = match[1].toLowerCase();
                 secciones[currentSection] = [];
             
-            // 2. Identificar pares clave-valor (clave: valor)
-            } else if (currentSection === 'personalidad_y_data' && (match = trimmedLine.match(regexKeyValue))) {
-                // Asignar al objeto CONFIG global
+            // 2. Extraer pares clave-valor SOLO de la sección de personalidad
+            } else if (currentSection === 'personalidad_y_data' && (match = trimmedLine.match(regexKeyValue))) { 
                 CONFIG[match[1].toLowerCase()] = match[2].trim();
                 
-            // 3. Si hay una sección de datos abierta (listas)
-            } else if (currentSection && !currentSection.startsWith('personalidad') && !currentSection.startsWith('instrucciones')) {
+            // 3. Si hay una sección de texto libre abierta, añadir la línea a su array
+            } else if (currentSection) {
                  secciones[currentSection].push(trimmedLine);
-            } else if (currentSection === 'instrucciones') {
-                secciones['instrucciones'].push(trimmedLine);
             }
         });
 
-        // 4. Procesamiento de Secciones Estructuradas (Data de la Empresa)
-
-        // A. Generar Menu en Markdown
-        const menuList = secciones['menu'].map(line => {
-            const [nombre, detalle] = line.split(':').map(s => s.trim());
-            return `- **${nombre}**: ${detalle}`;
-        }).join('\n');
-
-        // B. Generar Precios en Markdown 
-        const priceList = secciones['precios'].map(line => {
-            const [item, precio] = line.split(':').map(s => s.trim().replace(/[^\d.-]/g, ''));
-            return `- ${item}: S/. ${parseFloat(precio).toFixed(2)}`;
-        }).join('\n');
-        
-        // C. Generar General en Markdown
-        const generalData = secciones['general'].map(line => `- ${line}`).join('\n');
-
+        // 4. Procesamiento de Secciones
+        const instruccionesArray = secciones['instrucciones'] || [];
+        const conocimientoBaseArray = secciones['conocimiento_base'] || [];
 
         // 5. Ensamblar la Instrucción del Sistema
 
-        let instruccionFinal = secciones['instrucciones'].join('\n');
+        // A. Instrucción base (plantilla)
+        let instruccionFinal = instruccionesArray.join('\n');
         
-        // Rellenar Placeholders con datos de CONTEXTO.TXT y TECH_CONFIG
-        instruccionFinal = instruccionFinal.replace(/\[nombre\]/g, CONFIG.nombre);
-        instruccionFinal = instruccionFinal.replace(/\[tono\]/g, CONFIG.tono);
-        instruccionFinal = instruccionFinal.replace(/\[emoji_principal\]/g, CONFIG.emoji_principal);
-        instruccionFinal = instruccionFinal.replace(/\[idioma\]/g, CONFIG.idioma);
-        instruccionFinal = instruccionFinal.replace(/\[moneda\]/g, CONFIG.moneda);
-        instruccionFinal = instruccionFinal.replace(/\[moneda_simbolo\]/g, 'S/.');
-        instruccionFinal = instruccionFinal.replace(/\[whatsapp\]/g, TECH_CONFIG.whatsapp); // De TECH_CONFIG
-        instruccionFinal = instruccionFinal.replace(/\[nombre_empresa\]/g, CONFIG.nombre_empresa); // De CONTEXTO.TXT
+        // Rellenar Placeholders
+        instruccionFinal = instruccionFinal.replace(/\[nombre\]/g, CONFIG.nombre || 'Asistente');
+        instruccionFinal = instruccionFinal.replace(/\[tono\]/g, CONFIG.tono || 'amable');
+        instruccionFinal = instruccionFinal.replace(/\[emoji_principal\]/g, CONFIG.emoji_principal || '');
+        instruccionFinal = instruccionFinal.replace(/\[idioma\]/g, CONFIG.idioma || 'español');
+        instruccionFinal = instruccionFinal.replace(/\[moneda\]/g, CONFIG.moneda || 'Soles');
+        instruccionFinal = instruccionFinal.replace(/\[whatsapp\]/g, TECH_CONFIG.whatsapp);
+        instruccionFinal = instruccionFinal.replace(/\[nombre_empresa\]/g, CONFIG.nombre_empresa || 'Empresa');
 
 
-        // Adjuntar la Data Estructurada
-        instruccionFinal += `\n\n--- INFORMACIÓN DE LA EMPRESA ---\n`;
-        instruccionFinal += `\n**INFO GENERAL:**\n${generalData}`;
-        instruccionFinal += `\n\n**CARTA:**\n${menuList}`;
-        instruccionFinal += `\n\n**PRECIOS (Usar listas de Markdown):**\n${priceList}`;
+        // B. Adjuntar la Base de Conocimiento (Puro Texto)
+        const conocimientoBase = conocimientoBaseArray.filter(line => line.trim().length > 0).join('\n');
+        
+        instruccionFinal += `\n\n--- BASE DE CONOCIMIENTO (TEXTO PURO) ---\n`;
+        instruccionFinal += `\n${conocimientoBase}`;
+        instruccionFinal = instruccionFinal.replace(/\[base_de_conocimiento\]/g, "la BASE DE CONOCIMIENTO"); // Sustituir el placeholder en la plantilla
+
 
         return instruccionFinal;
 
     } catch (error) {
         console.error("Error al cargar o analizar contexto.txt:", error);
         document.getElementById('status-text').innerText = "Error de Contexto ⚠️";
-        // Fallback robusto
         return `Eres un asistente virtual. No se pudo cargar el archivo de configuración. Por favor, usa el WhatsApp ${TECH_CONFIG.whatsapp} para cualquier consulta.`;
     }
 }
