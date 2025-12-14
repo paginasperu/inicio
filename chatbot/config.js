@@ -14,12 +14,12 @@ export const TECH_CONFIG = {
     placeholder: "Escribe tu consulta...",
     
     // === SEGURIDAD Y BLINDAJE (CLIENTE) ===
-    max_length: 150,                // Límite físico de caracteres en el input.
+    max_length: 50,                // Límite físico de caracteres en el input.
     min_input_length: 4,            // Evita consultas vacías o spam de "a", "b".
     max_retries: 3,                 // Reintentos de conexión.
     
     // === LÍMITE DE MENSAJES PARA DEMO (CONTROL DE MARKETING) ===
-    max_demo_messages: 5,          //  El contador de mensajes totales para la demostración.
+    max_demo_messages: 3,          //  El contador de mensajes totales para la demostración.
     
     // === RATE LIMITING EN EL CLIENTE (Primera línea de defensa antes de ir al Proxy) ===
     rate_limit_max_requests: 5,     // Máximo 5 mensajes...
