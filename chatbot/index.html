@@ -3,65 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frankos Chicken - Pedidos con IA</title>
-    
+    <title>Chat de Pedidos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
     <style>
-        /* CONFIGURACIÓN BASE DEL CHAT - USARÁ VARIABLE CSS */
-        :root { --chat-color: #ea580c; } 
-        
-        /* Font cambiado a Segoe UI según tu original */
+        :root { --chat-color: #ea580c; }
         body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
         .chat-box { height: calc(100vh - 140px); }
-        
-        /* Efecto de Typing */
-        .typing-dot { 
-            animation: bounce 1s infinite;
-            background-color: var(--chat-color);
-        }
+        .typing-dot { animation: bounce 1s infinite; background-color: var(--chat-color); }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        
-        /* Estilos de Botón de WhatsApp */
-        .chat-btn { 
-            display: inline-block; 
-            margin-top: 0.5rem; 
-            padding: 0.5rem 1rem; 
-            background-color: #22c55e; /* green-500 */
-            color: white; 
-            border-radius: 0.5rem; 
-            font-weight: bold; 
-            text-decoration: none;
-            transition: background-color 0.2s;
-        }
-        .chat-btn:hover { background-color: #16a34a; } /* green-600 */
-
-        /* Estilo para las burbujas */
-        .bot-bubble {
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-            line-height: 1.4;
-        }
-        .bot-bubble pre {
-            background-color: #f1f5f9;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            margin-top: 0.5rem;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
+        .chat-btn { display: inline-block; margin-top: 0.5rem; padding: 0.5rem 1rem; background-color: #22c55e; color: white; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.85rem; }
+        .chat-btn:hover { background-color: #16a34a; }
+        .bot-bubble ul { list-style-type: disc; margin-left: 1.2rem; }
+        .bot-bubble p { margin-bottom: 0.5rem; }
         .bot-bubble p:last-child { margin-bottom: 0; }
-        .bot-bubble a { color: var(--chat-color); font-weight: 600; text-decoration: underline; }
+        .bot-bubble strong { color: var(--chat-color); }
     </style>
 </head>
 <body class="flex flex-col h-screen max-w-2xl mx-auto bg-gray-50 shadow-xl">
 
-    <header class="text-white p-4 flex items-center gap-3 shadow-md transition-colors" 
-            style="background-color: var(--chat-color);">
+    <header class="text-white p-4 flex items-center gap-3 shadow-md transition-colors" style="background-color: var(--chat-color);">
         <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold text-lg">FC</div>
         <div>
-            <h1 id="header-title" class="font-bold text-lg leading-tight">...</h1>
-            <p id="status-text" class="text-xs opacity-90">Inicializando IA...</p>
+            <h1 id="header-title" class="font-bold text-lg leading-tight">Cargando...</h1>
+            <p id="status-text" class="text-xs opacity-90">...</p>
         </div>
     </header>
 
@@ -69,23 +33,19 @@
         <div class="p-3 max-w-[85%] shadow-sm text-sm bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-tl-none self-start bot-bubble">
             <p id="bot-welcome-text">...</p>
         </div>
-        
-        </div>
+    </div>
 
     <div class="p-4 bg-white border-t border-gray-200">
         <div class="flex gap-2 relative">
-            <input type="text" id="userInput" placeholder="Escribe aquí..." maxlength="150" 
-                   class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 transition-all">
-            
-            <button id="sendBtn" 
-                    class="text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-md active:scale-95 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style="background-color: var(--chat-color);">
-                ➤
-            </button>
+            <input type="text" id="userInput" disabled 
+                   class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm">
+            <button id="sendBtn" disabled
+                    class="text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-md hover:opacity-90 disabled:opacity-50"
+                    style="background-color: var(--chat-color);">➤</button>
         </div>
-        <p class="text-center text-[10px] text-gray-400 mt-2">Asistente impulsado por DeepSeek</p>
+        <p class="text-center text-[10px] text-gray-400 mt-2">Powered by DeepSeek AI</p>
     </div>
 
-    <script src="motor.js"></script>
+    <script type="module" src="motor.js"></script>
 </body>
 </html>
