@@ -1,255 +1,230 @@
-// MOTOR.JS - Sistema de Chat con DeepSeek AI
+// MOTOR.JS - Lógica de Negocio, Seguridad y Conexión
 
-// === 1. CONFIGURACIÓN TÉCNICA (Desarrollador) ===
-const TECH_CONFIG = {
-    // URL del Proxy (Cloudflare Worker, rara vez cambia)
-    deepSeekUrl: "https://deepseek-chat-proxy.precios-com-pe.workers.dev", 
-    
-    // Configuración de la IA (rara vez cambia)
-    modelo: "deepseek-chat",
-    temperatura: 0.7,
-    
-    // Configuraciones de UI y Contacto (Pequeñas, pueden cambiar)
-    color_principal: "#ea580c", // Color naranja de Frankos Chicken
-    whatsapp: "51999999999",    // WhatsApp de contacto
-    placeholder: "Escribe tu consulta (carta, delivery, horario...)",
-};
+import { TECH_CONFIG, CONFIG_BOT } from './config.js'; 
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js'; 
 
-// === 2. VARIABLES GLOBALES ===
-let CONFIG = {}; // Contendrá los datos cargados de contexto.txt
+// === VARIABLES GLOBALES ===
 let systemInstruction = ""; 
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chat-container'); 
+const WA_LINK = `https://wa.me/${TECH_CONFIG.whatsapp}`;
+const requestTimestamps = []; // Para el Rate Limiting
 
-// === 3. LÓGICA DE PARSEO ASÍNCRONO (PARA CONTEXTO.TXT) ===
+// === SISTEMA DE SEGURIDAD: RATE LIMITING (Sliding Window) ===
+function checkRateLimit() {
+    const now = Date.now();
+    const windowMs = TECH_CONFIG.rate_limit_window_seconds * 1000;
+    
+    // Limpiar timestamps viejos
+    while (requestTimestamps.length > 0 && requestTimestamps[0] < now - windowMs) {
+        requestTimestamps.shift();
+    }
+
+    // Verificar si excede límite
+    if (requestTimestamps.length >= TECH_CONFIG.rate_limit_max_requests) {
+        return { 
+            limitReached: true, 
+            retryAfter: Math.ceil((requestTimestamps[0] + windowMs - now) / 1000) 
+        };
+    }
+    
+    requestTimestamps.push(now);
+    return { limitReached: false };
+}
+
+// === CARGA DE CONTEXTO ===
 async function cargarYAnalizarContexto() {
     try {
-        document.getElementById('status-text').innerText = "Cargando contexto...";
-        const response = await fetch('contexto.txt');
-        if (!response.ok) throw new Error("No se pudo cargar contexto.txt");
-        const textoContexto = await response.text();
-        
-        const secciones = {};
-        let currentSection = null;
-        
-        const regexSectionHeader = /^###\s*(\w+)$/; // Match only ###SECTION_NAME
-        const regexKeyValue = /^(\w+):\s*(.*)$/; 
+        document.getElementById('status-text').innerText = "Cargando sistema...";
 
-        // Primer paso: Separar el texto por bloques y extraer CONFIG
-        textoContexto.split('\n').forEach(line => {
-            const trimmedLine = line.trim();
-            if (!trimmedLine || trimmedLine.startsWith('#') && !trimmedLine.startsWith('###')) return; // Ignorar comentarios
+        const [resInst, resData] = await Promise.all([
+            fetch('instruccion.txt'),
+            fetch('data.txt')
+        ]);
 
-            let match;
+        if (!resInst.ok || !resData.ok) throw new Error("Error cargando archivos base");
+
+        const textoInstruccion = await resInst.text();
+        const textoData = await resData.text();
+        
+        // Parsear Configuración del Bot (Header de instruccion.txt)
+        let instruccionPrompt = "";
+        const lineas = textoInstruccion.split('\n');
+        let isBody = false;
+
+        lineas.forEach(line => {
+            const trim = line.trim();
+            const match = trim.match(/^(\w+):\s*(.*)$/); 
             
-            // 1. Identificar nueva sección de datos (###SECCION)
-            if (match = trimmedLine.match(regexSectionHeader)) { 
-                currentSection = match[1].toLowerCase();
-                secciones[currentSection] = [];
-            
-            // 2. Extraer pares clave-valor SOLO de la sección de personalidad
-            } else if (currentSection === 'personalidad_y_data' && (match = trimmedLine.match(regexKeyValue))) { 
-                CONFIG[match[1].toLowerCase()] = match[2].trim();
-                
-            // 3. Si hay una sección de texto libre abierta, añadir la línea a su array
-            } else if (currentSection) {
-                 secciones[currentSection].push(trimmedLine);
+            if (match && !isBody) {
+                CONFIG_BOT[match[1].toLowerCase()] = match[2].trim();
+            } else if (trim.length > 0) {
+                isBody = true;
+                instruccionPrompt += trim + '\n';
             }
         });
-
-        // 4. Procesamiento de Secciones
-        const instruccionesArray = secciones['instrucciones'] || [];
-        const conocimientoBaseArray = secciones['conocimiento_base'] || [];
-
-        // 5. Ensamblar la Instrucción del Sistema
-
-        // A. Instrucción base (plantilla)
-        let instruccionFinal = instruccionesArray.join('\n');
         
-        // Rellenar Placeholders
-        instruccionFinal = instruccionFinal.replace(/\[nombre\]/g, CONFIG.nombre || 'Asistente');
-        instruccionFinal = instruccionFinal.replace(/\[tono\]/g, CONFIG.tono || 'amable');
-        instruccionFinal = instruccionFinal.replace(/\[emoji_principal\]/g, CONFIG.emoji_principal || '');
-        instruccionFinal = instruccionFinal.replace(/\[idioma\]/g, CONFIG.idioma || 'español');
-        instruccionFinal = instruccionFinal.replace(/\[moneda\]/g, CONFIG.moneda || 'Soles');
-        instruccionFinal = instruccionFinal.replace(/\[whatsapp\]/g, TECH_CONFIG.whatsapp);
-        instruccionFinal = instruccionFinal.replace(/\[nombre_empresa\]/g, CONFIG.nombre_empresa || 'Empresa');
+        // Reemplazo de Placeholders
+        instruccionPrompt = instruccionPrompt
+            .replace(/\[nombre\]/g, CONFIG_BOT.nombre || 'Asistente')
+            .replace(/\[tono\]/g, CONFIG_BOT.tono || 'amable')
+            .replace(/\[emoji_principal\]/g, CONFIG_BOT.emoji_principal || '')
+            .replace(/\[idioma\]/g, CONFIG_BOT.idioma || 'español')
+            .replace(/\[moneda\]/g, CONFIG_BOT.moneda || 'Soles')
+            .replace(/\[whatsapp\]/g, TECH_CONFIG.whatsapp)
+            .replace(/\[nombre_empresa\]/g, CONFIG_BOT.nombre_empresa || 'Empresa');
 
+        // Adjuntar Data
+        instruccionPrompt += `\n\n--- BASE DE CONOCIMIENTO (USAR SOLO ESTO) ---\n${textoData}`;
 
-        // B. Adjuntar la Base de Conocimiento (Puro Texto)
-        const conocimientoBase = conocimientoBaseArray.filter(line => line.trim().length > 0).join('\n');
-        
-        instruccionFinal += `\n\n--- BASE DE CONOCIMIENTO (TEXTO PURO) ---\n`;
-        instruccionFinal += `\n${conocimientoBase}`;
-        instruccionFinal = instruccionFinal.replace(/\[base_de_conocimiento\]/g, "la BASE DE CONOCIMIENTO"); // Sustituir el placeholder en la plantilla
-
-
-        return instruccionFinal;
+        return instruccionPrompt;
 
     } catch (error) {
-        console.error("Error al cargar o analizar contexto.txt:", error);
-        document.getElementById('status-text').innerText = "Error de Contexto ⚠️";
-        return `Eres un asistente virtual. No se pudo cargar el archivo de configuración. Por favor, usa el WhatsApp ${TECH_CONFIG.whatsapp} para cualquier consulta.`;
+        console.error("Error crítico:", error);
+        return "Error de sistema. Contacte a soporte.";
     }
 }
 
-
-// === 4. INICIO DEL SISTEMA ===
+// === INICIO ===
 async function iniciarSistema() {
-    // 0. Cargar el contexto (Asíncrono)
     systemInstruction = await cargarYAnalizarContexto();
     
-    // 1. Aplicar Estilos y Configuración (Usando CONFIG y TECH_CONFIG)
+    // UI Setup
     document.documentElement.style.setProperty('--chat-color', TECH_CONFIG.color_principal);
-    document.getElementById('header-title').innerText = CONFIG.nombre_empresa || "Chat AI";
-    document.getElementById('bot-welcome-text').innerText = CONFIG.saludo_inicial || "Hola. ¿En qué puedo ayudarte?";
-    document.getElementById('status-text').innerText = "Conectado. Asistente IA 🤖";
+    document.getElementById('header-title').innerText = CONFIG_BOT.nombre_empresa || "Chat";
+    document.getElementById('bot-welcome-text').innerText = CONFIG_BOT.saludo_inicial || "Hola.";
+    document.getElementById('status-text').innerText = "En línea 🟢";
+    
+    // Input Security Setup
+    userInput.setAttribute('maxlength', TECH_CONFIG.max_length);
+    userInput.setAttribute('placeholder', TECH_CONFIG.placeholder);
     
     toggleInput(true);
 
-    // 2. Eventos
     sendBtn.addEventListener('click', procesarMensaje);
-    userInput.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault(); 
-            procesarMensaje();
-        }
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); procesarMensaje(); }
     });
 }
 
-
-// === 5. CEREBRO PRINCIPAL (Lógica IA) ===
+// === LÓGICA PRINCIPAL ===
 async function procesarMensaje() {
     const textoUsuario = userInput.value.trim();
+    
+    // 1. Validación de Input (Seguridad Básica)
     if (!textoUsuario) return;
+    if (textoUsuario.length < TECH_CONFIG.min_input_length) {
+        // No gastamos tokens ni mostramos nada, solo limpiamos
+        userInput.value = ''; 
+        return; 
+    }
+
+    // 2. Rate Limiting (Protección de Tokens/Costos)
+    const limit = checkRateLimit();
+    if (limit.limitReached) {
+        agregarBurbuja(`⚠️ Demasiadas consultas. Espera ${limit.retryAfter}s.`, 'bot');
+        userInput.value = '';
+        return;
+    }
 
     agregarBurbuja(textoUsuario, 'user');
     userInput.value = '';
     toggleInput(false);
-    
     const loadingId = mostrarLoading();
     
     try {
-        const respuestaIA = await generarRespuestaIA(textoUsuario);
-        
+        const respuesta = await llamarIA(textoUsuario);
         document.getElementById(loadingId)?.remove();
         
-        let contenidoHTML;
-        
-        if (respuestaIA.includes("Chatear por WhatsApp")) {
-            contenidoHTML = respuestaIA;
+        // Procesar respuesta
+        const whatsappCheck = `[whatsapp_link]`;
+        let htmlFinal = "";
+
+        if (respuesta.includes(whatsappCheck)) {
+            const cleanText = respuesta.replace(whatsappCheck, '');
+            const btnLink = `<a href="${WA_LINK}?text=${encodeURIComponent('Ayuda con: ' + textoUsuario)}" target="_blank" class="chat-btn">Hablar con Asesor 🟢</a>`;
+            htmlFinal = marked.parse(cleanText) + btnLink;
         } else {
-            contenidoHTML = marked.parse(respuestaIA);
+            htmlFinal = marked.parse(respuesta);
         }
         
-        agregarBurbuja(contenidoHTML, 'bot');
-        
-    } catch (error) {
-        console.error("Error al llamar a la IA de DeepSeek:", error);
+        agregarBurbuja(htmlFinal, 'bot');
+
+    } catch (e) {
         document.getElementById(loadingId)?.remove();
-        
-        const linkWsp = `https://wa.me/${TECH_CONFIG.whatsapp}?text=${encodeURIComponent("Hola, tuve un problema con el chat IA sobre: " + textoUsuario)}`;
-        const errorHtml = `
-            ⚠️ Lo siento, no pude comunicarme con el asistente.
-            <a href="${linkWsp}" class="chat-btn">Chatear por WhatsApp 🟢</a>
-        `;
-        agregarBurbuja(errorHtml, 'bot');
+        console.error(e);
+        agregarBurbuja(`Error de conexión. <a href="${WA_LINK}" class="chat-btn">WhatsApp</a>`, 'bot');
     } finally {
         toggleInput(true);
         userInput.focus();
     }
 }
 
-// Implementación del API de DeepSeek
-async function generarRespuestaIA(textoUsuario) {
-    const maxRetries = 3;
+// === API CALL (Stateless = Ahorro Máximo) ===
+async function llamarIA(pregunta) {
+    const { deepSeekUrl, modelo, temperatura, max_retries } = TECH_CONFIG;
     let delay = 1000;
 
     const messages = [
         { role: "system", content: systemInstruction },
-        { role: "user", content: textoUsuario }
+        { role: "user", content: pregunta }
     ];
-    
-    const payload = {
-        model: TECH_CONFIG.modelo, 
-        messages: messages,
-        temperature: TECH_CONFIG.temperatura,
-        stream: false
-    };
-    
-    for (let i = 0; i < maxRetries; i++) {
-        try {
-            const response = await fetch(TECH_CONFIG.deepSeekUrl, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
-            });
-            
-            if (!response.ok) throw new Error(`Error en la solicitud al Proxy! Código: ${response.status}`);
-            
-            const result = await response.json();
-            const content = result.choices?.[0]?.message?.content;
-            
-            if (content) return content;
-            
-            const fraseFail = `Lo siento, el modelo IA no pudo procesar tu solicitud. ¿Podrías reformular tu pregunta? 🧐`;
-            const linkWsp = `https://wa.me/${TECH_CONFIG.whatsapp}?text=${encodeURIComponent("Consulta no respondida: " + textoUsuario)}`;
-                
-            return `${fraseFail}\n<a href="${linkWsp}" class="chat-btn">Chatear por WhatsApp 🟢</a>`;
 
-        } catch (error) {
-            if (i === maxRetries - 1) throw error;
-            await new Promise(resolve => setTimeout(resolve, delay));
-            delay *= 2; 
+    for (let i = 0; i < max_retries; i++) {
+        try {
+            const res = await fetch(deepSeekUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: modelo,
+                    messages: messages, // No enviamos historial previo -> Ahorro de tokens masivo
+                    temperature: temperatura,
+                    stream: false
+                })
+            });
+
+            if (!res.ok) throw new Error(`API Error: ${res.status}`);
+            const data = await res.json();
+            
+            return data.choices?.[0]?.message?.content || "No entendí, ¿puedes repetir?";
+
+        } catch (err) {
+            if (i === max_retries - 1) throw err;
+            await new Promise(r => setTimeout(r, delay));
+            delay *= 2;
         }
     }
 }
 
-
-// === 6. UTILIDADES DE UI ===
-function toggleInput(estado) {
-    userInput.disabled = !estado;
-    sendBtn.disabled = !estado;
-    if (estado) setTimeout(() => userInput.focus(), 10);
+// === UI UTILS ===
+function toggleInput(state) {
+    userInput.disabled = !state;
+    sendBtn.disabled = !state;
 }
 
 function agregarBurbuja(html, tipo) {
-    const container = chatContainer; 
     const div = document.createElement('div');
-    const colorCliente = TECH_CONFIG.color_principal; 
-    
     if (tipo === 'user') {
         div.className = "p-3 max-w-[85%] shadow-sm text-sm text-white rounded-2xl rounded-tr-none self-end ml-auto";
-        div.style.backgroundColor = colorCliente;
-        div.textContent = html;
+        div.style.backgroundColor = TECH_CONFIG.color_principal;
+        div.textContent = html; // TextContent previene XSS del usuario
     } else {
         div.className = "p-3 max-w-[85%] shadow-sm text-sm bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-tl-none self-start mr-auto bot-bubble";
-        div.innerHTML = html;
-        const links = div.getElementsByTagName('a');
-        for(let link of links) link.target = "_blank";
+        div.innerHTML = html; // InnerHTML seguro porque viene de marked()
     }
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    chatContainer.appendChild(div);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 function mostrarLoading() {
-    const container = chatContainer;
     const id = 'load-' + Date.now();
     const div = document.createElement('div');
     div.id = id;
-    div.className = "p-3 max-w-[85%] shadow-sm bg-white border border-gray-200 rounded-2xl rounded-tl-none self-start flex gap-1";
-    div.innerHTML = `
-        <div class="w-2 h-2 rounded-full typing-dot"></div>
-        <div class="w-2 h-2 rounded-full typing-dot" style="animation-delay:0.2s"></div>
-        <div class="w-2 h-2 rounded-full typing-dot" style="animation-delay:0.4s"></div>
-    `;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    div.className = "p-3 max-w-[85%] bg-white border border-gray-200 rounded-2xl rounded-tl-none self-start flex gap-1";
+    div.innerHTML = `<div class="w-2 h-2 rounded-full typing-dot"></div><div class="w-2 h-2 rounded-full typing-dot" style="animation-delay:0.2s"></div><div class="w-2 h-2 rounded-full typing-dot" style="animation-delay:0.4s"></div>`;
+    chatContainer.appendChild(div);
     return id;
 }
 
-// Se ejecuta al cargar la ventana
 window.onload = iniciarSistema;
