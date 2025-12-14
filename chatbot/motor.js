@@ -3,6 +3,9 @@
 import { TECH_CONFIG, CONFIG_BOT } from './config.js'; 
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js'; 
 
+// === VARIABLES TÉCNICAS (MOVIDAS POR SEGURIDAD) ===
+const deepSeekUrl = "https://deepseek-chat-proxy.precios-com-pe.workers.dev"; // URL del Proxy (Cloudflare Worker)
+
 // === VARIABLES GLOBALES ===
 let systemInstruction = ""; 
 const userInput = document.getElementById('userInput');
@@ -35,7 +38,6 @@ function checkRateLimit() {
 }
 
 // === CARGA DE CONTEXTO ===
-// (Función cargarYAnalizarContexto se mantiene igual que antes)
 async function cargarYAnalizarContexto() {
     try {
         document.getElementById('status-text').innerText = "Cargando sistema...";
@@ -50,24 +52,10 @@ async function cargarYAnalizarContexto() {
         const textoInstruccion = await resInst.text();
         const textoData = await resData.text();
         
-        // Parsear Configuración del Bot (Header de instruccion.txt)
-        let instruccionPrompt = "";
-        const lineas = textoInstruccion.split('\n');
-        let isBody = false;
-
-        lineas.forEach(line => {
-            const trim = line.trim();
-            const match = trim.match(/^(\w+):\s*(.*)$/); 
-            
-            if (match && !isBody) {
-                CONFIG_BOT[match[1].toLowerCase()] = match[2].trim();
-            } else if (trim.length > 0) {
-                isBody = true;
-                instruccionPrompt += trim + '\n';
-            }
-        });
+        // El textoInstruccion ahora es solo el prompt sin necesidad de parsear encabezados.
+        let instruccionPrompt = textoInstruccion;
         
-        // Reemplazo de Placeholders
+        // Reemplazo de Placeholders usando CONFIG_BOT importado directamente
         instruccionPrompt = instruccionPrompt
             .replace(/\[nombre\]/g, CONFIG_BOT.nombre || 'Asistente')
             .replace(/\[tono\]/g, CONFIG_BOT.tono || 'amable')
@@ -92,11 +80,14 @@ async function cargarYAnalizarContexto() {
 async function iniciarSistema() {
     systemInstruction = await cargarYAnalizarContexto();
     
-    // UI Setup
+    // UI Setup (Usando los nuevos valores de CONFIG_BOT)
     document.documentElement.style.setProperty('--chat-color', TECH_CONFIG.color_principal);
     document.getElementById('header-title').innerText = CONFIG_BOT.nombre_empresa || "Chat";
     document.getElementById('bot-welcome-text').innerText = CONFIG_BOT.saludo_inicial || "Hola.";
     document.getElementById('status-text').innerText = "En línea 🟢";
+    
+    // NUEVO: Actualizar el ícono del header
+    document.getElementById('header-icon-initials').innerText = CONFIG_BOT.icono_header; 
     
     // Input Security Setup
     userInput.setAttribute('maxlength', TECH_CONFIG.max_length);
@@ -182,7 +173,8 @@ async function procesarMensaje() {
 
 // === API CALL (Stateless = Ahorro Máximo) ===
 async function llamarIA(pregunta) {
-    const { deepSeekUrl, modelo, temperatura, max_retries } = TECH_CONFIG;
+    // modelo, temperatura y max_retries vienen de TECH_CONFIG, deepSeekUrl es global.
+    const { modelo, temperatura, max_retries } = TECH_CONFIG; 
     let delay = 1000;
 
     const messages = [
@@ -192,11 +184,11 @@ async function llamarIA(pregunta) {
 
     for (let i = 0; i < max_retries; i++) {
         try {
-            const res = await fetch(deepSeekUrl, {
+            const res = await fetch(deepSeekUrl, { // Usa la constante global deepSeekUrl
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: modelo,
+                    model: modelo, 
                     messages: messages, 
                     temperature: temperatura,
                     stream: false
