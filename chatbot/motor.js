@@ -52,16 +52,11 @@ async function cargarYAnalizarContexto() {
         const textoInstruccion = await resInst.text();
         const textoData = await resData.text();
         
-        // El textoInstruccion ahora es solo el prompt sin necesidad de parsear encabezados.
+        // El textoInstruccion ahora es solo el prompt.
         let instruccionPrompt = textoInstruccion;
         
-        // Reemplazo de Placeholders usando CONFIG_BOT importado directamente
+        // Reemplazo de Placeholders (solo los que quedan de CONFIG_BOT y TECH_CONFIG)
         instruccionPrompt = instruccionPrompt
-            .replace(/\[nombre\]/g, CONFIG_BOT.nombre || 'Asistente')
-            .replace(/\[tono\]/g, CONFIG_BOT.tono || 'amable')
-            .replace(/\[emoji_principal\]/g, CONFIG_BOT.emoji_principal || '')
-            .replace(/\[idioma\]/g, CONFIG_BOT.idioma || 'español')
-            .replace(/\[moneda\]/g, CONFIG_BOT.moneda || 'Soles')
             .replace(/\[whatsapp\]/g, TECH_CONFIG.whatsapp)
             .replace(/\[nombre_empresa\]/g, CONFIG_BOT.nombre_empresa || 'Empresa');
 
@@ -80,13 +75,13 @@ async function cargarYAnalizarContexto() {
 async function iniciarSistema() {
     systemInstruction = await cargarYAnalizarContexto();
     
-    // UI Setup (Usando los nuevos valores de CONFIG_BOT)
+    // UI Setup (Usando los valores de CONFIG_BOT)
     document.documentElement.style.setProperty('--chat-color', TECH_CONFIG.color_principal);
     document.getElementById('header-title').innerText = CONFIG_BOT.nombre_empresa || "Chat";
     document.getElementById('bot-welcome-text').innerText = CONFIG_BOT.saludo_inicial || "Hola.";
     document.getElementById('status-text').innerText = "En línea 🟢";
     
-    // NUEVO: Actualizar el ícono del header
+    // Actualizar el ícono del header
     document.getElementById('header-icon-initials').innerText = CONFIG_BOT.icono_header; 
     
     // Input Security Setup
