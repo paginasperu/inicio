@@ -25,7 +25,7 @@ export const TECH_CONFIG = {
     min_input_length: 4,                // Evita consultas vacías o spam.
     
     // Límite de Mensajes para Demostración
-    max_demo_messages: 3,               // Contador de mensajes totales para la demo.
+    max_demo_messages: 5,               // Contador de mensajes totales para la demo.
     
     // Rate Limiting
     rate_limit_max_requests: 5,         // Máximo 5 mensajes...
