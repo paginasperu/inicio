@@ -2,11 +2,10 @@
 
 export const CONFIG_BOT = {
     // === CONFIGURACIÓN DE LA EMPRESA (FRONTEND) ===
-    nombre_empresa: "Frankos Chicken & Grill", 
+    nombre_empresa: "Frankos Chicken", 
     saludo_inicial: "¡Hola! Bienvenido a Frankos Chicken. ¿En qué puedo ayudarte hoy?", 
     icono_header: "FC", 
     
-    // NOTA: La personalidad (nombre, tono, idioma, etc.) se ha movido al archivo instrucciones.txt.
 };
 
 export const TECH_CONFIG = {
