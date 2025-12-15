@@ -6,7 +6,7 @@ import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
 
 // === VARIABLES GLOBALES ===
 let systemInstruction = ""; 
-let conversationHistory = []; // Almacena el historial para el contexto
+let conversationHistory = []; 
 // Elementos del Chat
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -18,12 +18,86 @@ const keyInput = document.getElementById('keyInput');
 const keySubmit = document.getElementById('keySubmit');   
 const keyPrompt = document.getElementById('key-prompt');  
 const keyError = document.getElementById('keyError');     
+// Elementos de Texto (NUEVOS)
+const footerText = document.getElementById('footer-text'); 
+const headerIconInitials = document.getElementById('header-icon-initials'); 
+
 
 const WA_LINK = `https://wa.me/${UI_CONFIG.WHATSAPP_NUMERO}`;
 const requestTimestamps = []; 
 let messageCount = 0;         
 
-// === SISTEMA DE SEGURIDAD: RATE LIMITING (Sliding Window - Frontend) ===
+
+// === CONFIGURACIÓN DINÁMICA DEL DOM (PULIDA) ===
+function aplicarConfiguracionGlobal() {
+    // 1. Título de la pestaña y Meta Descripción (SEO)
+    document.title = `${APP_CONFIG.NOMBRE_EMPRESA} ${APP_CONFIG.TITLE_SUFFIX}`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", APP_CONFIG.META_DESCRIPTION);
+
+    // 2. Favicon Dinámico
+    const linkIcon = document.querySelector("link[rel*='icon']");
+    if (linkIcon) {
+        linkIcon.href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${UI_CONFIG.FAVICON_EMOJI}</text></svg>`;
+    }
+
+    // 3. Colores y Textos Visuales
+    document.documentElement.style.setProperty('--chat-color', UI_CONFIG.COLOR_PRIMARIO);
+    
+    // === LÓGICA CONDICIONAL DEL LOGO ===
+    if (UI_CONFIG.LOGO_URL && headerIconInitials) {
+        // Opción 1: Usar URL de Imagen
+        const img = document.createElement('img');
+        img.src = UI_CONFIG.LOGO_URL;
+        img.alt = APP_CONFIG.NOMBRE_EMPRESA;
+        img.className = 'w-full h-full object-contain';
+        headerIconInitials.innerHTML = '';
+        headerIconInitials.appendChild(img);
+    } else if (headerIconInitials) {
+        // Opción 2: Usar Iniciales/Emoji
+        headerIconInitials.innerText = UI_CONFIG.ICONO_HEADER;
+    }
+    
+    // Header Title (Si está cargando, poner nombre empresa)
+    const headerTitle = document.getElementById('header-title');
+    if (headerTitle.innerText === "Cargando...") headerTitle.innerText = APP_CONFIG.NOMBRE_EMPRESA;
+
+    // === Textos del Gate y Footer ===
+    keyPrompt.innerText = UI_CONFIG.TEXTO_CLAVE_ACCESO;
+    keySubmit.innerText = UI_CONFIG.TEXTO_BOTON_ACCESO;
+    
+    if (footerText) footerText.innerText = UI_CONFIG.FOOTER_TEXTO;
+}
+
+
+// === FUNCIÓN DE CARGA DE CONTEXTO (OPTIMIZADA) ===
+async function cargarYAnalizarContexto() {
+    try {
+        document.getElementById('status-text').innerText = "Cargando sistema...";
+
+        // CAMBIO CRÍTICO: SOLO UNA LLAMADA A CONTEXTO.TXT
+        const resContexto = await fetch('./CONTEXTO.txt'); 
+
+        if (!resContexto.ok) throw new Error("Error cargando archivo de contexto (CONTEXTO.txt)");
+
+        let systemInstruction = await resContexto.text();
+        
+        // Reemplazo de variables en el CONTEXTO (solo nombre de la empresa)
+        systemInstruction = systemInstruction
+            .replace(/\[nombre_empresa\]/g, APP_CONFIG.NOMBRE_EMPRESA || 'Empresa');
+            // Nota: [whatsapp_link] se mantiene como token para ser devuelto por la IA.
+
+        if (AI_CONFIG.ENABLE_LOGGING) console.log("Contexto IA cargado exitosamente.");
+        return systemInstruction;
+
+    } catch (error) {
+        if (AI_CONFIG.ENABLE_LOGGING) console.error("Error crítico en carga de contexto:", error);
+        return "Error de sistema. Contacte a soporte.";
+    }
+}
+
+
+// === RESTO DE FUNCIONES (SIN CAMBIOS FUNCIONALES) ===
 function checkRateLimit() {
     const now = Date.now();
     const windowMs = SEGURIDAD_CONFIG.RATE_LIMIT_WINDOW_SECONDS * 1000;
@@ -44,51 +118,13 @@ function checkRateLimit() {
     return { limitReached: false };
 }
 
-// === CARGA DE CONTEXTO ===
-async function cargarYAnalizarContexto() {
-    try {
-        document.getElementById('status-text').innerText = "Cargando sistema...";
-
-        const [resInst, resData] = await Promise.all([
-            fetch('./instrucciones.txt'),
-            fetch('./datos.txt')
-        ]);
-
-        if (!resInst.ok || !resData.ok) throw new Error("Error cargando archivos base");
-
-        const textoInstruccion = await resInst.text();
-        const textoData = await resData.text();
-        
-        // El textoInstruccion ahora es solo el prompt.
-        let instruccionPrompt = textoInstruccion;
-        
-        // Reemplazo de Placeholders
-        instruccionPrompt = instruccionPrompt
-            .replace(/\[whatsapp\]/g, UI_CONFIG.WHATSAPP_NUMERO)
-            .replace(/\[nombre_empresa\]/g, APP_CONFIG.NOMBRE_EMPRESA || 'Empresa');
-
-        // Adjuntar Data
-        instruccionPrompt += `\n\n--- BASE DE CONOCIMIENTO (USAR SOLO ESTO) ---\n${textoData}`;
-
-        return instruccionPrompt;
-
-    } catch (error) {
-        if (AI_CONFIG.ENABLE_LOGGING) console.error("Error crítico en carga de contexto:", error);
-        return "Error de sistema. Contacte a soporte.";
-    }
-}
-
-
-// === LÓGICA DE ACCESO ===
 function setupAccessGate() {
-    keyPrompt.innerText = UI_CONFIG.TEXTO_CLAVE_ACCESO;
     keySubmit.style.backgroundColor = UI_CONFIG.COLOR_PRIMARIO;
     
     const checkKey = () => {
         const input = keyInput.value.trim().toLowerCase();
         const realKey = SEGURIDAD_CONFIG.CLAVE_ACCESO.toLowerCase();
 
-        // Lógica de Bypass: Si la clave está VACÍA ("") en ajustes, entra directamente.
         const isBypassEnabled = realKey === "";
         const isCorrectKey = input === realKey;
         
@@ -113,17 +149,13 @@ function setupAccessGate() {
     });
 }
 
-// === INICIO DEL CHAT ===
 async function cargarIA() {
     systemInstruction = await cargarYAnalizarContexto();
     
-    // UI Setup
-    document.documentElement.style.setProperty('--chat-color', UI_CONFIG.COLOR_PRIMARIO);
+    // UI Setup Final
     document.getElementById('header-title').innerText = APP_CONFIG.NOMBRE_EMPRESA || "Chat";
     document.getElementById('bot-welcome-text').innerText = UI_CONFIG.SALUDO_INICIAL || "Hola.";
     document.getElementById('status-text').innerText = "En línea 🟢";
-    
-    document.getElementById('header-icon-initials').innerText = UI_CONFIG.ICONO_HEADER; 
     
     // Input Security Setup
     userInput.setAttribute('maxlength', SEGURIDAD_CONFIG.MAX_LENGTH_INPUT);
@@ -137,10 +169,8 @@ async function cargarIA() {
     });
 }
 
-
-// === FUNCIÓN PRINCIPAL DE INICIO ===
 async function iniciarSistema() {
-    document.documentElement.style.setProperty('--chat-color', UI_CONFIG.COLOR_PRIMARIO);
+    aplicarConfiguracionGlobal();
     
     if (SEGURIDAD_CONFIG.CLAVE_ACCESO) {
         setupAccessGate();
@@ -151,12 +181,9 @@ async function iniciarSistema() {
     }
 }
 
-
-// === LÓGICA PRINCIPAL ===
 async function procesarMensaje() {
     const textoUsuario = userInput.value.trim();
     
-    // 1. BLOQUEO DE DEMO Y UX DE ALERTA
     if (messageCount >= SEGURIDAD_CONFIG.MAX_DEMO_MESSAGES) {
         const demoEndMsg = `🛑 ¡Demo finalizado! Has alcanzado el límite de ${SEGURIDAD_CONFIG.MAX_DEMO_MESSAGES} mensajes. Por favor, contáctanos para continuar.`;
         if (messageCount === SEGURIDAD_CONFIG.MAX_DEMO_MESSAGES) {
@@ -168,7 +195,6 @@ async function procesarMensaje() {
         return;
     }
     
-    // Alerta de límite próximo
     if (UI_CONFIG.SHOW_REMAINING_MESSAGES && 
         messageCount >= SEGURIDAD_CONFIG.MAX_DEMO_MESSAGES - UI_CONFIG.WARNING_THRESHOLD &&
         messageCount < SEGURIDAD_CONFIG.MAX_DEMO_MESSAGES) {
@@ -177,8 +203,6 @@ async function procesarMensaje() {
         agregarBurbuja(`⚠️ Atención: Te quedan ${remaining} mensaje(s) de demostración.`, 'bot');
     }
 
-
-    // 2. Validación de Input
     if (!textoUsuario) return;
     if (textoUsuario.length < SEGURIDAD_CONFIG.MIN_LENGTH_INPUT || textoUsuario.length > SEGURIDAD_CONFIG.MAX_LENGTH_INPUT) {
         if (AI_CONFIG.ENABLE_LOGGING) console.warn("Input no válido por longitud.");
@@ -186,7 +210,6 @@ async function procesarMensaje() {
         return; 
     }
 
-    // 3. Rate Limiting (Frontend)
     const limit = checkRateLimit();
     if (limit.limitReached) {
         agregarBurbuja(`⚠️ Demasiadas consultas. Espera ${limit.retryAfter}s.`, 'bot');
@@ -196,7 +219,6 @@ async function procesarMensaje() {
 
     agregarBurbuja(textoUsuario, 'user');
     
-    // Agregar mensaje del usuario al historial
     conversationHistory.push({ role: "user", content: textoUsuario });
     
     userInput.value = '';
@@ -204,19 +226,18 @@ async function procesarMensaje() {
     const loadingId = mostrarLoading();
     
     try {
-        const respuesta = await llamarIA(); // Ya no necesita textoUsuario como argumento
+        const respuesta = await llamarIA(); 
         document.getElementById(loadingId)?.remove();
         
-        // Agregar respuesta del bot al historial
         conversationHistory.push({ role: "assistant", content: respuesta });
 
-        // Procesar respuesta
         const whatsappCheck = `[whatsapp_link]`;
         let htmlFinal = "";
 
         if (respuesta.includes(whatsappCheck)) {
-            const cleanText = respuesta.replace(whatsappCheck, '');
-            const btnLink = `<a href="${WA_LINK}?text=${encodeURIComponent('Ayuda con: ' + textoUsuario)}" target="_blank" class="chat-btn">${UI_CONFIG.WHATSAPP_NUMERO}</a>`;
+            // Si la IA devuelve el token de falla, separamos el texto (si hay) y adjuntamos el CTA.
+            const cleanText = respuesta.replace(whatsappCheck, 'Para más detalles, comunícate por WhatsApp.');
+            const btnLink = `<a href="${WA_LINK}?text=${encodeURIComponent('Necesito ayuda con la consulta: ' + textoUsuario)}" target="_blank" class="chat-btn">Contáctanos aquí</a>`;
             htmlFinal = marked.parse(cleanText) + btnLink;
         } else {
             htmlFinal = marked.parse(respuesta);
@@ -239,24 +260,20 @@ async function procesarMensaje() {
     }
 }
 
-// === API CALL ===
 async function llamarIA() {
     const { MODELO, TEMPERATURA, RETRY_LIMIT, RETRY_DELAY_MS, URL_PROXY, TIMEOUT_MS, MAX_TOKENS_RESPONSE, MAX_CONTEXT_MESSAGES } = AI_CONFIG; 
     let delay = RETRY_DELAY_MS;
     
-    // Construir la lista de mensajes con el historial
     let messages = [
         { role: "system", content: systemInstruction }
     ];
 
-    // Añadir el historial limitado (para RAG y contexto)
     const contextStart = Math.max(0, conversationHistory.length - MAX_CONTEXT_MESSAGES);
     messages = messages.concat(conversationHistory.slice(contextStart));
 
 
     for (let i = 0; i < RETRY_LIMIT; i++) {
         try {
-            // Configurar el fetch con AbortController para el timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
@@ -267,13 +284,13 @@ async function llamarIA() {
                     model: MODELO, 
                     messages: messages, 
                     temperature: TEMPERATURA,
-                    max_tokens: MAX_TOKENS_RESPONSE, // Límite de tokens de salida (Costo)
+                    max_tokens: MAX_TOKENS_RESPONSE, 
                     stream: false
                 }),
-                signal: controller.signal // Aplicar el timeout
+                signal: controller.signal 
             });
 
-            clearTimeout(timeoutId); // Limpiar timeout si la respuesta llega a tiempo
+            clearTimeout(timeoutId); 
 
             if (!res.ok) throw new Error(`API Error: ${res.status}`);
             const data = await res.json();
@@ -286,12 +303,11 @@ async function llamarIA() {
             }
             if (i === RETRY_LIMIT - 1) throw err;
             await new Promise(r => setTimeout(r, delay));
-            delay *= 2; // Backoff exponencial
+            delay *= 2; 
         }
     }
 }
 
-// === UI UTILS ===
 function toggleInput(state) {
     userInput.disabled = !state;
     sendBtn.disabled = !state;
@@ -316,6 +332,7 @@ function mostrarLoading() {
     const div = document.createElement('div');
     div.id = id;
     div.className = "p-3 max-w-[85%] bg-white border border-gray-200 rounded-2xl rounded-tl-none self-start flex gap-1";
+    // CORRECCIÓN: Se asegura w-2 h-2 para que los puntos sean visibles
     div.innerHTML = `<div class="w-2 h-2 rounded-full typing-dot"></div><div class="w-2 h-2 rounded-full typing-dot" style="animation-delay:0.2s"></div><div class="w-2 h-2 rounded-full typing-dot" style="animation-delay:0.4s"></div>`;
     chatContainer.appendChild(div);
     chatContainer.scrollTop = chatContainer.scrollHeight; 
