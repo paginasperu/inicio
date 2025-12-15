@@ -124,8 +124,18 @@ function setupAccessGate() {
 
             const row = data.table.rows[0].c;
             
-            sheetAccessKey = row[0] && row[0].v !== null ? String(row[0].v).toLowerCase() : ""; 
-            sheetExpirationDate = row[1] && row[1].v !== null ? row[1].v : ""; 
+            // 1. CLAVE DE ACCESO: Asegura que sea una cadena, limpia espacios y minúsculas.
+            sheetAccessKey = row[0] && row[0].v !== null ? String(row[0].v).trim().toLowerCase() : ""; 
+            
+            // 2. EXTRACCIÓN DE FECHA: Prioriza el formato formateado ('f') para obtener la cadena DD-MM-YYYY HH:mm:ss.
+            let rawExpiration = row[1];
+            if (rawExpiration && rawExpiration.f) {
+                sheetExpirationDate = rawExpiration.f; // Usa el texto formateado
+            } else if (rawExpiration && rawExpiration.v !== null) {
+                sheetExpirationDate = String(rawExpiration.v); // Usa el valor numérico/string como fallback
+            } else {
+                sheetExpirationDate = "";
+            }
             
             keyError.classList.add('hidden');
             keyError.innerText = "";
@@ -146,34 +156,30 @@ function setupAccessGate() {
         let expirationDate;
         
         // 1. Lógica de corrección para formato DD-MM-YYYY HH:mm:ss (Formato peruano local)
-        // match[1]=Day, match[2]=Month, match[3]=Year, match[4]=Time
         const match = dateString.match(/^(\d{2})-(\d{2})-(\d{4}) (\d{2}:\d{2}:\d{2})$/);
         
         if (match) {
-            // Extrae los componentes numéricos
             const day = parseInt(match[1]);
             const month = parseInt(match[2]) - 1; // JS month es 0-indexed (Enero=0)
             const year = parseInt(match[3]);
             
-            // Extrae la hora, minutos y segundos de la cadena de tiempo
             const timeMatch = match[4].match(/^(\d{2}):(\d{2}):(\d{2})$/);
             const hours = parseInt(timeMatch[1]);
             const minutes = parseInt(timeMatch[2]);
             const seconds = parseInt(timeMatch[3]);
 
-            // **CORRECCIÓN CRÍTICA:** Usamos el constructor Date.UTC para forzar el tiempo local
-            // No, mejor usamos el constructor local: new Date(Y, M, D, H, m, s)
+            // **CORRECCIÓN FINAL:** Usamos el constructor local Date(Y, M, D, H, m, s)
+            // Esto obliga a JS a interpretar la fecha en la hora local del dispositivo.
             expirationDate = new Date(year, month, day, hours, minutes, seconds); 
         
         } else {
-             // 2. Fallback para otros formatos que JS pueda parsear
+             // 2. Fallback para otros formatos que JS pueda parsear (ISO, etc.)
              dateString = dateString.replace(' ', 'T'); 
              expirationDate = new Date(dateString);
         }
 
         const now = new Date(); 
         
-        // Comprueba si la fecha creada es válida
         if (isNaN(expirationDate.getTime())) { 
              console.error("Fecha de expiración inválida en Sheet:", sheetExpirationDate);
              return false;
@@ -199,7 +205,7 @@ function setupAccessGate() {
             return; 
         }
         
-        // 2. Clave vacía en el Sheet (Permite acceso inmediato sin necesidad de ingresar nada)
+        // 2. Clave vacía en el Sheet (Permite acceso automático)
         if (realKey === "") {
             keyError.classList.add('hidden');
             accessGate.classList.add('hidden');
