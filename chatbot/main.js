@@ -95,9 +95,11 @@ function setupAccessGate() {
     
     const isKeyExpired = () => {
         if (!CONFIG.CLAVE_EXPIRACION) return false;
-        const now = new Date();
-        const expirationDate = new Date(CONFIG.CLAVE_EXPIRACION);
-        return now > expirationDate;
+        
+        const expirationDate = new Date(CONFIG.CLAVE_EXPIRACION); 
+        const now = new Date(); 
+        
+        return now.getTime() > expirationDate.getTime();
     };
     
     const checkKey = () => {
