@@ -124,10 +124,19 @@ function setupAccessGate() {
 
             const row = data.table.rows[0].c;
             
-            // 1. CLAVE DE ACCESO: Si row[0].v es null, rawAccessValue será "", garantizando que sheetAccessKey sea "".
+            // 1. CLAVE DE ACCESO: Si row[0].v es null, rawAccessValue será "".
             const rawAccessValue = row[0] && row[0].v !== null ? row[0].v : "";
+            
+            // *** PUNTO CRÍTICO DE INSPECCIÓN 1 ***
+            console.log("DEBUG: Valor crudo (rawAccessValue) de la celda A1:", rawAccessValue);
+            console.log("DEBUG: Tipo de dato de rawAccessValue:", typeof rawAccessValue);
+            
             sheetAccessKey = String(rawAccessValue).trim().toLowerCase(); 
             
+            // *** PUNTO CRÍTICO DE INSPECCIÓN 2 ***
+            console.log("DEBUG: Clave procesada (sheetAccessKey):", sheetAccessKey);
+            console.log("DEBUG: Longitud de sheetAccessKey:", sheetAccessKey.length);
+
             // 2. EXTRACCIÓN DE FECHA: Prioriza el formato formateado ('f') para obtener la cadena DD-MM-YYYY HH:mm:ss.
             let rawExpiration = row[1];
             if (rawExpiration && rawExpiration.f) {
@@ -192,6 +201,10 @@ function setupAccessGate() {
         if (!loaded) return; 
 
         const realKey = sheetAccessKey; 
+        
+        // *** PUNTO CRÍTICO DE INSPECCIÓN 3 ***
+        console.log("DEBUG: Valor final realKey para validación:", realKey);
+        
         const input = keyInput.value.trim().toLowerCase();
         
         const hasExpired = isKeyExpired();
