@@ -76,9 +76,9 @@ async function cargarYAnalizarContexto() {
         document.getElementById('status-text').innerText = "Cargando sistema...";
 
         // CAMBIO CRÍTICO: SOLO UNA LLAMADA A CONTEXTO.TXT
-        const resContexto = await fetch('./CONTEXTO.txt'); 
+        const resContexto = await fetch('./contexto.txt'); 
 
-        if (!resContexto.ok) throw new Error("Error cargando archivo de contexto (CONTEXTO.txt)");
+        if (!resContexto.ok) throw new Error("Error cargando archivo de contexto (contexto.txt)");
 
         let systemInstruction = await resContexto.text();
         
