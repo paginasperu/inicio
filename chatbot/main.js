@@ -122,13 +122,12 @@ function setupAccessGate() {
             const jsonText = text.replace(/.*google.visualization.Query.setResponse\((.*)\);/s, '$1');
             const data = JSON.parse(jsonText);
 
-            // **********************************************
-            // CORRECCIÓN CRÍTICA: Protege la lectura de la Fila 2 (índice 1). Si no existe, usamos la Fila 1 (encabezados).
+            // CORRECCIÓN CRÍTICA: Protege la lectura de la Fila 2 (índice 1) si la tabla tiene al menos dos filas.
             const dataRows = data.table.rows;
-            const row = dataRows.length > 1 ? dataRows[1].c : (dataRows[0] ? dataRows[0].c : []);
-            // **********************************************
+            // Si hay dos filas o más, usamos la Fila 2 (datos). Si no, usamos la Fila 1 (encabezado o vacía) como fallback, y si no hay nada, un array vacío.
+            const row = dataRows.length > 1 ? dataRows[1].c : (dataRows[0] ? dataRows[0].c : []); 
             
-            // 1. CLAVE DE ACCESO: Si row[0] es undefined (o null), rawAccessValue será "".
+            // 1. CLAVE DE ACCESO: Manejo robusto de la clave vacía (null -> "").
             const rawAccessValue = row[0] && row[0].v !== null ? row[0].v : "";
             sheetAccessKey = String(rawAccessValue).trim().toLowerCase(); 
             
@@ -148,7 +147,6 @@ function setupAccessGate() {
 
         } catch (error) {
             console.error("Error al cargar configuración de Sheet:", error);
-            // Muestra un error de servidor en la puerta de acceso
             keyError.innerText = "Error: No se pudo obtener la clave del servidor.";
             keyError.classList.remove('hidden');
             return false;
@@ -184,7 +182,6 @@ function setupAccessGate() {
         const now = new Date(); 
         
         if (isNaN(expirationDate.getTime())) { 
-             // Si hay error en la fecha, no expira (o podría forzar el bloqueo, pero asumimos que es un error de configuración)
              console.error("Fecha de expiración inválida en Sheet:", sheetExpirationDate); 
              return false;
         }
@@ -193,7 +190,6 @@ function setupAccessGate() {
     };
 
     const checkKey = async () => {
-        // Al hacer clic, recargamos la configuración por si el Sheet ha cambiado.
         const loaded = await fetchSheetConfig(); 
         if (!loaded) return; 
 
@@ -250,8 +246,8 @@ async function cargarIA() {
     document.getElementById('bot-welcome-text').innerText = CONFIG.SALUDO_INICIAL || "Hola.";
     document.getElementById('status-text').innerText = "En línea 🟢";
     
-    userInput.setAttribute('maxlength', CONFIG.MAX_LENGTH);
-    userInput.setAttribute('placeholder', CONFIG.PLACEHOLDER);
+    userInput.setAttribute('maxlength', CONFIG.MAX_LENGTH); // CORREGIDO
+    userInput.setAttribute('placeholder', CONFIG.PLACEHOLDER); // CORREGIDO
     
     toggleInput(true);
 
