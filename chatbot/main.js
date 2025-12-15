@@ -29,7 +29,7 @@ function aplicarConfiguracionGlobal() {
         linkIcon.href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${CONFIG.FAVICON_EMOJI}</text></svg>`;
     }
 
-    document.documentElement.style.setProperty('--chat-color', CONFIG.COLOR_PRINCIPAL);
+    document.documentElement.style.setProperty('--chat-color', CONFIG.COLOR_PRIMARIO); // CORREGIDO
     
     const headerIconInitials = document.getElementById('header-icon-initials');
     
@@ -101,7 +101,7 @@ function getExportUrl(sheetId) {
 
 
 function setupAccessGate() {
-    keySubmit.style.backgroundColor = CONFIG.COLOR_PRINCIPAL;
+    keySubmit.style.backgroundColor = CONFIG.COLOR_PRIMARIO; // CORREGIDO
     
     let sheetAccessKey = "";
     let sheetExpirationDate = "";
@@ -123,16 +123,15 @@ function setupAccessGate() {
             const data = JSON.parse(jsonText);
 
             // **********************************************
-            // CORRECCIÓN FINAL: Lee la SEGUNDA fila (índice 1) para saltar los encabezados.
-            const row = data.table.rows[1].c; 
+            // CORRECCIÓN CRÍTICA: Protege la lectura de la Fila 2 (índice 1). Si no existe, usamos la Fila 1 (encabezados).
+            const dataRows = data.table.rows;
+            const row = dataRows.length > 1 ? dataRows[1].c : (dataRows[0] ? dataRows[0].c : []);
             // **********************************************
             
-            // 1. CLAVE DE ACCESO: Manejo robusto de la clave vacía (null -> "").
+            // 1. CLAVE DE ACCESO: Si row[0] es undefined (o null), rawAccessValue será "".
             const rawAccessValue = row[0] && row[0].v !== null ? row[0].v : "";
             sheetAccessKey = String(rawAccessValue).trim().toLowerCase(); 
             
-            // (Se han quitado los logs de depuración para la versión final)
-
             // 2. EXTRACCIÓN DE FECHA: Prioriza el formato formateado ('f') para obtener la cadena DD-MM-YYYY HH:mm:ss.
             let rawExpiration = row[1];
             if (rawExpiration && rawExpiration.f) {
@@ -149,6 +148,7 @@ function setupAccessGate() {
 
         } catch (error) {
             console.error("Error al cargar configuración de Sheet:", error);
+            // Muestra un error de servidor en la puerta de acceso
             keyError.innerText = "Error: No se pudo obtener la clave del servidor.";
             keyError.classList.remove('hidden');
             return false;
@@ -174,11 +174,9 @@ function setupAccessGate() {
             const minutes = parseInt(timeMatch[2]);
             const seconds = parseInt(timeMatch[3]);
 
-            // **Usa el constructor local para evitar problemas de zona horaria.**
             expirationDate = new Date(year, month, day, hours, minutes, seconds); 
         
         } else {
-             // Fallback para otros formatos que JS pueda parsear (ISO, etc.)
              dateString = dateString.replace(' ', 'T'); 
              expirationDate = new Date(dateString);
         }
@@ -186,15 +184,16 @@ function setupAccessGate() {
         const now = new Date(); 
         
         if (isNaN(expirationDate.getTime())) { 
-             console.error("Fecha de expiración inválida en Sheet:", sheetExpirationDate);
+             // Si hay error en la fecha, no expira (o podría forzar el bloqueo, pero asumimos que es un error de configuración)
+             console.error("Fecha de expiración inválida en Sheet:", sheetExpirationDate); 
              return false;
         }
         
-        // Usa >= para incluir el momento exacto de la expiración
         return now.getTime() >= expirationDate.getTime();
     };
 
     const checkKey = async () => {
+        // Al hacer clic, recargamos la configuración por si el Sheet ha cambiado.
         const loaded = await fetchSheetConfig(); 
         if (!loaded) return; 
 
@@ -408,7 +407,7 @@ function agregarBurbuja(html, tipo) {
     const div = document.createElement('div');
     if (tipo === 'user') {
         div.className = "p-3 max-w-[85%] shadow-sm text-sm text-white rounded-2xl rounded-tr-none self-end ml-auto";
-        div.style.backgroundColor = CONFIG.COLOR_PRINCIPAL;
+        div.style.backgroundColor = CONFIG.COLOR_PRIMARIO; // CORREGIDO
         div.textContent = html;
     } else {
         div.className = "p-3 max-w-[85%] shadow-sm text-sm bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-tl-none self-start mr-auto bot-bubble";
