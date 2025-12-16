@@ -1,147 +1,50 @@
 <!DOCTYPE html>
-<html lang="es-PE" class="scroll-smooth">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    
-    <title>Chatbot</title>
-    <meta name="description" content="Chatbot automático e inteligente con IA para ventas y atención al cliente.">
-    <meta name="theme-color" content="#ea580c">
-
-    <meta property="og:title" content="Asistente Virtual">
-    <meta property="og:description" content="Una solución modular de chatbot.">
-    <meta property="og:type" content="website">
-
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - Frankos Chicken</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style>
-        :root {
-            --chat-color: #ea580c;
-            --chat-bg: #f3f4f6;
-            --chat-color-soft: rgba(234, 88, 12, 0.1);
-        }
-        body {
-            background-color: var(--chat-bg);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        
-        .chat-box { height: calc(100dvh - 140px); }
-        @supports not (height: 100dvh) {
-            .chat-box { height: calc(100vh - 140px); }
-        }
-
-        .access-gate-container {
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; height: 100vh; padding: 2rem;
-        }
-
-        .bot-bubble { line-height: 1.5; }
-        .bot-bubble ul, .bot-bubble ol {
-            list-style-type: disc;
-            margin-left: 1.5rem;
-            padding-left: 0.5rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .bot-bubble strong {
-            color: var(--chat-color);
-            font-weight: 700;
-        }
-        .bot-bubble p { margin-bottom: 0.5rem; }
-        .bot-bubble p:last-child { margin-bottom: 0; }
-        
-        .chat-btn {
-            display: inline-block;
-            margin-top: 0.5rem;
-            padding: 0.5rem 1rem;
-            background-color: #22c55e;
-            color: white;
-            border-radius: 0.5rem;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: background-color 0.2s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .chat-btn:hover {
-            background-color: #16a34a;
-        }
-
-        .typing-dot {
-            animation: bounce 1s infinite;
-            animation-timing-function: ease-in-out;
-            background-color: var(--chat-color);
-            will-change: transform;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-    </style>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body role="application" class="flex flex-col h-screen max-w-2xl mx-auto shadow-xl">
+<body class="bg-gray-100 h-screen flex flex-col">
 
-    <div id="chat-interface" class="hidden flex flex-col h-full" aria-live="polite">
-        <header class="text-white p-4 flex items-center gap-3 shadow-md transition-colors" style="background-color: var(--chat-color);">
-            <div id="header-icon-initials" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold text-lg" aria-hidden="true"></div>
-            <div>
-                <h1 id="header-title" class="font-bold text-lg leading-tight">Cargando...</h1>
-                <p id="status-text" class="text-xs opacity-90"></p>
-            </div>
+    <div id="chat-interface" class="flex flex-col h-full max-w-2xl mx-auto w-full bg-white shadow-xl overflow-hidden">
+        
+        <header class="p-4 flex items-center gap-3 border-b text-white shadow-md" id="main-header" style="background-color: var(--chat-color)">
+            <div id="header-icon-initials" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold overflow-hidden border border-white/30">
+                </div>
+            <h1 id="header-title" class="font-semibold text-lg tracking-tight"></h1>
         </header>
 
-        <div id="chat-container" class="chat-box overflow-y-auto p-4 space-y-4 flex flex-col scroll-smooth" role="log" aria-live="polite">
-            <div class="p-3 max-w-[85%] shadow-sm text-sm bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-tl-none self-start bot-bubble">
-                <p id="bot-welcome-text" role="status"></p>
+        <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 flex flex-col">
+            <div id="bot-welcome-bubble" class="p-3 max-w-[85%] text-sm bg-white border border-gray-200 rounded-2xl rounded-tl-none self-start shadow-sm bot-bubble">
+                <p id="bot-welcome-text"></p>
             </div>
         </div>
 
-        <div class="p-4 bg-white border-t border-gray-200">
-            <div class="flex gap-2 relative">
-                <label for="userInput" class="sr-only">Escribe tu mensaje</label>
-                <input type="text" id="userInput" disabled
-                       class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm"
-                       placeholder=""
-                       autocomplete="off">
-                <button id="sendBtn" disabled
-                        class="text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-md hover:opacity-90 disabled:opacity-50"
-                        style="background-color: var(--chat-color);"
-                        aria-label="Enviar mensaje">➤</button>
+        <footer class="p-4 border-t bg-white">
+            <div id="feedback-demo-text" class="text-[10px] uppercase font-bold mb-2 text-center h-4 tracking-widest"></div>
+            
+            <div class="flex gap-2 items-center">
+                <input type="text" 
+                       id="userInput" 
+                       class="flex-1 border border-gray-300 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all" 
+                       style="focus-ring-color: var(--chat-color)"
+                       disabled>
+                
+                <button id="sendBtn" 
+                        class="text-white rounded-full p-2.5 transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none shadow-md" 
+                        style="background-color: var(--chat-color)" 
+                        disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
             </div>
-            <p id="footer-text" class="text-center text-[10px] text-gray-400 mt-2">Chat oficial.pe</p>
-        </div>
-    </div>
-    
-    <div id="access-gate" class="access-gate-container w-full h-full bg-white">
-        <h2 class="text-lg font-semibold mb-4 text-gray-700">Contraseña</h2>
-        <label for="keyInput" class="sr-only">Clave de acceso</label>
-        <input type="password" id="keyInput"
-               class="w-64 border border-gray-300 rounded-lg px-4 py-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-               autocomplete="current-password">
-        <button id="keySubmit"
-                class="mt-4 px-6 py-2 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
-                style="background-color: var(--chat-color);">INGRESAR</button>
-        <p id="keyError" class="text-red-500 text-xs mt-2 hidden" role="alert">Clave incorrecta. Intenta de nuevo.</p>
+        </footer>
     </div>
 
-    <script type="module" src="main.js?vi=2.0"></script>
-    <noscript>
-        <div class="p-4 text-center text-red-600">Este chat requiere JavaScript para funcionar.</div>
-    </noscript>
+    <script type="module" src="main.js"></script>
 </body>
 </html>
