@@ -1,4 +1,6 @@
 export const CONFIG = {
+
+  VERSION: "1",
   
   NOMBRE_EMPRESA: "Frankos Chicken",
   WHATSAPP_NUMERO: "51949973277",
