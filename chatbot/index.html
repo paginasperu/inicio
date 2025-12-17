@@ -14,27 +14,28 @@
         document.title = CONFIG.NOMBRE_EMPRESA;
     </script>
     <style>
-        /* MEJORA: Fija el cuerpo para que no "baile" en el celular */
+        /* CSS Limpio: Sin position fixed para evitar bugs de scroll y teclado */
         html, body {
-            height: 100dvh;
+            min-height: 100dvh;
             margin: 0;
             padding: 0;
             overflow: hidden;
-            position: fixed;
-            width: 100%;
+            background-color: #f3f4f6;
         }
-        /* MEJORA: Evita zoom en iPhone */
+
+        /* Evita el zoom automático en iPhone al tocar el campo de texto */
         #userInput { font-size: 16px !important; }
 
         .bot-bubble img { max-width: 100%; border-radius: 0.5rem; margin-top: 0.5rem; }
         #chat-container::-webkit-scrollbar { width: 4px; }
         #chat-container::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        
         .typing-dot { width: 8px; height: 8px; background: #9ca3af; border-radius: 50%; animation: typing 1.4s infinite ease-in-out; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
 
-<body class="bg-gray-100 flex flex-col">
+<body class="flex flex-col">
     <div id="chat-interface" class="flex flex-col min-h-[100dvh] max-w-2xl mx-auto w-full bg-white shadow-xl overflow-hidden">
         
         <header class="p-4 flex items-center gap-3 border-b text-white shadow-md shrink-0" id="main-header" style="background-color: var(--chat-color)">
