@@ -3,40 +3,26 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Catálogo Luxe | Google Sheets</title>
+<title>Catálogo Luxe | Inteligente</title>
 <style>
   :root { --radius: 14px; --bg: #fafafa; --max-width: 1200px; }
   body { font-family: 'Segoe UI', Arial, sans-serif; margin:0; background: var(--bg); color:#222; }
 
-  /* CABECERA CON ALINEACIÓN CORREGIDA */
-  header {
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    position: sticky; top: 0; z-index: 100;
-    width: 100%;
-  }
+  header { background: #fff; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; width: 100%; }
 
-  /* Este contenedor asegura que la cabecera y el grid midan lo mismo */
   .header-content {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 14px 16px;
-    display: grid;
-    grid-template-columns: 1fr 220px;
-    gap: 12px;
-    box-sizing: border-box;
+    max-width: var(--max-width); margin: 0 auto; padding: 14px 16px;
+    display: grid; grid-template-columns: 1fr 220px; gap: 12px; box-sizing: border-box;
   }
 
   header input, header select {
-    padding: 10px 15px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; outline: none; background: #fdfdfd;
-    width: 100%; box-sizing: border-box;
+    padding: 10px 15px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; 
+    outline: none; background: #fdfdfd; width: 100%; box-sizing: border-box;
   }
 
-  /* RESPONSIVE CABECERA */
   @media(max-width:720px){ .header-content { grid-template-columns: 1fr 1fr; } }
   @media(max-width:480px){ .header-content { grid-template-columns: 1fr; } }
 
-  /* GRILLA DE PRODUCTOS */
   .container { max-width: var(--max-width); margin: 20px auto; padding: 0 16px; box-sizing: border-box; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
   
@@ -69,12 +55,7 @@
     <input id="search" type="text" placeholder="Buscar carteras por nombre o color..." />
     <select id="category">
       <option value="todas">Todas las categorías</option>
-      <option value="mano">Mano</option>
-      <option value="hombro">Hombro</option>
-      <option value="mochila">Mochila</option>
-      <option value="bandolera">Bandolera</option>
-      <option value="luxury">Premium</option>
-    </select>
+      </select>
   </div>
 </header>
 
@@ -84,15 +65,14 @@
 </main>
 
 <script>
-  // Tu enlace de Google Sheets
   const originalUrl = 'https://docs.google.com/spreadsheets/d/1SbZbDnDjBplG8vKc6Y75ZTn5aqakFLAv7xxM4TQXKP8/edit?gid=0#gid=0';
-  
   const idMatch = originalUrl.match(/\/d\/(.+?)\//);
   const sheetId = idMatch ? idMatch[1] : '';
   const dataUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
 
   const grid = document.getElementById('products');
   const status = document.getElementById('status');
+  const categorySelect = document.getElementById('category');
 
   async function init() {
     try {
@@ -101,8 +81,14 @@
       const rows = csvText.split('\n').map(row => row.split(',')).filter(cols => cols.length >= 4);
       const productsData = rows.slice(1);
 
+      const categories = new Set(); // Para guardar categorías únicas
+
       grid.innerHTML = productsData.map(col => {
         const [nombre, categoria, color, precio] = col.map(c => c.replace(/"/g, '').trim());
+        
+        // Guardamos la categoría para el menú
+        if(categoria) categories.add(categoria);
+
         return `
           <div class="card" data-name="${nombre}" data-category="${categoria.toLowerCase()}" data-color="${color}">
             <div class="thumb"></div>
@@ -113,6 +99,14 @@
           </div>
         `;
       }).join('');
+
+      // Generar opciones del menú automáticamente
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.toLowerCase();
+        option.textContent = cat;
+        categorySelect.appendChild(option);
+      });
 
       status.style.display = 'none';
       setupLogic();
@@ -132,8 +126,8 @@
       
       items.forEach(card => {
         const matchesText = card.dataset.name.toLowerCase().includes(q) || card.dataset.color.toLowerCase().includes(q);
-        const matchesCat = cat === 'todas' || card.dataset.category.includes(cat);
-        card.classList.toggle('hidden', !(matchText && matchesCat));
+        const matchesCat = cat === 'todas' || card.dataset.category === cat;
+        card.classList.toggle('hidden', !(matchesText && matchesCat));
       });
     }
 
