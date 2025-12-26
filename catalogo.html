@@ -3,18 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Catálogo Luxe | Inteligente</title>
+<title>Catálogo Luxe | Descripción Flexible</title>
 <style>
   :root { --radius: 14px; --bg: #fafafa; --max-width: 1200px; }
   body { font-family: 'Segoe UI', Arial, sans-serif; margin:0; background: var(--bg); color:#222; }
 
+  /* CABECERA ALINEADA */
   header { background: #fff; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; width: 100%; }
-
   .header-content {
     max-width: var(--max-width); margin: 0 auto; padding: 14px 16px;
     display: grid; grid-template-columns: 1fr 220px; gap: 12px; box-sizing: border-box;
   }
-
   header input, header select {
     padding: 10px 15px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; 
     outline: none; background: #fdfdfd; width: 100%; box-sizing: border-box;
@@ -23,39 +22,56 @@
   @media(max-width:720px){ .header-content { grid-template-columns: 1fr 1fr; } }
   @media(max-width:480px){ .header-content { grid-template-columns: 1fr; } }
 
+  /* GRILLA Y TARJETAS UNIFORMES */
   .container { max-width: var(--max-width); margin: 20px auto; padding: 0 16px; box-sizing: border-box; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
   
   .card { 
     background: #fff; border: 1px solid #eee; border-radius: var(--radius); 
-    padding: 12px; display: flex; flex-direction: column;
+    padding: 16px; display: flex; flex-direction: column;
+    height: 450px; /* ALTURA FIJA PARA TODAS LAS FICHAS */
     transition: transform 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
   }
   .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
 
   .thumb { 
-    aspect-ratio: 1/1; background: linear-gradient(135deg, #eee, #ddd); 
-    border-radius: 10px; margin-bottom: 10px;
+    width: 100%; height: 180px; flex-shrink: 0;
+    background: linear-gradient(135deg, #eee, #ddd); 
+    border-radius: 10px; margin-bottom: 12px;
     display: flex; align-items: center; justify-content: center;
   }
-  .thumb::after { content: '👜'; font-size: 2rem; opacity: 0.2; }
+  .thumb::after { content: '👜'; font-size: 2.5rem; opacity: 0.2; }
 
-  .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-  .meta { font-size: 12px; color: #666; margin-bottom: 2px; }
-  .price { font-weight: 700; margin-top: auto; padding-top: 10px; color: #000; }
+  .title { font-weight: 700; font-size: 16px; margin-bottom: 8px; color: #000; }
+
+  /* DESCRIPCIÓN CON SALTOS DE LÍNEA Y SCROLL SI ES MUY LARGA */
+  .description { 
+    font-size: 13px; color: #555; line-height: 1.5;
+    white-space: pre-wrap; /* RESPETA SALTOS DE LÍNEA */
+    overflow-y: auto; /* PERMITE SCROLL SI EL TEXTO SUPERA EL ESPACIO */
+    margin-bottom: 10px;
+    flex-grow: 1; /* OCUPA EL ESPACIO DISPONIBLE */
+    padding-right: 5px;
+  }
+  /* Estilo opcional para el scroll interno de la descripción */
+  .description::-webkit-scrollbar { width: 4px; }
+  .description::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+
+  .price { font-weight: 700; font-size: 1.2rem; color: #000; border-top: 1px solid #eee; pt: 10px; margin-top: 5px; }
   
   .hidden { display: none !important; }
-  #status { text-align: center; padding: 40px; color: #888; font-size: 14px; }
+  #status { text-align: center; padding: 40px; color: #888; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-content">
-    <input id="search" type="text" placeholder="Buscar carteras por nombre o color..." />
+    <input id="search" type="text" placeholder="Buscar productos..." />
     <select id="category">
       <option value="todas">Todas las categorías</option>
-      </select>
+    </select>
   </div>
 </header>
 
@@ -78,29 +94,28 @@
     try {
       const resp = await fetch(dataUrl);
       const csvText = await resp.text();
-      const rows = csvText.split('\n').map(row => row.split(',')).filter(cols => cols.length >= 4);
+      // Usamos una lógica más robusta para separar filas que contienen saltos de línea (CSV estándar)
+      const rows = parseCSV(csvText);
       const productsData = rows.slice(1);
 
-      const categories = new Set(); // Para guardar categorías únicas
+      const categories = new Set();
 
       grid.innerHTML = productsData.map(col => {
-        const [nombre, categoria, color, precio] = col.map(c => c.replace(/"/g, '').trim());
+        if (col.length < 4) return '';
+        const [nombre, categoria, precio, descripcion] = col;
         
-        // Guardamos la categoría para el menú
-        if(categoria) categories.add(categoria);
+        if(categoria) categories.add(categoria.trim());
 
         return `
-          <div class="card" data-name="${nombre}" data-category="${categoria.toLowerCase()}" data-color="${color}">
+          <div class="card" data-name="${nombre}" data-category="${categoria.trim().toLowerCase()}">
             <div class="thumb"></div>
             <div class="title">${nombre}</div>
-            <div class="meta">Categoría: ${categoria}</div>
-            <div class="meta">Color: ${color}</div>
+            <div class="description">${descripcion}</div>
             <div class="price">${precio}</div>
           </div>
         `;
       }).join('');
 
-      // Generar opciones del menú automáticamente
       categories.forEach(cat => {
         const option = document.createElement('option');
         option.value = cat.toLowerCase();
@@ -111,8 +126,31 @@
       status.style.display = 'none';
       setupLogic();
     } catch (e) {
-      status.innerHTML = "⚠️ Error al conectar con el catálogo.";
+      status.innerHTML = "⚠️ Error al cargar productos. Revisa los permisos del Sheets.";
     }
+  }
+
+  // Función para procesar CSV con campos que tienen saltos de línea (entre comillas)
+  function parseCSV(text) {
+    const result = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (inQuotes) {
+        if (char === '"' && text[i+1] === '"') { field += '"'; i++; }
+        else if (char === '"') inQuotes = false;
+        else field += char;
+      } else {
+        if (char === '"') inQuotes = true;
+        else if (char === ',') { row.push(field); field = ''; }
+        else if (char === '\n') { row.push(field); result.push(row); row = []; field = ''; }
+        else field += char;
+      }
+    }
+    row.push(field); result.push(row);
+    return result;
   }
 
   function setupLogic() {
@@ -123,14 +161,12 @@
     function runFilter() {
       const q = search.value.toLowerCase();
       const cat = select.value;
-      
       items.forEach(card => {
-        const matchesText = card.dataset.name.toLowerCase().includes(q) || card.dataset.color.toLowerCase().includes(q);
+        const matchesText = card.dataset.name.toLowerCase().includes(q) || card.innerText.toLowerCase().includes(q);
         const matchesCat = cat === 'todas' || card.dataset.category === cat;
         card.classList.toggle('hidden', !(matchesText && matchesCat));
       });
     }
-
     search.addEventListener('input', runFilter);
     select.addEventListener('change', runFilter);
   }
