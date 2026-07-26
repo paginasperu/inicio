@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Personalidad y Actitud - Campo</title>
+    <style>
+        :root {
+            --bg: #f4f4f7;
+            --card: #ffffff;
+            --text: #1a1a1a;
+            --accent: #2563eb;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 12px; }
+        
+        .container { max-width: 500px; width: 100%; background: var(--card); border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h1 { font-size: 1.2rem; margin-bottom: 6px; text-align: center; }
+        p.subtitle { font-size: 0.85rem; color: #64748b; text-align: center; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 1rem; }
+        
+        .question-card { display: none; }
+        .question-card.active { display: block; }
+        .q-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 14px; line-height: 1.4; }
+        
+        .option-btn {
+            display: block; width: 100%; text-align: left; padding: 12px; margin-bottom: 8px;
+            background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;
+            font-size: 0.88rem; cursor: pointer; transition: background 0.15s;
+        }
+        .option-btn:hover { background: #e2e8f0; }
+
+        .progress-bar { height: 4px; background: #e2e8f0; width: 100%; margin-bottom: 20px; border-radius: 2px; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+
+        #results { display: none; }
+        .score-box { text-align: center; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; font-size: 0.95rem; }
+        .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-header">
+        <h1>Test de Personalidad y Actitud</h1>
+        <p class="subtitle">Evaluación de perfil y estilo de trabajo</p>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    </div>
+
+    <!-- Registro inicial -->
+    <div id="setup-step">
+        <div class="form-group">
+            <label for="candidate-name">Nombre Completo del Personal:</label>
+            <input type="text" id="candidate-name" placeholder="Ej: Ana María Torres" required>
+        </div>
+        <button class="option-btn" style="background: var(--accent); color: white; text-align: center; font-weight: bold;" onclick="startQuiz()">Comenzar Evaluacion</button>
+    </div>
+
+    <!-- Preguntas -->
+    <div id="questions-container"></div>
+
+    <button id="submit-btn" class="option-btn" style="background: var(--accent); color: white; text-align: center; font-weight: bold; display:none;" onclick="calculateResults()">Ver Diagnóstico de Personalidad</button>
+
+    <!-- Pantalla de Resultados -->
+    <div id="results">
+        <h2>Diagnóstico de Personalidad</h2>
+        <p id="res-candidate" style="margin-bottom: 12px; font-weight: bold; color: #475569;"></p>
+        
+        <div id="status-box" class="score-box"></div>
+
+        <div class="metric"><span>Puntaje Total:</span> <strong id="score-total"></strong></div>
+        <div class="metric"><span>Extroversión / Abordaje:</span> <strong id="score-extro"></strong></div>
+        <div class="metric"><span>Resiliencia Emocional:</span> <strong id="score-resil"></strong></div>
+        <div class="metric"><span>Autogestión y Responsabilidad:</span> <strong id="score-auto"></strong></div>
+        <div class="metric"><span>Actitud y Servicio:</span> <strong id="score-serv"></strong></div>
+
+        <div style="margin-top: 20px; font-size: 0.8rem; color: #64748b; text-align: center;">
+            Envía una captura de pantalla de este resultado a tu supervisor.
+        </div>
+    </div>
+</div>
+
+<script>
+const questions = [
+    // EXTROVERSIÓN / ABORDAJE
+    {
+        cat: 'extro',
+        q: '¿Cómo te sientes cuando tienes que iniciar conversación o acercarte a un grupo de personas desconocidas en la calle?',
+        options: [
+            { txt: 'Me da bastante vergüenza o timidez al principio.', pts: 0 },
+            { txt: 'Prefiero esperar a que ellos me miren antes de acercarme.', pts: 4 },
+            { txt: 'Me resulta natural, me sale de forma espontánea y sin temor.', pts: 10 },
+            { txt: 'Lo hago solo si mi jefe me está observando directamente.', pts: 2 }
+        ]
+    },
+    {
+        cat: 'extro',
+        q: 'En un evento o reunión social donde no conoces a nadie, ¿cuál es tu actitud habitual?',
+        options: [
+            { txt: 'Suelo hablar y presentarme rápidamente con varias personas.', pts: 10 },
+            { txt: 'Me quedo a un lado esperando a que alguien me hable.', pts: 0 },
+            { txt: 'Solo hablo si la persona me resulta agradable.', pts: 4 },
+            { txt: 'Me mantengo cerca de la puerta o revisando mi celular.', pts: 0 }
+        ]
+    },
+    // RESILIENCIA EMOCIONAL
+    {
+        cat: 'resil',
+        q: 'Cuando le extiendes la mano a alguien y te ignora por completo pasando de largo, ¿qué piensas internamente?',
+        options: [
+            { txt: 'Me da rabia o impotencia su falta de educación.', pts: 0 },
+            { txt: 'No me lo tomo a pecho; entiendo que la gente va apurada y voy por la siguiente.', pts: 10 },
+            { txt: 'Siento vergüenza de que otros hayan visto que me ignoraron.', pts: 2 },
+            { txt: 'Me pongo de mal humor por un rato.', pts: 0 }
+        ]
+    },
+    {
+        cat: 'resil',
+        q: 'Si llevas 2 horas paradas bajo el sol y la gente está poco receptiva, ¿cuál es tu nivel de energía mental?',
+        options: [
+            { txt: 'Decae por completo y empiezo a bajar el ritmo para que pase el tiempo.', pts: 0 },
+            { txt: 'Mantengo el ritmo enfocándome en cumplir la meta del día.', pts: 10 },
+            { txt: 'Empiezo a tomar descansos muy largos cada pocos minutos.', pts: 0 },
+            { txt: 'Me frustro y prefiero guardarme los volantes.', pts: 0 }
+        ]
+    },
+    // AUTOGESTIÓN
+    {
+        cat: 'auto',
+        q: 'Cuando trabajas sola en la calle sin un supervisor presente todo el tiempo:',
+        options: [
+            { txt: 'Mantengo exactamente el mismo nivel de ritmo que si me estuvieran viendo.', pts: 10 },
+            { txt: 'Aprovecho para caminar más despacio y relajar el ritmo.', pts: 2 },
+            { txt: 'Me distraigo bastante revisando mis redes sociales.', pts: 0 },
+            { txt: 'Me paro en una sola esquina a esperar que pase la hora.', pts: 2 }
+        ]
+    },
+    {
+        cat: 'auto',
+        q: 'Si tienes pactado un horario de inicio a las 8:30 AM en el punto de volanteo:',
+        options: [
+            { txt: 'Llego 10 o 15 minutos antes para alistarme y empezar exacta.', pts: 10 },
+            { txt: 'Llego a las 8:30 AM exactas o con 5 minutos de margen.', pts: 6 },
+            { txt: 'Suelo llegar 15 minutos tarde pero lo compenso al final.', pts: 0 },
+            { txt: 'Depende de qué tan lejos me quede el punto.', pts: 2 }
+        ]
+    },
+    // ACTITUD Y SERVICIO
+    {
+        cat: 'serv',
+        q: '¿Qué opina la gente que te conoce sobre tu forma de ser en el día a día?',
+        options: [
+            { txt: 'Que soy seria, callada y reservada.', pts: 2 },
+            { txt: 'Que soy alegre, enérgica y muy conversadora.', pts: 10 },
+            { txt: 'Que cambio de humor muy rápido según el día.', pts: 0 },
+            { txt: 'Que soy tranquila pero me molesto con frecuencia.', pts: 0 }
+        ]
+    },
+    {
+        cat: 'serv',
+        q: 'Un peatón te pregunta dónde queda una calle cercana que tú sí conoces, pero tú estás concentrada entregando volantes:',
+        options: [
+            { txt: 'Le respondo amablemente orientándolo en un segundo y le entrego la tarjeta/volante.', pts: 10 },
+            { txt: 'Le digo que no sé para no perder tiempo.', pts: 0 },
+            { txt: 'Le indico rápidamente con la mano sin hablar.', pts: 4 },
+            { txt: 'Le digo que estoy trabajando y que busque en su mapa.', pts: 0 }
+        ]
+    }
+];
+
+let currentQ = 0;
+let scores = { extro: 0, resil: 0, auto: 0, serv: 0 };
+let candidateName = "";
+
+function startQuiz() {
+    const nameInput = document.getElementById('candidate-name').value.trim();
+    if(!nameInput) {
+        alert('Ingresa el nombre del personal.');
+        return;
+    }
+    candidateName = nameInput;
+    document.getElementById('setup-step').style.display = 'none';
+    renderQuestions();
+    showQuestion(0);
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questions-container');
+    questions.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = `question-card ${idx === 0 ? 'active' : ''}`;
+        qDiv.id = `q-${idx}`;
+        
+        let html = `<div class="q-title">${idx + 1}. ${q.q}</div>`;
+        q.options.forEach((opt) => {
+            html += `<button class="option-btn" onclick="selectOption(${idx}, ${opt.pts}, '${q.cat}')">${opt.txt}</button>`;
+        });
+        
+        qDiv.innerHTML = html;
+        container.appendChild(qDiv);
+    });
+}
+
+function showQuestion(index) {
+    document.querySelectorAll('.question-card').forEach(el => el.classList.remove('active'));
+    const nextQ = document.getElementById(`q-${index}`);
+    if(nextQ) {
+        nextQ.classList.add('active');
+        const progressPct = ((index) / questions.length) * 100;
+        document.getElementById('progress').style.width = `${progressPct}%`;
+    }
+}
+
+function selectOption(qIdx, points, category) {
+    scores[category] += points;
+    currentQ++;
+    
+    if (currentQ < questions.length) {
+        showQuestion(currentQ);
+    } else {
+        document.querySelectorAll('.question-card').forEach(el => el.classList.remove('active'));
+        document.getElementById('progress').style.width = '100%';
+        document.getElementById('submit-btn').style.display = 'block';
+    }
+}
+
+function calculateResults() {
+    document.getElementById('quiz-header').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    
+    const totalPossible = questions.length * 10;
+    const userTotal = scores.extro + scores.resil + scores.auto + scores.serv;
+    const percentage = Math.round((userTotal / totalPossible) * 100);
+
+    document.getElementById('res-candidate').innerText = `Candidata: ${candidateName}`;
+    document.getElementById('score-total').innerText = `${userTotal} / ${totalPossible} (${percentage}%)`;
+    document.getElementById('score-extro').innerText = `${scores.extro} / 20 pts`;
+    document.getElementById('score-resil').innerText = `${scores.resil} / 20 pts`;
+    document.getElementById('score-auto').innerText = `${scores.auto} / 20 pts`;
+    document.getElementById('score-serv').innerText = `${scores.serv} / 20 pts`;
+
+    const statusBox = document.getElementById('status-box');
+    
+    // Filtro por rasgo introvertido o pasivo
+    if (scores.extro < 10) {
+        statusBox.style.background = '#fef2f2';
+        statusBox.style.color = '#991b1b';
+        statusBox.innerText = 'PERFIL INTROVERTIDO / PASIVO (Riesgo de baja entrega e inhibición en calle)';
+    } else if (percentage >= 80) {
+        statusBox.style.background = '#f0fdf4';
+        statusBox.style.color = '#166534';
+        statusBox.innerText = 'PERFIL PROACTIVO Y EXTROVERTIDO (Ideal para imagen de marca y volanteo dinámico)';
+    } else if (percentage >= 60) {
+        statusBox.style.background = '#fefce8';
+        statusBox.style.color = '#854d0e';
+        statusBox.innerText = 'PERFIL ENERGETICO MODERADO (Apto pero requiere motivación constante)';
+    } else {
+        statusBox.style.background = '#fef2f2';
+        statusBox.style.color = '#991b1b';
+        statusBox.innerText = 'NO RECOMENDADO (Baja resiliencia y falta de iniciativa)';
+    }
+}
+</script>
+</body>
+</html>
