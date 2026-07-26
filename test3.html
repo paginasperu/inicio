@@ -11,6 +11,7 @@
             --text: #1a1a1a;
             --accent: #0284c7;
             --border: #e2e8f0;
+            --danger: #991b1b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -41,11 +42,16 @@
         #results { display: none; }
         .score-box { text-align: center; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; font-size: 0.95rem; }
         .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+
+        /* Estilos para el bloqueo */
+        .blocked-box { text-align: center; padding: 20px 10px; }
+        .blocked-box h2 { color: var(--danger); margin-bottom: 10px; font-size: 1.1rem; }
+        .blocked-box p { font-size: 0.9rem; color: #64748b; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="main-container">
     <div id="quiz-header">
         <h1>Test de Agilidad Mental y Memoria</h1>
         <p class="subtitle">Evaluación de capacidad cognitiva aplicada</p>
@@ -86,6 +92,25 @@
 </div>
 
 <script>
+const LOCK_KEY = "evaluacion_agilidad_completada";
+
+// Verificar bloqueo al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem(LOCK_KEY) === "true") {
+        mostrarPantallaBloqueo();
+    }
+});
+
+function mostrarPantallaBloqueo() {
+    document.getElementById('main-container').innerHTML = `
+        <div class="blocked-box">
+            <h2>Test de Agilidad Mental Finalizado</h2>
+            <p>Ya has realizado esta prueba previamente desde este dispositivo.</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: #94a3b8;">Si necesitas rendirla nuevamente, contacta a tu supervisor.</p>
+        </div>
+    `;
+}
+
 const questions = [
     // MEMORIA DE TRABAJO
     {
@@ -230,6 +255,9 @@ function selectOption(qIdx, points, category) {
 }
 
 function calculateResults() {
+    // Registrar el bloqueo en el navegador al ver el resultado
+    localStorage.setItem(LOCK_KEY, "true");
+
     document.getElementById('quiz-header').style.display = 'none';
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('results').style.display = 'block';
