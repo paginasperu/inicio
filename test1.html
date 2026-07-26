@@ -50,11 +50,16 @@
         #results { display: none; }
         .score-box { text-align: center; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; }
         .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+
+        /* Bloqueo */
+        .blocked-box { text-align: center; padding: 20px 10px; }
+        .blocked-box h2 { color: var(--danger); margin-bottom: 10px; }
+        .blocked-box p { font-size: 0.9rem; color: #555; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="main-container">
     <div id="quiz-header">
         <h1>Evaluación de Perfil Operativo</h1>
         <p class="subtitle">Casos prácticos de campo y agilidad</p>
@@ -95,6 +100,25 @@
 </div>
 
 <script>
+const LOCK_KEY = "evaluacion_campo_completada";
+
+// Verificar bloqueo al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem(LOCK_KEY) === "true") {
+        mostrarPantallaBloqueo();
+    }
+});
+
+function mostrarPantallaBloqueo() {
+    document.getElementById('main-container').innerHTML = `
+        <div class="blocked-box">
+            <h2>Evaluación Finalizada</h2>
+            <p>Ya has realizado esta prueba previamente desde este dispositivo.</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">Si necesitas rendirla nuevamente, contacta a tu supervisor.</p>
+        </div>
+    `;
+}
+
 const questions = [
     // ÉTICA Y HONESTIDAD (Situacionales con trampa)
     {
@@ -239,6 +263,9 @@ function selectOption(qIdx, points, category) {
 }
 
 function calculateResults() {
+    // Registrar el bloqueo en el navegador para evitar futuros reintentos
+    localStorage.setItem(LOCK_KEY, "true");
+
     document.getElementById('quiz-header').style.display = 'none';
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('results').style.display = 'block';
