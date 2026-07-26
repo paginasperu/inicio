@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Desempeño y Perfil - Campo</title>
+    <style>
+        :root {
+            --bg: #f4f4f7;
+            --card: #ffffff;
+            --text: #1a1a1a;
+            --accent: #0052cc;
+            --border: #e0e0e0;
+            --success: #173b22;
+            --warning: #8a5300;
+            --danger: #721c24;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 12px; }
+        
+        .container { max-width: 500px; width: 100%; background: var(--card); border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h1 { font-size: 1.25rem; margin-bottom: 8px; text-align: center; }
+        p.subtitle { font-size: 0.85rem; color: #666; text-align: center; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 1rem; }
+        
+        .question-card { display: none; margin-bottom: 20px; }
+        .question-card.active { display: block; }
+        .q-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+        
+        .option-btn {
+            display: block; width: 100%; text-align: left; padding: 12px; margin-bottom: 8px;
+            background: #f8f9fa; border: 1px solid var(--border); border-radius: 6px;
+            font-size: 0.9rem; cursor: pointer; transition: background 0.2s;
+        }
+        .option-btn:hover { background: #e9ecef; }
+        
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--accent); color: white; border: none;
+            border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; display: none;
+        }
+
+        .progress-bar { height: 4px; background: #e0e0e0; width: 100%; margin-bottom: 20px; border-radius: 2px; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+
+        /* Reporte Final */
+        #results { display: none; }
+        .score-box { text-align: center; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; }
+        .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-header">
+        <h1>Evaluación de Perfil Operativo</h1>
+        <p class="subtitle">Casos prácticos de campo y agilidad</p>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    </div>
+
+    <!-- Formulario Inicial -->
+    <div id="setup-step">
+        <div class="form-group">
+            <label for="candidate-name">Nombre Completo del Personal:</label>
+            <input type="text" id="candidate-name" placeholder="Ej: María López" required>
+        </div>
+        <button class="option-btn" style="background: var(--accent); color: white; text-align: center; font-weight: bold;" onclick="startQuiz()">Iniciar Test</button>
+    </div>
+
+    <!-- Preguntas -->
+    <div id="questions-container"></div>
+
+    <button id="submit-btn" class="btn-submit" onclick="calculateResults()">Finalizar y Generar Diagnóstico</button>
+
+    <!-- Pantalla de Resultados -->
+    <div id="results">
+        <h2>Resultado del Diagnóstico</h2>
+        <p id="res-candidate" style="margin-bottom: 10px; font-weight: bold;"></p>
+        
+        <div id="status-box" class="score-box"></div>
+
+        <div class="metric"><span>Puntaje Total:</span> <strong id="score-total"></strong></div>
+        <div class="metric"><span>Ética y Honestidad:</span> <strong id="score-ethics"></strong></div>
+        <div class="metric"><span>Resolución de Problemas:</span> <strong id="score-problem"></strong></div>
+        <div class="metric"><span>Tolerancia a la Frustración:</span> <strong id="score-resilience"></strong></div>
+        <div class="metric"><span>Memoria / Agilidad:</span> <strong id="score-agility"></strong></div>
+
+        <div style="margin-top: 15px; font-size: 0.8rem; color: #555;">
+            * Captura esta pantalla y envíala a supervisión para completar tu registro.
+        </div>
+    </div>
+</div>
+
+<script>
+const questions = [
+    // ÉTICA Y HONESTIDAD (Situacionales con trampa)
+    {
+        cat: 'ethics',
+        q: 'Te entregaron 1,000 volantes para repartir en 4 horas. Son las 3:00 PM, hace demasiado calor, hay poca gente y te quedan 400 volantes. ¿Qué haces?',
+        options: [
+            { txt: 'Boto la mitad en un tacho discreto para cumplir con la meta de tiempo.', pts: 0 },
+            { txt: 'Entrego de a 2 o 3 volantes por persona para terminar más rápido.', pts: 0 },
+            { txt: 'Cambio de esquina a una zona con más flujo y continúo hasta la hora pactada.', pts: 10 },
+            { txt: 'Guardo los volantes restantes y me voy a descansar.', pts: 0 }
+        ]
+    },
+    {
+        cat: 'ethics',
+        q: 'El supervisor no te está mirando y un negocio cercano te ofrece dinero por dejarles un paquete de tus volantes en su mostrador. ¿Qué haces?',
+        options: [
+            { txt: 'Acepto, así reparto más rápido y gano un dinero extra.', pts: 0 },
+            { txt: 'Acepto pero solo les dejo una parte pequeña.', pts: 0 },
+            { txt: 'Rechazo. Mi trabajo es entregarlos uno a uno a las personas en la calle.', pts: 10 },
+            { txt: 'Les dejo volantes gratis pero no recibo dinero.', pts: 2 }
+        ]
+    },
+    // RESOLUCIÓN DE PROBLEMAS EN CAMPO
+    {
+        cat: 'problem',
+        q: 'Un serenazgo o fiscalizador te dice que no puedes entregar volantes en esa esquina porque está prohibido. ¿Cómo reaccionas?',
+        options: [
+            { txt: 'Discuto con él demostrando que no estoy haciendo nada malo.', pts: 0 },
+            { txt: 'Me guardo los volantes, me muevo un par de cuadras fuera de su zona y le aviso a mi supervisor.', pts: 10 },
+            { txt: 'Me voy a mi casa y reporto que la jornada se canceló.', pts: 0 },
+            { txt: 'Sigo volanteando disimuladamente sin que me vea.', pts: 2 }
+        ]
+    },
+    {
+        cat: 'problem',
+        q: 'Comienza a llover fuerte mientras estás en plena jornada de repartición. ¿Qué haces?',
+        options: [
+            { txt: 'Sigo volanteando bajo la lluvia aunque los papeles se mojen.', pts: 0 },
+            { txt: 'Protejo el material en la mochila/bolsa, busco un techo transitado y continúo.', pts: 10 },
+            { txt: 'Me meto a un centro comercial y los tiro en el baño.', pts: 0 },
+            { txt: 'Doy por terminada la jornada sin avisar.', pts: 0 }
+        ]
+    },
+    // TOLERANCIA A LA FRUSTRACIÓN Y ACTITUD
+    {
+        cat: 'resilience',
+        q: 'Le intentas entregar un volante a un peatón y este te responde de forma grosera y agresiva. ¿Qué haces?',
+        options: [
+            { txt: 'Le respondo con el mismo tono para hacerme respetar.', pts: 0 },
+            { txt: 'Mantengo la calma, sonrío o me retiro en silencio, y continúo con la siguiente persona.', pts: 10 },
+            { txt: 'Me desmotivo y dejo de entregar por media hora.', pts: 0 },
+            { txt: 'Lo sigo para reclamarle su mala educación.', pts: 0 }
+        ]
+    },
+    {
+        cat: 'resilience',
+        q: 'Llevas 10 personas consecutivas que rechazan tu volante con la mano. ¿Cuál es tu reacción mental?',
+        options: [
+            { txt: 'Pienso que la zona no sirve y me cruzo de brazos.', pts: 0 },
+            { txt: 'Ajusto mi postura, mi sonrisa y cambio la frase breve con la que me acerco.', pts: 10 },
+            { txt: 'Empiezo a meter el volante a la fuerza en los bolsos.', pts: 0 },
+            { txt: 'Espero a que el supervisor me cambie de sitio.', pts: 2 }
+        ]
+    },
+    // AGILIDAD / MEMORIA DE TRABAJO (Evaluación Técnica Básica)
+    {
+        cat: 'agility',
+        q: 'Si el volante promociona "Menú Ejecutivo S/ 12.00 de Lunes a Viernes de 12 a 4 PM", ¿cuál es la mejor frase para llamar la atención en 3 segundos?',
+        options: [
+            { txt: 'Tome un volante por favor, lea la información.', pts: 0 },
+            { txt: '¡Hola! Menús ejecutivos a solo 12 soles, aquí cerquita.', pts: 10 },
+            { txt: 'Buenas tardes señor, estamos promocionando un restaurante.', pts: 2 },
+            { txt: 'Mire nuestra carta de lunes a viernes.', pts: 2 }
+        ]
+    },
+    {
+        cat: 'agility',
+        q: 'Instrucción: Guarda este código en tu mente: "PROMO20". ¿Cuál es el código que debes recordar?',
+        options: [
+            { txt: 'PROMO200', pts: 0 },
+            { txt: 'PORMO20', pts: 0 },
+            { txt: 'PROMO20', pts: 10 },
+            { txt: 'PROM20', pts: 0 }
+        ]
+    }
+];
+
+let currentQ = 0;
+let scores = { ethics: 0, problem: 0, resilience: 0, agility: 0 };
+let candidateName = "";
+
+function startQuiz() {
+    const nameInput = document.getElementById('candidate-name').value.trim();
+    if(!nameInput) {
+        alert('Por favor, ingresa el nombre para continuar.');
+        return;
+    }
+    candidateName = nameInput;
+    document.getElementById('setup-step').style.display = 'none';
+    renderQuestions();
+    showQuestion(0);
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questions-container');
+    questions.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = `question-card ${idx === 0 ? 'active' : ''}`;
+        qDiv.id = `q-${idx}`;
+        
+        let html = `<div class="q-title">${idx + 1}. ${q.q}</div>`;
+        q.options.forEach((opt) => {
+            html += `<button class="option-btn" onclick="selectOption(${idx}, ${opt.pts}, '${q.cat}')">${opt.txt}</button>`;
+        });
+        
+        qDiv.innerHTML = html;
+        container.appendChild(qDiv);
+    });
+}
+
+function showQuestion(index) {
+    document.querySelectorAll('.question-card').forEach(el => el.classList.remove('active'));
+    const nextQ = document.getElementById(`q-${index}`);
+    if(nextQ) {
+        nextQ.classList.add('active');
+        const progressPct = ((index) / questions.length) * 100;
+        document.getElementById('progress').style.width = `${progressPct}%`;
+    }
+}
+
+function selectOption(qIdx, points, category) {
+    scores[category] += points;
+    currentQ++;
+    
+    if (currentQ < questions.length) {
+        showQuestion(currentQ);
+    } else {
+        document.querySelectorAll('.question-card').forEach(el => el.classList.remove('active'));
+        document.getElementById('progress').style.width = '100%';
+        document.getElementById('submit-btn').style.display = 'block';
+    }
+}
+
+function calculateResults() {
+    document.getElementById('quiz-header').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    
+    const totalPossible = questions.length * 10;
+    const userTotal = scores.ethics + scores.problem + scores.resilience + scores.agility;
+    const percentage = Math.round((userTotal / totalPossible) * 100);
+
+    document.getElementById('res-candidate').innerText = `Candidata: ${candidateName}`;
+    document.getElementById('score-total').innerText = `${userTotal} / ${totalPossible} (${percentage}%)`;
+    document.getElementById('score-ethics').innerText = `${scores.ethics} pts`;
+    document.getElementById('score-problem').innerText = `${scores.problem} pts`;
+    document.getElementById('score-resilience').innerText = `${scores.resilience} pts`;
+    document.getElementById('score-agility').innerText = `${scores.agility} pts`;
+
+    const statusBox = document.getElementById('status-box');
+    
+    // Filtro estricto: Si la ética es baja, se descarta automáticamente sin importar el total
+    if (scores.ethics < 20) {
+        statusBox.style.background = '#f8d7da';
+        statusBox.style.color = '#721c24';
+        statusBox.innerText = 'PERFIL NO APTO (Falta de alineación ética / Riesgo de pérdida de volantes)';
+    } else if (percentage >= 80) {
+        statusBox.style.background = '#d4edda';
+        statusBox.style.color = '#155724';
+        statusBox.innerText = 'PERFIL ALTAMENTE RECOMENDADO (Apto para campo sin supervisión directa)';
+    } else if (percentage >= 60) {
+        statusBox.style.background = '#fff3cd';
+        statusBox.style.color = '#856404';
+        statusBox.innerText = 'PERFIL EN OBSERVACIÓN (Requiere supervisión inicial)';
+    } else {
+        statusBox.style.background = '#f8d7da';
+        statusBox.style.color = '#721c24';
+        statusBox.innerText = 'DESCARTE (Puntaje bajo en competencias clave)';
+    }
+}
+</script>
+</body>
+</html>
