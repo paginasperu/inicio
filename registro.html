@@ -1,0 +1,592 @@
+<!-- ============================================================
+     OFICIAL — Registro de diseñadores (versión para WordPress)
+     ------------------------------------------------------------
+     Cómo usarlo:
+     1. Crea una página nueva en WordPress (o edita una existente).
+     2. Añade un bloque "HTML personalizado" (busca "Custom HTML"
+        si tu WordPress está en inglés).
+     3. Pega TODO este archivo dentro de ese bloque.
+     4. Publica. Listo — no usa WPForms, envía directo a Google
+        Sheets con el mismo Apps Script que ya configuraste.
+     5. Recuerda reemplazar SHEET_ENDPOINT más abajo con tu URL real.
+     ============================================================ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+/* Todo vive bajo #of-form para que el CSS del tema no lo toque */
+#of-form{
+  --paper:#F3F0E7;
+  --paper-raised:#FBFAF6;
+  --ink:#17161B;
+  --accent:#C81D2C;
+  --accent-ink:#8F1420;
+  --line:#D8D2BE;
+  --muted:#726C5D;
+  --ok:#2B6B4A;
+  --radius:2px;
+
+  background:var(--paper) !important;
+  color:var(--ink) !important;
+  font-family:'Inter',system-ui,sans-serif !important;
+  line-height:1.5 !important;
+  -webkit-font-smoothing:antialiased;
+  padding:48px 16px 64px !important;
+  background-image:radial-gradient(circle, rgba(23,22,27,0.06) 1px, transparent 1px) !important;
+  background-size:22px 22px !important;
+  display:block;
+}
+#of-form *{ box-sizing:border-box !important; }
+#of-form h1,#of-form h3,#of-form p,#of-form ul,#of-form li,#of-form label,#of-form button{
+  margin:0; padding:0; text-align:left; list-style:none; border:0; background:none;
+  font:inherit; color:inherit; line-height:inherit;
+}
+
+#of-form .sheet{
+  max-width:720px !important;
+  margin:0 auto !important;
+  background:var(--paper-raised) !important;
+  position:relative !important;
+  border:1px solid var(--ink) !important;
+  box-shadow:6px 6px 0 var(--ink) !important;
+}
+
+/* Marcas de registro (esquinas) */
+#of-form .crop{ position:absolute !important; width:20px !important; height:20px !important; pointer-events:none !important; }
+#of-form .crop::before,#of-form .crop::after{ content:"" !important; position:absolute !important; background:var(--ink) !important; }
+#of-form .crop::before{ width:100% !important; height:1px !important; top:50% !important; left:0 !important; }
+#of-form .crop::after{ width:1px !important; height:100% !important; left:50% !important; top:0 !important; }
+#of-form .crop.tl{ top:-10px !important; left:-10px !important; }
+#of-form .crop.tr{ top:-10px !important; right:-10px !important; }
+#of-form .crop.bl{ bottom:-10px !important; left:-10px !important; }
+#of-form .crop.br{ bottom:-10px !important; right:-10px !important; }
+
+#of-form header.masthead{ padding:40px 44px 28px !important; border-bottom:2px solid var(--ink) !important; }
+#of-form .masthead .kicker{
+  font-family:'IBM Plex Mono',monospace !important; font-size:12px !important; letter-spacing:.14em !important;
+  text-transform:uppercase !important; color:var(--accent-ink) !important; display:flex !important;
+  align-items:center !important; gap:8px !important; margin-bottom:14px !important;
+}
+#of-form .masthead .kicker::before{ content:"" !important; width:9px !important; height:9px !important; border-radius:50% !important; background:var(--accent) !important; display:inline-block !important; }
+#of-form h1{ font-family:'Archivo Black',sans-serif !important; font-size:clamp(28px,5vw,38px) !important; line-height:1.05 !important; margin:0 0 10px !important; letter-spacing:-0.01em !important; display:block !important; }
+#of-form .masthead p{ color:var(--muted) !important; font-size:15px !important; max-width:46ch !important; display:block !important; }
+#of-form .ticket-id{ font-family:'IBM Plex Mono',monospace !important; font-size:11px !important; color:var(--muted) !important; margin-top:18px !important; letter-spacing:.05em !important; }
+
+#of-form form{ padding:8px 44px 44px !important; }
+#of-form .section{ padding:34px 0 6px !important; }
+#of-form .section + .section{ border-top:1px dashed var(--line) !important; position:relative !important; }
+#of-form .section + .section::before,#of-form .section + .section::after{
+  content:"" !important; position:absolute !important; top:-5px !important; width:10px !important; height:10px !important;
+  border-radius:50% !important; background:var(--paper) !important; border:1px solid var(--line) !important;
+}
+#of-form .section + .section::before{ left:-54px !important; }
+#of-form .section + .section::after{ right:-54px !important; }
+
+#of-form .section-head{ display:flex !important; align-items:baseline !important; gap:12px !important; margin-bottom:6px !important; }
+#of-form .section-num{ font-family:'IBM Plex Mono',monospace !important; font-size:13px !important; color:var(--accent) !important; font-weight:600 !important; }
+#of-form .section-title{ font-family:'Archivo Black',sans-serif !important; font-size:19px !important; text-transform:uppercase !important; letter-spacing:.01em !important; }
+#of-form .section-note{ font-size:13.5px !important; color:var(--muted) !important; margin:6px 0 22px !important; max-width:60ch !important; display:block !important; }
+
+#of-form .row{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:20px !important; }
+#of-form .row.three{ grid-template-columns:1fr 1fr 1fr !important; }
+#of-form .row.dob{ grid-template-columns:.8fr 1.3fr 1fr !important; }
+@media (max-width:560px){
+  #of-form .row, #of-form .row.three, #of-form .row.dob{ grid-template-columns:1fr !important; }
+}
+
+#of-form .field{ margin-bottom:20px !important; }
+#of-form .field label{ display:block !important; font-size:12.5px !important; font-weight:600 !important; text-transform:uppercase !important; letter-spacing:.05em !important; margin-bottom:7px !important; }
+#of-form .field label .req{ color:var(--accent) !important; margin-left:2px !important; }
+#of-form .field label .opt{ font-weight:400 !important; text-transform:none !important; color:var(--muted) !important; letter-spacing:0 !important; font-size:11.5px !important; }
+
+#of-form input[type=text],#of-form input[type=tel],#of-form input[type=url],#of-form input[type=number],#of-form select{
+  width:100% !important; font-family:'Inter',sans-serif !important; font-size:15px !important; padding:11px 12px !important;
+  border:1px solid var(--ink) !important; border-radius:var(--radius) !important; background:#fff !important; color:var(--ink) !important;
+  appearance:none !important; -webkit-appearance:none !important; box-shadow:none !important;
+  transition:box-shadow .15s ease, border-color .15s ease !important;
+}
+#of-form select{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%2317161B' stroke-width='1.6' fill='none' fill-rule='evenodd'/></svg>") !important;
+  background-repeat:no-repeat !important; background-position:right 12px center !important; padding-right:32px !important;
+}
+#of-form input:focus,#of-form select:focus{ outline:none !important; border-color:var(--accent) !important; box-shadow:0 0 0 3px rgba(200,29,44,0.15) !important; }
+#of-form input::placeholder{ color:#A7A296 !important; }
+
+#of-form .field.error input,#of-form .field.error select{ border-color:var(--accent) !important; background:#FBEDEC !important; }
+#of-form .error-msg{ display:none !important; font-family:'IBM Plex Mono',monospace !important; font-size:11.5px !important; color:var(--accent-ink) !important; margin-top:6px !important; }
+#of-form .field.error .error-msg{ display:block !important; }
+
+/* Género — control segmentado */
+#of-form .segmented{ display:flex !important; border:1px solid var(--ink) !important; border-radius:var(--radius) !important; overflow:hidden !important; }
+#of-form .segmented input{ position:absolute !important; opacity:0 !important; pointer-events:none !important; }
+#of-form .segmented label{
+  flex:1 !important; text-align:center !important; padding:11px 8px !important; font-size:14px !important; font-weight:600 !important;
+  text-transform:none !important; letter-spacing:0 !important; cursor:pointer !important; color:var(--muted) !important;
+  background:#fff !important; border:none !important; margin:0 !important; transition:background .15s ease, color .15s ease !important;
+}
+#of-form .segmented label + label{ border-left:1px solid var(--ink) !important; }
+#of-form .segmented input:checked + label{ background:var(--ink) !important; color:#fff !important; }
+#of-form .segmented input:focus-visible + label{ outline:2px solid var(--accent) !important; outline-offset:-2px !important; }
+
+/* Teléfono con prefijo */
+#of-form .prefix-field{ position:relative !important; }
+#of-form .prefix-field .prefix{
+  position:absolute !important; left:1px !important; top:1px !important; bottom:1px !important; display:flex !important; align-items:center !important;
+  padding:0 10px !important; font-family:'IBM Plex Mono',monospace !important; font-size:14px !important; color:var(--muted) !important;
+  background:#EFEBDF !important; border-right:1px solid var(--ink) !important; border-radius:1px 0 0 1px !important;
+}
+#of-form .prefix-field input{ padding-left:52px !important; }
+
+/* Tarifas */
+#of-form .rate-group{ margin-bottom:30px !important; padding:20px 20px 6px !important; border:1px solid var(--line) !important; border-radius:var(--radius) !important; background:#FDFCF9 !important; }
+#of-form .rate-group.error{ border-color:var(--accent) !important; background:#FBEDEC !important; }
+#of-form .rate-group-title{ display:flex !important; align-items:center !important; gap:12px !important; margin-bottom:4px !important; }
+#of-form .rate-group-title .sq{ width:10px !important; height:10px !important; background:var(--accent) !important; flex:none !important; }
+#of-form .rate-group-title h3{ font-family:'Archivo Black',sans-serif !important; font-size:18px !important; text-transform:uppercase !important; letter-spacing:.01em !important; margin:0 !important; display:block !important; }
+#of-form .rate-group-title::after{ content:"" !important; flex:1 !important; height:2px !important; background:var(--line) !important; }
+#of-form .rate-group-note{ font-family:'IBM Plex Mono',monospace !important; font-size:11.5px !important; color:var(--muted) !important; margin:0 0 18px !important; display:block !important; }
+#of-form .rate-group-error{ display:none !important; font-family:'IBM Plex Mono',monospace !important; font-size:11.5px !important; color:var(--accent-ink) !important; margin:-8px 0 16px !important; }
+#of-form .rate-group.error .rate-group-error{ display:block !important; }
+#of-form .amount-field{ position:relative !important; }
+#of-form .amount-field .cur{
+  position:absolute !important; left:1px !important; top:1px !important; bottom:1px !important; display:flex !important; align-items:center !important;
+  padding:0 10px !important; font-family:'IBM Plex Mono',monospace !important; font-size:13px !important; color:var(--muted) !important;
+  background:#EFEBDF !important; border-right:1px solid var(--ink) !important;
+}
+#of-form .amount-field input{ padding-left:44px !important; font-family:'IBM Plex Mono',monospace !important; }
+#of-form .amount-field input::-webkit-outer-spin-button,#of-form .amount-field input::-webkit-inner-spin-button{ -webkit-appearance:none !important; margin:0 !important; }
+#of-form .amount-field input[type=number]{ -moz-appearance:textfield !important; }
+
+#of-form .field-hint{ font-size:11.5px !important; color:var(--muted) !important; margin-top:6px !important; display:block !important; }
+
+/* Envío */
+#of-form .submit-row{ margin-top:34px !important; display:flex !important; align-items:center !important; gap:18px !important; flex-wrap:wrap !important; }
+#of-form button.submit{
+  font-family:'IBM Plex Mono',monospace !important; font-size:13px !important; letter-spacing:.08em !important; text-transform:uppercase !important;
+  font-weight:600 !important; background:var(--ink) !important; color:#fff !important; border:1px solid var(--ink) !important;
+  padding:15px 30px !important; border-radius:var(--radius) !important; cursor:pointer !important; display:inline-block !important;
+  transition:background .15s ease, transform .1s ease !important;
+}
+#of-form button.submit:hover{ background:var(--accent-ink) !important; border-color:var(--accent-ink) !important; }
+#of-form button.submit:active{ transform:translateY(1px) !important; }
+#of-form button.submit:disabled{ opacity:.6 !important; cursor:not-allowed !important; }
+#of-form .submit-note{ font-size:12px !important; color:var(--muted) !important; }
+
+#of-form .banner{ display:none !important; margin:0 44px 0 !important; padding:16px 18px !important; border:1px solid var(--ok) !important; background:#EEF6F1 !important; color:var(--ok) !important; font-size:14px !important; font-weight:600 !important; }
+#of-form .banner.show{ display:block !important; }
+#of-form .banner.err{ border-color:var(--accent) !important; background:#FBEDEC !important; color:var(--accent-ink) !important; }
+
+#of-form footer.stamp{ text-align:center !important; margin-top:26px !important; font-family:'IBM Plex Mono',monospace !important; font-size:11px !important; letter-spacing:.1em !important; color:var(--muted) !important; text-transform:uppercase !important; display:block !important; }
+
+@media (prefers-reduced-motion: reduce){
+  #of-form *{ transition:none !important; }
+}
+</style>
+
+<div id="of-form">
+
+<div class="sheet">
+  <span class="crop tl"></span><span class="crop tr"></span>
+  <span class="crop bl"></span><span class="crop br"></span>
+
+  <header class="masthead">
+    <div class="kicker">Ficha de registro · Red de diseñadores</div>
+    <h1>Registro de diseñadores</h1>
+    <p>Completa tus datos y tarifas para que OFICIAL te derive trabajos de diseño según presupuesto del cliente.</p>
+    <div class="ticket-id" id="of-ticketId"></div>
+  </header>
+
+  <div class="banner" id="of-formBanner"></div>
+
+  <form id="of-designerForm" novalidate>
+
+    <!-- 01 — Datos personales -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <span class="section-title">Datos personales</span>
+      </div>
+
+      <div class="row">
+        <div class="field" data-field="nombres">
+          <label for="of-nombres">Nombres<span class="req">*</span></label>
+          <input type="text" id="of-nombres" name="nombres" placeholder="Ej. María" autocomplete="given-name">
+          <div class="error-msg">Ingresa tus nombres.</div>
+        </div>
+        <div class="field" data-field="apellidos">
+          <label for="of-apellidos">Apellidos<span class="req">*</span></label>
+          <input type="text" id="of-apellidos" name="apellidos" placeholder="Ej. Quispe Rojas" autocomplete="family-name">
+          <div class="error-msg">Ingresa tus apellidos.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field" data-field="genero">
+          <label>Género<span class="req">*</span></label>
+          <div class="segmented" role="radiogroup" aria-label="Género">
+            <input type="radio" id="of-genero-mujer" name="genero" value="Mujer">
+            <label for="of-genero-mujer">Mujer</label>
+            <input type="radio" id="of-genero-hombre" name="genero" value="Hombre">
+            <label for="of-genero-hombre">Hombre</label>
+          </div>
+          <div class="error-msg">Selecciona una opción.</div>
+        </div>
+
+        <div class="field" data-field="fechaNacimiento">
+          <label>Fecha de nacimiento <span class="opt">(opcional)</span></label>
+          <div class="row dob" style="margin-bottom:0;gap:10px;">
+            <select id="of-dia" name="dia" aria-label="Día">
+              <option value="" selected>Día</option>
+            </select>
+            <select id="of-mes" name="mes" aria-label="Mes">
+              <option value="" selected>Mes</option>
+            </select>
+            <select id="of-anio" name="anio" aria-label="Año">
+              <option value="" selected>Año</option>
+            </select>
+          </div>
+          <div class="error-msg">Completa día, mes y año, o deja los tres en blanco.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field" data-field="distrito">
+          <label for="of-distrito">Distrito<span class="req">*</span></label>
+          <select id="of-distrito" name="distrito">
+            <option value="" selected disabled>Elige un distrito</option>
+          </select>
+          <div class="error-msg">Selecciona tu distrito.</div>
+        </div>
+
+        <div class="field" data-field="telefono">
+          <label for="of-telefono">Teléfono<span class="req">*</span></label>
+          <div class="prefix-field">
+            <span class="prefix">+51</span>
+            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" inputmode="numeric" maxlength="9">
+          </div>
+          <div class="error-msg">Ingresa un número de 9 dígitos.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — Tarifas de diseño -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <span class="section-title">Tarifas de diseño</span>
+      </div>
+      <p class="section-note">
+        Se consideran 3 niveles de tarifas para ofrecer diferentes alternativas según el tipo de trabajo,
+        complejidad y presupuesto del cliente. Indica el precio que consideres adecuado para cada nivel, ya
+        sea que trabajes con ChatGPT, Canva, Illustrator u otros programas. No es obligatorio completar todos
+        los niveles, pero debes indicar al menos una tarifa para cada producto.
+      </p>
+
+      <div class="rate-group" data-field="tarjetaGroup">
+        <div class="rate-group-title"><span class="sq"></span><h3>Tarjeta de presentación</h3></div>
+        <p class="rate-group-note">Indica al menos un precio para este producto.</p>
+        <div class="rate-group-error">Indica al menos una tarifa de tarjeta (básico, intermedio o avanzado).</div>
+        <div class="row three">
+          <div class="field" data-field="tarjetaBasico">
+            <label for="of-tarjetaBasico">Básico <span class="opt">(opcional)</span></label>
+            <div class="amount-field">
+              <span class="cur">S/</span>
+              <input type="number" id="of-tarjetaBasico" name="tarjetaBasico" min="0" step="0.5" placeholder="0.00">
+            </div>
+          </div>
+          <div class="field" data-field="tarjetaIntermedio">
+            <label for="of-tarjetaIntermedio">Intermedio <span class="opt">(opcional)</span></label>
+            <div class="amount-field">
+              <span class="cur">S/</span>
+              <input type="number" id="of-tarjetaIntermedio" name="tarjetaIntermedio" min="0" step="0.5" placeholder="0.00">
+            </div>
+          </div>
+          <div class="field" data-field="tarjetaAvanzado">
+            <label for="of-tarjetaAvanzado">Avanzado <span class="opt">(opcional)</span></label>
+            <div class="amount-field">
+              <span class="cur">S/</span>
+              <input type="number" id="of-tarjetaAvanzado" name="tarjetaAvanzado" min="0" step="0.5" placeholder="0.00">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rate-group" data-field="volanteGroup">
+        <div class="rate-group-title"><span class="sq"></span><h3>Volante publicitario</h3></div>
+        <p class="rate-group-note">Indica al menos un precio para este producto.</p>
+        <div class="rate-group-error">Indica al menos una tarifa de volante (básico, intermedio o avanzado).</div>
+        <div class="row three">
+          <div class="field" data-field="volanteBasico">
+            <label for="of-volanteBasico">Básico <span class="opt">(opcional)</span></label>
+            <div class="amount-field">
+              <span class="cur">S/</span>
+              <input type="number" id="of-volanteBasico" name="volanteBasico" min="0" step="0.5" placeholder="0.00">
+            </div>
+          </div>
+          <div class="field" data-field="volanteIntermedio">
+            <label for="of-volanteIntermedio">Intermedio <span class="opt">(opcional)</span></label>
+            <div class="amount-field">
+              <span class="cur">S/</span>
+              <input type="number" id="of-volanteIntermedio" name="volanteIntermedio" min="0" step="0.5" placeholder="0.00">
+            </div>
+          </div>
+          <div class="field" data-field="volanteAvanzado">
+            <label for="of-volanteAvanzado">Avanzado <span class="opt">(opcional)</span></label>
+            <div class="amount-field">
+              <span class="cur">S/</span>
+              <input type="number" id="of-volanteAvanzado" name="volanteAvanzado" min="0" step="0.5" placeholder="0.00">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 — Portafolio -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <span class="section-title">Portafolio</span>
+      </div>
+
+      <div class="field" data-field="portafolio">
+        <label for="of-portafolio">Enlace directo<span class="req">*</span></label>
+        <input type="url" id="of-portafolio" name="portafolio" placeholder="https://www.behance.net/tu-usuario">
+        <div class="field-hint">Behance, Instagram, Drive u otro enlace donde se vea tu trabajo.</div>
+        <div class="error-msg">Ingresa un enlace válido (debe empezar con http:// o https://).</div>
+      </div>
+
+      <!-- Honeypot anti-spam: invisible para personas -->
+      <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+        <label for="of-sitioWeb">No completar este campo</label>
+        <input type="text" id="of-sitioWeb" name="sitioWeb" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="submit" id="of-submitBtn">Enviar ficha</button>
+        <span class="submit-note">Los campos marcados con <span style="color:#C81D2C;">*</span> son obligatorios.</span>
+      </div>
+    </section>
+  </form>
+</div>
+
+<footer class="stamp">Oficial · Registro de diseñadores</footer>
+
+</div><!-- /#of-form -->
+
+<script>
+(function(){
+  "use strict";
+
+  var root = document.getElementById("of-form");
+
+  /* ---------- Ticket id ---------- */
+  var now = new Date();
+  var ticketId = "OF-DIS-" + now.getFullYear() + String(now.getMonth()+1).padStart(2,"0") + String(now.getDate()).padStart(2,"0")
+    + "-" + Math.floor(1000 + Math.random()*9000);
+  document.getElementById("of-ticketId").textContent = ticketId;
+
+  /* ---------- Día / Mes / Año ---------- */
+  var diaSel = document.getElementById("of-dia");
+  for (var d = 1; d <= 31; d++) {
+    var opt = document.createElement("option");
+    opt.value = String(d); opt.textContent = String(d);
+    diaSel.appendChild(opt);
+  }
+
+  var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  var mesSel = document.getElementById("of-mes");
+  meses.forEach(function(nombreMes, i){
+    var opt = document.createElement("option");
+    opt.value = String(i + 1); opt.textContent = nombreMes;
+    mesSel.appendChild(opt);
+  });
+
+  var anioSel = document.getElementById("of-anio");
+  var currentYear = now.getFullYear();
+  var minAge = 16, maxAge = 80;
+  for (var y = currentYear - minAge; y >= currentYear - maxAge; y--) {
+    var opt = document.createElement("option");
+    opt.value = String(y); opt.textContent = String(y);
+    anioSel.appendChild(opt);
+  }
+
+  /* ---------- Distritos ---------- */
+  var distritos = [
+    "Ancón","Ate","Barranco","Bellavista","Breña","Callao","Carabayllo",
+    "Carmen de La Legua-Reynoso","Chaclacayo","Chorrillos","Cieneguilla","Comas",
+    "El Agustino","Independencia","Jesús María","La Molina","La Perla","La Punta",
+    "La Victoria","Lima","Lince","Los Olivos","Lurigancho","Lurín",
+    "Magdalena del Mar","Mi Perú","Miraflores","Pachacámac","Pucusana","Pueblo Libre",
+    "Puente Piedra","Punta Hermosa","Punta Negra","Rímac","San Bartolo","San Borja",
+    "San Isidro","San Juan de Lurigancho","San Juan de Miraflores","San Luis",
+    "San Martín de Porres","San Miguel","Santa Anita","Santa María del Mar",
+    "Santa Rosa","Santiago de Surco","Surquillo","Ventanilla","Villa El Salvador",
+    "Villa María del Triunfo"
+  ];
+  var distritoSel = document.getElementById("of-distrito");
+  distritos.forEach(function(nombreDistrito){
+    var opt = document.createElement("option");
+    opt.value = nombreDistrito; opt.textContent = nombreDistrito;
+    distritoSel.appendChild(opt);
+  });
+
+  /* ---------- Teléfono: solo dígitos, máx. 9 ---------- */
+  var telInput = document.getElementById("of-telefono");
+  telInput.addEventListener("input", function(){
+    this.value = this.value.replace(/\D/g, "").slice(0, 9);
+  });
+
+  /* ---------- Tarifas: no negativos ---------- */
+  root.querySelectorAll('.amount-field input[type=number]').forEach(function(input){
+    input.addEventListener("input", function(){
+      if (this.value !== "" && parseFloat(this.value) < 0) this.value = 0;
+    });
+  });
+
+  /* ---------- Validación + envío a Google Sheets ---------- */
+  var form = document.getElementById("of-designerForm");
+  var banner = document.getElementById("of-formBanner");
+  var submitBtn = document.getElementById("of-submitBtn");
+
+  // Reemplaza esto con la URL /exec de tu Google Apps Script Web App.
+  var SHEET_ENDPOINT = "https://script.google.com/macros/s/TU_ID_DE_DESPLIEGUE/exec";
+
+  function setError(fieldName, hasError) {
+    var field = form.querySelector('[data-field="' + fieldName + '"]');
+    if (!field) return;
+    field.classList.toggle("error", hasError);
+  }
+
+  function isValidUrl(value) {
+    try {
+      var u = new URL(value);
+      return u.protocol === "http:" || u.protocol === "https:";
+    } catch (e) { return false; }
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    banner.classList.remove("show", "err");
+
+    var valid = true;
+    var firstInvalid = null;
+    function fail(fieldName) {
+      setError(fieldName, true);
+      valid = false;
+      if (!firstInvalid) firstInvalid = form.querySelector('[data-field="' + fieldName + '"]');
+    }
+
+    var nombres = form.nombres.value.trim();
+    setError("nombres", false);
+    if (!nombres) fail("nombres");
+
+    var apellidos = form.apellidos.value.trim();
+    setError("apellidos", false);
+    if (!apellidos) fail("apellidos");
+
+    var genero = form.querySelector('input[name="genero"]:checked');
+    setError("genero", false);
+    if (!genero) fail("genero");
+
+    var dia = form.dia.value, mes = form.mes.value, anio = form.anio.value;
+    var dobFilledCount = [dia, mes, anio].filter(Boolean).length;
+    setError("fechaNacimiento", false);
+    if (dobFilledCount > 0 && dobFilledCount < 3) fail("fechaNacimiento");
+
+    var distrito = form.distrito.value;
+    setError("distrito", false);
+    if (!distrito) fail("distrito");
+
+    var telefono = form.telefono.value.trim();
+    setError("telefono", false);
+    if (!/^\d{9}$/.test(telefono)) fail("telefono");
+
+    var tarjetaBasico = form.tarjetaBasico.value.trim();
+    var tarjetaIntermedio = form.tarjetaIntermedio.value.trim();
+    var tarjetaAvanzado = form.tarjetaAvanzado.value.trim();
+    var tarjetaGroupField = form.querySelector('[data-field="tarjetaGroup"]');
+    tarjetaGroupField.classList.remove("error");
+    if (!(tarjetaBasico || tarjetaIntermedio || tarjetaAvanzado)) {
+      tarjetaGroupField.classList.add("error");
+      valid = false;
+      if (!firstInvalid) firstInvalid = tarjetaGroupField;
+    }
+
+    var volanteBasico = form.volanteBasico.value.trim();
+    var volanteIntermedio = form.volanteIntermedio.value.trim();
+    var volanteAvanzado = form.volanteAvanzado.value.trim();
+    var volanteGroupField = form.querySelector('[data-field="volanteGroup"]');
+    volanteGroupField.classList.remove("error");
+    if (!(volanteBasico || volanteIntermedio || volanteAvanzado)) {
+      volanteGroupField.classList.add("error");
+      valid = false;
+      if (!firstInvalid) firstInvalid = volanteGroupField;
+    }
+
+    var portafolio = form.portafolio.value.trim();
+    setError("portafolio", false);
+    if (!portafolio || !isValidUrl(portafolio)) fail("portafolio");
+
+    var esBot = form.sitioWeb.value.trim() !== "";
+
+    if (!valid) {
+      banner.textContent = "Revisa los campos marcados en rojo antes de enviar.";
+      banner.classList.add("show", "err");
+      if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        var focusable = firstInvalid.querySelector("input, select");
+        if (focusable) focusable.focus();
+      }
+      return;
+    }
+
+    if (esBot) {
+      banner.textContent = "Ficha enviada correctamente.";
+      banner.classList.add("show");
+      form.reset();
+      return;
+    }
+
+    var payload = {
+      ticketId: ticketId, nombres: nombres, apellidos: apellidos, genero: genero.value,
+      fechaNacimiento: dobFilledCount === 3 ? (anio + "-" + String(mes).padStart(2,"0") + "-" + String(dia).padStart(2,"0")) : "",
+      distrito: distrito, telefono: telefono,
+      tarjetaBasico: tarjetaBasico, tarjetaIntermedio: tarjetaIntermedio, tarjetaAvanzado: tarjetaAvanzado,
+      volanteBasico: volanteBasico, volanteIntermedio: volanteIntermedio, volanteAvanzado: volanteAvanzado,
+      portafolio: portafolio
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Enviando…";
+
+    fetch(SHEET_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data && data.result === "success") {
+          banner.textContent = data.updated
+            ? "Ya tenías una ficha registrada con ese teléfono: se actualizó con tus datos nuevos. Gracias, " + nombres + "."
+            : "Ficha " + ticketId + " enviada correctamente. Gracias, " + nombres + ".";
+          banner.classList.remove("err");
+          banner.classList.add("show");
+          form.reset();
+        } else {
+          banner.textContent = (data && data.message) || "No se pudo guardar tu ficha. Intenta nuevamente.";
+          banner.classList.add("show", "err");
+        }
+      })
+      .catch(function(){
+        banner.textContent = "No se pudo conectar con el servidor. Revisa tu conexión e intenta nuevamente.";
+        banner.classList.add("show", "err");
+      })
+      .finally(function(){
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Enviar ficha";
+      });
+  });
+
+})();
+</script>
