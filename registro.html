@@ -5,736 +5,159 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Registro Oficial de Diseñadores | OFICIAL</title>
   <style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 
-  /* Reset global seguro */
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow-x: hidden;
-    background: #F3F0E7;
-  }
-
-  /* Todo vive bajo #of-form para encapsulación total */
+  /* Encapsulamiento total CSS bajo #of-form */
   #of-form {
-    --paper: #F3F0E7;
-    --paper-raised: #FBFAF6;
-    --ink: #17161B;
-    --accent: #C81D2C;
-    --accent-ink: #8F1420;
-    --line: #D8D2BE;
-    --muted: #726C5D;
-    --ok: #2B6B4A;
-    --ok-bg: #EEF6F1;
-    --radius: 2px;
-
-    background: var(--paper) !important;
-    color: var(--ink) !important;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-    line-height: 1.5 !important;
-    -webkit-font-smoothing: antialiased;
-    padding: clamp(20px, 4vw, 48px) clamp(12px, 3vw, 16px) clamp(32px, 5vw, 64px) !important;
-    background-image: radial-gradient(circle, rgba(23,22,27,0.06) 1px, transparent 1px) !important;
-    background-size: 22px 22px !important;
-    display: block;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow-x: hidden !important;
+    background: #F3F0E7;
+    color: #17161B;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    padding: clamp(20px, 4vw, 48px) clamp(12px, 3vw, 16px);
+    background-image: radial-gradient(circle, rgba(23,22,27,0.06) 1px, transparent 1px);
+    background-size: 22px 22px;
+    box-sizing: border-box;
   }
 
-  #of-form * {
-    box-sizing: border-box !important;
-  }
-
-  #of-form h1, #of-form h3, #of-form p, #of-form ul, #of-form li, #of-form label, #of-form button {
-    margin: 0;
-    padding: 0;
-    text-align: left;
-    list-style: none;
-    border: 0;
-    background: none;
-    font: inherit;
-    color: inherit;
-    line-height: inherit;
-  }
+  #of-form * { box-sizing: border-box; margin: 0; padding: 0; }
 
   #of-form .sheet {
-    max-width: 720px !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    background: var(--paper-raised) !important;
-    position: relative !important;
-    border: 1px solid var(--ink) !important;
-    box-shadow: 6px 6px 0 var(--ink) !important;
+    max-width: 720px;
+    margin: 0 auto;
+    background: #FBFAF6;
+    position: relative;
+    border: 1px solid #17161B;
+    box-shadow: 6px 6px 0 #17161B;
   }
 
-  /* Marcas de registro (esquinas) */
-  #of-form .crop {
-    position: absolute !important;
-    width: 20px !important;
-    height: 20px !important;
-    pointer-events: none !important;
-  }
-  #of-form .crop::before, #of-form .crop::after {
-    content: "" !important;
-    position: absolute !important;
-    background: var(--ink) !important;
-  }
-  #of-form .crop::before {
-    width: 100% !important;
-    height: 1px !important;
-    top: 50% !important;
-    left: 0 !important;
-  }
-  #of-form .crop::after {
-    width: 1px !important;
-    height: 100% !important;
-    left: 50% !important;
-    top: 0 !important;
-  }
-  #of-form .crop.tl { top: -10px !important; left: -10px !important; }
-  #of-form .crop.tr { top: -10px !important; right: -10px !important; }
-  #of-form .crop.bl { bottom: -10px !important; left: -10px !important; }
-  #of-form .crop.br { bottom: -10px !important; right: -10px !important; }
+  /* Marcas de registro */
+  #of-form .crop { position: absolute; width: 20px; height: 20px; pointer-events: none; }
+  #of-form .crop::before, #of-form .crop::after { content: ""; position: absolute; background: #17161B; }
+  #of-form .crop::before { width: 100%; height: 1px; top: 50%; left: 0; }
+  #of-form .crop::after { width: 1px; height: 100%; left: 50%; top: 0; }
+  #of-form .tl { top: -10px; left: -10px; } #of-form .tr { top: -10px; right: -10px; }
+  #of-form .bl { bottom: -10px; left: -10px; } #of-form .br { bottom: -10px; right: -10px; }
 
   #of-form header.masthead {
-    padding: clamp(24px, 4vw, 36px) clamp(18px, 5vw, 44px) clamp(20px, 3.5vw, 26px) !important;
-    border-bottom: 2px solid var(--ink) !important;
+    padding: clamp(24px, 4vw, 36px) clamp(18px, 5vw, 44px) clamp(20px, 3.5vw, 26px);
+    border-bottom: 2px solid #17161B;
   }
 
   #of-form .masthead-top {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: 12px !important;
-    flex-wrap: wrap !important;
-    margin-bottom: 14px !important;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
   }
 
   #of-form .masthead-brand {
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 13px !important;
-    letter-spacing: .16em !important;
-    font-weight: 700 !important;
-    color: var(--accent-ink) !important;
-    text-transform: uppercase !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .16em;
+    font-weight: 700; color: #8F1420; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
   }
-  #of-form .masthead-brand::before {
-    content: "" !important;
-    width: 8px !important;
-    height: 8px !important;
-    border-radius: 50% !important;
-    background: var(--accent) !important;
-    display: inline-block !important;
-  }
+  #of-form .masthead-brand::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #C81D2C; }
 
-  /* Botón interactivo directo de WhatsApp */
   #of-form .whatsapp-help {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 12px !important;
-    color: var(--ink) !important;
-    text-decoration: none !important;
-    background: #fff !important;
-    padding: 8px 14px !important;
-    border: 1px solid var(--ink) !important;
-    border-radius: var(--radius) !important;
-    box-shadow: 2px 2px 0 var(--ink) !important;
-    transition: all .15s ease !important;
-    cursor: pointer !important;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #17161B;
+    text-decoration: none; background: #fff; padding: 8px 14px;
+    border: 1px solid #17161B; border-radius: 2px; box-shadow: 2px 2px 0 #17161B;
+    transition: all .15s ease;
   }
-  #of-form .whatsapp-help:hover {
-    background: var(--ink) !important;
-    color: #fff !important;
-    transform: translate(-1px, -1px) !important;
-    box-shadow: 3px 3px 0 var(--accent) !important;
-  }
-  #of-form .whatsapp-help:active {
-    transform: translate(1px, 1px) !important;
-    box-shadow: 1px 1px 0 var(--ink) !important;
-  }
-  #of-form .whatsapp-help svg {
-    flex: none !important;
-    transition: transform .15s ease !important;
-  }
-  #of-form .whatsapp-help:hover svg {
-    transform: scale(1.1) !important;
-  }
-  #of-form .whatsapp-help strong {
-    font-weight: 700 !important;
-    letter-spacing: .02em !important;
-  }
+  #of-form .whatsapp-help:hover { background: #17161B; color: #fff; transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #C81D2C; }
 
-  #of-form h1 {
-    font-family: 'Archivo Black', sans-serif !important;
-    font-size: clamp(24px, 4.8vw, 36px) !important;
-    line-height: 1.1 !important;
-    margin: 0 0 10px !important;
-    letter-spacing: -0.01em !important;
-    display: block !important;
-    text-transform: uppercase !important;
-  }
+  #of-form h1 { font-family: 'Archivo Black', sans-serif; font-size: clamp(24px, 4.8vw, 36px); line-height: 1.1; margin-bottom: 10px; text-transform: uppercase; }
+  #of-form .masthead p { color: #726C5D; font-size: clamp(14px, 2vw, 15px); max-width: 54ch; }
 
-  #of-form .masthead p {
-    color: var(--muted) !important;
-    font-size: clamp(14px, 2vw, 15px) !important;
-    max-width: 54ch !important;
-    display: block !important;
-  }
+  #of-form form { padding: 8px clamp(18px, 5vw, 44px) clamp(24px, 5vw, 44px); }
+  #of-form .section { padding: 32px 0 6px; }
+  #of-form .section + .section { border-top: 1px dashed #D8D2BE; }
 
-  #of-form form {
-    padding: 8px clamp(18px, 5vw, 44px) clamp(24px, 5vw, 44px) !important;
-  }
+  #of-form .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  #of-form .section-num { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #C81D2C; font-weight: 700; }
+  #of-form .section-title { font-family: 'Archivo Black', sans-serif; font-size: clamp(17px, 3vw, 19px); text-transform: uppercase; }
+  #of-form .section-note { font-size: 13.5px; color: #726C5D; margin: 6px 0 22px; max-width: 60ch; }
 
-  #of-form .section {
-    padding: 32px 0 6px !important;
-  }
-  #of-form .section + .section {
-    border-top: 1px dashed var(--line) !important;
-    position: relative !important;
-  }
-  #of-form .section + .section::before,
-  #of-form .section + .section::after {
-    content: "" !important;
-    position: absolute !important;
-    top: -5px !important;
-    width: 10px !important;
-    height: 10px !important;
-    border-radius: 50% !important;
-    background: var(--paper) !important;
-    border: 1px solid var(--line) !important;
-  }
-  #of-form .section + .section::before { left: -54px !important; }
-  #of-form .section + .section::after { right: -54px !important; }
+  #of-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  #of-form .field { margin-bottom: 20px; }
+  #of-form .field label { display: block; font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 7px; }
+  #of-form .field label .req { color: #C81D2C; margin-left: 2px; }
+  #of-form .field label .opt { font-weight: 400; text-transform: none; color: #726C5D; font-size: 11.5px; }
 
-  #of-form .section-head {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 12px !important;
-    margin-bottom: 6px !important;
+  #of-form input[type=text], #of-form input[type=tel], #of-form input[type=url], #of-form input[type=number], #of-form select {
+    width: 100%; font-family: 'Inter', system-ui, sans-serif; font-size: 16px;
+    min-height: 46px; padding: 11px 12px; border: 1px solid #17161B; border-radius: 2px;
+    background: #fff; color: #17161B; appearance: none; -webkit-appearance: none;
   }
-  #of-form .section-num {
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 13px !important;
-    color: var(--accent) !important;
-    font-weight: 700 !important;
-  }
-  #of-form .section-title {
-    font-family: 'Archivo Black', sans-serif !important;
-    font-size: clamp(17px, 3vw, 19px) !important;
-    text-transform: uppercase !important;
-    letter-spacing: .01em !important;
-  }
-  #of-form .section-note {
-    font-size: 13.5px !important;
-    color: var(--muted) !important;
-    margin: 6px 0 22px !important;
-    max-width: 60ch !important;
-    display: block !important;
-  }
+  #of-form input:focus, #of-form select:focus { outline: none; border-color: #C81D2C; box-shadow: 0 0 0 3px rgba(200,29,44,0.15); }
+  
+  #of-form .error-msg { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8F1420; margin-top: 6px; }
+  #of-form .field.error input, #of-form .field.error select { border-color: #C81D2C; background: #FBEDEC; }
+  #of-form .field.error .error-msg { display: block; }
 
-  #of-form .row {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 20px !important;
-  }
-  #of-form .row.dob {
-    grid-template-columns: 0.85fr 1.35fr 1fr !important;
-    gap: 10px !important;
-  }
+  /* Controles de Fecha Triples */
+  #of-form .date-triplet { display: grid; grid-template-columns: 1fr 1.4fr 1.1fr; gap: 8px; }
 
-  #of-form .field {
-    margin-bottom: 20px !important;
-  }
-  #of-form .field label {
-    display: block !important;
-    font-size: 12.5px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: .05em !important;
-    margin-bottom: 7px !important;
-  }
-  #of-form .field label .req {
-    color: var(--accent) !important;
-    margin-left: 2px !important;
-  }
-  #of-form .field label .opt {
-    font-weight: 400 !important;
-    text-transform: none !important;
-    color: var(--muted) !important;
-    letter-spacing: 0 !important;
-    font-size: 11.5px !important;
-  }
-
-  #of-form input[type=text],
-  #of-form input[type=tel],
-  #of-form input[type=url],
-  #of-form input[type=number],
-  #of-form select {
-    width: 100% !important;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-    font-size: 16px !important; /* 16px previene el zoom forzado en móviles iOS/Android */
-    line-height: 1.4 !important;
-    min-height: 46px !important;
-    padding: 11px 12px !important;
-    border: 1px solid var(--ink) !important;
-    border-radius: var(--radius) !important;
-    background: #fff !important;
-    color: var(--ink) !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    box-shadow: none !important;
-    transition: box-shadow .15s ease, border-color .15s ease !important;
-  }
-
-  #of-form select {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%2317161B' stroke-width='1.6' fill='none' fill-rule='evenodd'/></svg>") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 12px center !important;
-    padding-right: 32px !important;
-  }
-
-  #of-form input:focus, #of-form select:focus {
-    outline: none !important;
-    border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(200,29,44,0.15) !important;
-  }
-  #of-form input::placeholder {
-    color: #A7A296 !important;
-  }
-
-  #of-form .field.error input, #of-form .field.error select {
-    border-color: var(--accent) !important;
-    background: #FBEDEC !important;
-  }
-  #of-form .error-msg {
-    display: none !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 11.5px !important;
-    color: var(--accent-ink) !important;
-    margin-top: 6px !important;
-  }
-  #of-form .field.error .error-msg {
-    display: block !important;
-  }
-
-  /* Género — control segmentado */
-  #of-form .segmented {
-    display: flex !important;
-    border: 1px solid var(--ink) !important;
-    border-radius: var(--radius) !important;
-    overflow: hidden !important;
-    min-height: 46px !important;
-  }
-  #of-form .segmented input {
-    position: absolute !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
+  /* Segmented Gender */
+  #of-form .segmented { display: flex; border: 1px solid #17161B; border-radius: 2px; overflow: hidden; min-height: 46px; }
+  #of-form .segmented input { position: absolute; opacity: 0; pointer-events: none; }
   #of-form .segmented label {
-    flex: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 11px 8px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    cursor: pointer !important;
-    color: var(--muted) !important;
-    background: #fff !important;
-    border: none !important;
-    margin: 0 !important;
-    transition: background .15s ease, color .15s ease !important;
-    -webkit-tap-highlight-color: transparent !important;
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 11px 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: #726C5D; background: #fff;
   }
-  #of-form .segmented label + label {
-    border-left: 1px solid var(--ink) !important;
-  }
-  #of-form .segmented input:checked + label {
-    background: var(--ink) !important;
-    color: #fff !important;
-  }
-  #of-form .segmented input:focus-visible + label {
-    outline: 2px solid var(--accent) !important;
-    outline-offset: -2px !important;
-  }
+  #of-form .segmented label + label { border-left: 1px solid #17161B; }
+  #of-form .segmented input:checked + label { background: #17161B; color: #fff; }
 
-  /* Teléfono con prefijo */
-  #of-form .prefix-field {
-    position: relative !important;
+  /* Prefijos */
+  #of-form .prefix-field, #of-form .amount-field { position: relative; }
+  #of-form .prefix-field .prefix, #of-form .amount-field .cur {
+    position: absolute; left: 1px; top: 1px; bottom: 1px; display: flex; align-items: center;
+    padding: 0 10px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #726C5D;
+    background: #EFEBDF; border-right: 1px solid #17161B; pointer-events: none;
   }
-  #of-form .prefix-field .prefix {
-    position: absolute !important;
-    left: 1px !important;
-    top: 1px !important;
-    bottom: 1px !important;
-    display: flex !important;
-    align-items: center !important;
-    padding: 0 10px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 14px !important;
-    color: var(--muted) !important;
-    background: #EFEBDF !important;
-    border-right: 1px solid var(--ink) !important;
-    border-radius: 1px 0 0 1px !important;
-    pointer-events: none !important;
-  }
-  #of-form .prefix-field input {
-    padding-left: 54px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    letter-spacing: .04em !important;
-  }
+  #of-form .prefix-field input { padding-left: 54px; font-family: 'IBM Plex Mono', monospace; }
+  #of-form .amount-field input { padding-left: 46px; font-family: 'IBM Plex Mono', monospace; }
 
   /* Tarifas */
-  #of-form .rate-group {
-    margin-bottom: 28px !important;
-    padding: 20px 20px 6px !important;
-    border: 1px solid var(--line) !important;
-    border-radius: var(--radius) !important;
-    background: #FDFCF9 !important;
-  }
-  #of-form .rate-group.error {
-    border-color: var(--accent) !important;
-    background: #FBEDEC !important;
-  }
-  #of-form .rate-group-title {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    margin-bottom: 4px !important;
-  }
-  #of-form .rate-group-title .sq {
-    width: 10px !important;
-    height: 10px !important;
-    background: var(--accent) !important;
-    flex: none !important;
-  }
-  #of-form .rate-group-title h3 {
-    font-family: 'Archivo Black', sans-serif !important;
-    font-size: 18px !important;
-    text-transform: uppercase !important;
-    letter-spacing: .01em !important;
-    margin: 0 !important;
-    display: block !important;
-  }
-  #of-form .rate-group-title::after {
-    content: "" !important;
-    flex: 1 !important;
-    height: 2px !important;
-    background: var(--line) !important;
-  }
-  #of-form .rate-group-note {
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 11.5px !important;
-    color: var(--muted) !important;
-    margin: 0 0 18px !important;
-    display: block !important;
-  }
-  #of-form .rate-group-error {
-    display: none !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 11.5px !important;
-    color: var(--accent-ink) !important;
-    margin: -8px 0 16px !important;
-  }
-  #of-form .rate-group.error .rate-group-error {
-    display: block !important;
-  }
-  #of-form .amount-field {
-    position: relative !important;
-  }
-  #of-form .amount-field .cur {
-    position: absolute !important;
-    left: 1px !important;
-    top: 1px !important;
-    bottom: 1px !important;
-    display: flex !important;
-    align-items: center !important;
-    padding: 0 10px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 13px !important;
-    color: var(--muted) !important;
-    background: #EFEBDF !important;
-    border-right: 1px solid var(--ink) !important;
-    pointer-events: none !important;
-  }
-  #of-form .amount-field input {
-    padding-left: 46px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-  }
-  #of-form .amount-field input::-webkit-outer-spin-button,
-  #of-form .amount-field input::-webkit-inner-spin-button {
-    -webkit-appearance: none !important;
-    margin: 0 !important;
-  }
-  #of-form .amount-field input[type=number] {
-    -moz-appearance: textfield !important;
-  }
+  #of-form .rate-group { margin-bottom: 28px; padding: 20px 20px 6px; border: 1px solid #D8D2BE; border-radius: 2px; background: #FDFCF9; }
+  #of-form .rate-group.error { border-color: #C81D2C; background: #FBEDEC; }
+  #of-form .rate-group-title { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  #of-form .rate-group-title .sq { width: 10px; height: 10px; background: #C81D2C; }
+  #of-form .rate-group-title h3 { font-family: 'Archivo Black', sans-serif; font-size: 18px; text-transform: uppercase; }
+  #of-form .rate-group-note { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #726C5D; margin-bottom: 18px; }
+  #of-form .rate-group-error { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8F1420; margin: -8px 0 16px; }
+  #of-form .rate-group.error .rate-group-error { display: block; }
 
-  #of-form .field-hint {
-    font-size: 11.5px !important;
-    color: var(--muted) !important;
-    margin-top: 6px !important;
-    display: block !important;
-  }
-
-  /* Microcopy de beneficio / confianza (positivo en verde) */
   #of-form .trust-badge {
-    margin: 24px 0 16px !important;
-    padding: 14px 18px !important;
-    background: #EEF6F1 !important;
-    border-left: 4px solid var(--ok) !important;
-    border-top: 1px solid rgba(43,107,74,0.25) !important;
-    border-right: 1px solid rgba(43,107,74,0.25) !important;
-    border-bottom: 1px solid rgba(43,107,74,0.25) !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    color: var(--ok) !important;
-    line-height: 1.45 !important;
-    letter-spacing: .02em !important;
-    border-radius: var(--radius) !important;
-  }
-  #of-form .trust-badge svg {
-    flex: none !important;
-    color: var(--ok) !important;
+    margin: 24px 0 16px; padding: 14px 18px; background: #EEF6F1;
+    border: 1px solid rgba(43,107,74,0.25); border-left: 4px solid #2B6B4A; display: flex; align-items: center;
+    gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; color: #2B6B4A;
   }
 
-  /* Envío */
-  #of-form .submit-row {
-    margin-top: 24px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 18px !important;
-    flex-wrap: wrap !important;
-  }
+  #of-form .submit-row { margin-top: 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
   #of-form button.submit {
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 13px !important;
-    letter-spacing: .08em !important;
-    text-transform: uppercase !important;
-    font-weight: 600 !important;
-    background: var(--ink) !important;
-    color: #fff !important;
-    border: 1px solid var(--ink) !important;
-    padding: 15px 30px !important;
-    border-radius: var(--radius) !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-    transition: background .15s ease, transform .1s ease, box-shadow .15s ease !important;
-    box-shadow: 3px 3px 0 rgba(23,22,27,0.3) !important;
-    -webkit-tap-highlight-color: transparent !important;
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    font-weight: 600; background: #17161B; color: #fff; border: 1px solid #17161B; padding: 15px 30px;
+    border-radius: 2px; cursor: pointer; box-shadow: 3px 3px 0 rgba(23,22,27,0.3); transition: all .15s ease;
   }
-  #of-form button.submit:hover {
-    background: var(--accent-ink) !important;
-    border-color: var(--accent-ink) !important;
-    box-shadow: 4px 4px 0 var(--ink) !important;
-  }
-  #of-form button.submit:active {
-    transform: translate(1px, 1px) !important;
-    box-shadow: 1px 1px 0 var(--ink) !important;
-  }
-  #of-form button.submit:disabled {
-    opacity: .6 !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
-  }
-  #of-form .submit-note {
-    font-size: 12px !important;
-    color: var(--muted) !important;
-  }
+  #of-form button.submit:hover { background: #8F1420; border-color: #8F1420; box-shadow: 4px 4px 0 #17161B; }
+  #of-form button.submit:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
 
-  /* Banner y Sello Animado */
-  #of-form .banner {
-    display: none !important;
-    margin: 22px clamp(18px, 5vw, 44px) 0 !important;
-    padding: 20px 22px !important;
-    border: 1.5px solid var(--ok) !important;
-    background: var(--ok-bg) !important;
-    color: var(--ok) !important;
-    border-radius: var(--radius) !important;
-    line-height: 1.45 !important;
-  }
-  #of-form .banner.show {
-    display: block !important;
-  }
-  #of-form .banner.err {
-    border-color: var(--accent) !important;
-    background: #FBEDEC !important;
-    color: var(--accent-ink) !important;
-  }
+  #of-form .banner { display: none; margin: 22px clamp(18px, 5vw, 44px) 0; padding: 20px 22px; border: 1.5px solid #2B6B4A; background: #EEF6F1; color: #2B6B4A; }
+  #of-form .banner.show { display: block; }
+  #of-form .banner.err { border-color: #C81D2C; background: #FBEDEC; color: #8F1420; }
+  #of-form .stamp-seal { display: inline-block; border: 2.5px double #2B6B4A; padding: 6px 14px; margin-bottom: 12px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; text-transform: uppercase; }
 
-  @keyframes stampDrop {
-    0% { opacity: 0; transform: scale(2.2) rotate(-14deg); }
-    60% { opacity: 1; transform: scale(0.95) rotate(-3deg); }
-    80% { transform: scale(1.04) rotate(-5deg); }
-    100% { opacity: 1; transform: scale(1) rotate(-4deg); }
-  }
-  #of-form .stamp-seal {
-    display: inline-block !important;
-    border: 2.5px double var(--ok) !important;
-    padding: 6px 14px !important;
-    margin-bottom: 12px !important;
-    color: var(--ok) !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: .12em !important;
-    animation: stampDrop .45s cubic-bezier(.175,.885,.32,1.275) forwards !important;
-    background: rgba(43,107,74,0.06) !important;
-    border-radius: 2px !important;
-  }
-  #of-form .stamp-seal .stamp-main {
-    font-size: 13px !important;
-    line-height: 1.2 !important;
-    display: block !important;
-  }
-  #of-form .stamp-seal .stamp-sub {
-    font-size: 9.5px !important;
-    letter-spacing: .16em !important;
-    opacity: .85 !important;
-    display: block !important;
-    margin-top: 2px !important;
-  }
-  #of-form .banner.err .stamp-seal {
-    display: none !important;
-  }
-  #of-form .banner-msg {
-    font-size: 15px !important;
-    font-weight: 600 !important;
-  }
+  #of-form footer.stamp { text-align: center; margin-top: 26px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: .18em; color: #726C5D; text-transform: uppercase; }
 
-  /* Pie de página oficial */
-  #of-form footer.stamp {
-    text-align: center !important;
-    margin-top: 26px !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    letter-spacing: .18em !important;
-    color: var(--muted) !important;
-    text-transform: uppercase !important;
-    display: block !important;
-  }
-
-  /* ========================================================
-     MEDIA QUERIES ULTRA RESPONSIVAS (MÓVILES & TABLETS)
-     ======================================================== */
   @media (max-width: 640px) {
-    #of-form {
-      padding: 20px 10px 48px !important;
-    }
-    #of-form .sheet {
-      box-shadow: 4px 4px 0 var(--ink) !important;
-    }
-    #of-form header.masthead {
-      padding: 22px 16px 18px !important;
-    }
-    #of-form form {
-      padding: 6px 16px 26px !important;
-    }
-    #of-form .section {
-      padding: 24px 0 4px !important;
-    }
-    #of-form .section + .section::before { left: -20px !important; }
-    #of-form .section + .section::after { right: -20px !important; }
-
-    #of-form .row {
-      grid-template-columns: 1fr !important;
-      gap: 14px !important;
-    }
-    #of-form .row.dob {
-      grid-template-columns: 0.85fr 1.35fr 1fr !important;
-      gap: 6px !important;
-    }
-    #of-form .row.dob select {
-      font-size: 14.5px !important;
-      padding: 10px 8px !important;
-      padding-right: 22px !important;
-      background-position: right 6px center !important;
-    }
-    #of-form .rate-group {
-      padding: 16px 12px 4px !important;
-      margin-bottom: 22px !important;
-    }
-    #of-form .banner {
-      margin: 16px 16px 0 !important;
-      padding: 16px 14px !important;
-    }
-    #of-form .submit-row {
-      flex-direction: column !important;
-      align-items: stretch !important;
-      gap: 12px !important;
-    }
-    #of-form button.submit {
-      width: 100% !important;
-      text-align: center !important;
-      padding: 14px 20px !important;
-    }
-    #of-form .submit-note {
-      text-align: center !important;
-    }
-    #of-form .trust-badge {
-      padding: 12px 14px !important;
-      font-size: 11px !important;
-      gap: 10px !important;
-    }
-  }
-
-  @media (max-width: 420px) {
-    #of-form {
-      padding: 16px 6px 36px !important;
-    }
-    #of-form header.masthead {
-      padding: 18px 12px 16px !important;
-    }
-    #of-form form {
-      padding: 4px 12px 22px !important;
-    }
-    #of-form .masthead-top {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      gap: 10px !important;
-    }
-    #of-form .whatsapp-help {
-      width: 100% !important;
-      justify-content: center !important;
-      font-size: 11.5px !important;
-      padding: 9px 10px !important;
-    }
-    #of-form .crop {
-      display: none !important; /* Elimina riesgos de desbordamiento horizontal en móviles angostos */
-    }
-    #of-form .section + .section::before,
-    #of-form .section + .section::after {
-      display: none !important;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #of-form * {
-      transition: none !important;
-      animation: none !important;
-    }
+    #of-form .row { grid-template-columns: 1fr; gap: 14px; }
+    #of-form .submit-row { flex-direction: column; align-items: stretch; }
+    #of-form button.submit { width: 100%; text-align: center; }
   }
   </style>
 </head>
 <body>
 
 <div id="of-form">
-
 <div class="sheet">
   <span class="crop tl"></span><span class="crop tr"></span>
   <span class="crop bl"></span><span class="crop br"></span>
@@ -742,8 +165,8 @@
   <header class="masthead">
     <div class="masthead-top">
       <div class="masthead-brand">OFICIAL</div>
-      <a href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores" target="_blank" rel="noopener noreferrer" class="whatsapp-help" title="Contactar por WhatsApp">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+      <a href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores" target="_blank" rel="noopener" class="whatsapp-help">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
         <span>¿Tienes dudas? <strong>Escribir por WhatsApp</strong></span>
       </a>
     </div>
@@ -752,15 +175,11 @@
   </header>
 
   <div class="banner" id="of-formBanner" role="alert" aria-live="polite">
-    <div class="stamp-seal" id="of-stampSeal" style="display:none;">
-      <span class="stamp-main">✓ REGISTRO RECIBIDO</span>
-      <span class="stamp-sub">REGISTRO OFICIAL DE DISEÑADORES</span>
-    </div>
-    <div class="banner-msg" id="of-bannerMsg"></div>
+    <div class="stamp-seal" id="of-stampSeal" style="display:none;">✓ REGISTRO RECIBIDO</div>
+    <div id="of-bannerMsg"></div>
   </div>
 
   <form id="of-designerForm" novalidate>
-
     <!-- 01 — Datos personales -->
     <section class="section">
       <div class="section-head">
@@ -771,12 +190,12 @@
       <div class="row">
         <div class="field" data-field="nombres">
           <label for="of-nombres">Nombres<span class="req">*</span></label>
-          <input type="text" id="of-nombres" name="nombres" autocomplete="given-name" required>
+          <input type="text" id="of-nombres" name="nombres" required>
           <div class="error-msg">Ingresa tus nombres.</div>
         </div>
         <div class="field" data-field="apellidos">
           <label for="of-apellidos">Apellidos<span class="req">*</span></label>
-          <input type="text" id="of-apellidos" name="apellidos" autocomplete="family-name" required>
+          <input type="text" id="of-apellidos" name="apellidos" required>
           <div class="error-msg">Ingresa tus apellidos.</div>
         </div>
       </div>
@@ -784,7 +203,7 @@
       <div class="row">
         <div class="field" data-field="genero">
           <label>Género<span class="req">*</span></label>
-          <div class="segmented" role="radiogroup" aria-label="Género">
+          <div class="segmented">
             <input type="radio" id="of-genero-mujer" name="genero" value="Mujer">
             <label for="of-genero-mujer">Mujer</label>
             <input type="radio" id="of-genero-hombre" name="genero" value="Hombre">
@@ -794,26 +213,20 @@
         </div>
 
         <div class="field" data-field="fechaNacimiento">
-          <label>Fecha de nacimiento <span class="opt">(opcional)</span></label>
-          <div class="row dob" style="margin-bottom:0;">
-            <select id="of-dia" name="dia" aria-label="Día">
-              <option value="" selected>Día</option>
-            </select>
-            <select id="of-mes" name="mes" aria-label="Mes">
-              <option value="" selected>Mes</option>
-            </select>
-            <select id="of-anio" name="anio" aria-label="Año">
-              <option value="" selected>Año</option>
-            </select>
+          <label>Fecha de nacimiento<span class="req">*</span></label>
+          <div class="date-triplet">
+            <select id="of-nacDia" aria-label="Día de nacimiento"><option value="">Día</option></select>
+            <select id="of-nacMes" aria-label="Mes de nacimiento"><option value="">Mes</option></select>
+            <select id="of-nacAnio" aria-label="Año de nacimiento"><option value="">Año</option></select>
           </div>
-          <div class="error-msg">Completa día, mes y año, o deja los tres en blanco.</div>
+          <div class="error-msg">Selecciona tu fecha de nacimiento completa.</div>
         </div>
       </div>
 
       <div class="row">
         <div class="field" data-field="distrito">
           <label for="of-distrito">Distrito<span class="req">*</span></label>
-          <input type="text" id="of-distrito" name="distrito" list="of-distritos-list" placeholder="Escribe o elige un distrito (ej. Miraflores)" autocomplete="off" required>
+          <input type="text" id="of-distrito" name="distrito" list="of-distritos-list" placeholder="Escribe tu distrito" required>
           <datalist id="of-distritos-list"></datalist>
           <div class="error-msg">Selecciona un distrito válido de Lima/Callao.</div>
         </div>
@@ -822,9 +235,9 @@
           <label for="of-telefono">Teléfono celular<span class="req">*</span></label>
           <div class="prefix-field">
             <span class="prefix">+51</span>
-            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" inputmode="numeric" maxlength="11" required>
+            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" maxlength="11" required>
           </div>
-          <div class="error-msg">Ingresa un número celular de 9 dígitos que empiece con 9.</div>
+          <div class="error-msg">Ingresa un celular de 9 dígitos que empiece con 9.</div>
         </div>
       </div>
     </section>
@@ -835,53 +248,36 @@
         <span class="section-num">02</span>
         <span class="section-title">Tarifas de diseño</span>
       </div>
-      <p class="section-note">
-        Se consideran 2 niveles de tarifas (Básico o Complejo) para ofrecer diferentes alternativas según el tipo de trabajo,
-        complejidad y presupuesto del cliente. Indica el precio que consideres adecuado para cada nivel, ya
-        sea que trabajes con ChatGPT, Canva, Illustrator u otros programas. No es obligatorio completar ambos
-        niveles, pero debes indicar al menos una tarifa para cada producto.
-      </p>
+      <p class="section-note">Indica al menos una tarifa para cada producto según tu experiencia.</p>
 
       <div class="rate-group" data-field="tarjetaGroup">
         <div class="rate-group-title"><span class="sq"></span><h3>Tarjeta de presentación</h3></div>
-        <p class="rate-group-note">Indica al menos un precio para este producto.</p>
-        <div class="rate-group-error">Indica al menos una tarifa de tarjeta (básico o complejo).</div>
+        <p class="rate-group-note">Indica al menos un precio.</p>
+        <div class="rate-group-error">Indica al menos una tarifa para tarjeta.</div>
         <div class="row">
-          <div class="field" data-field="tarjetaBasico">
+          <div class="field">
             <label for="of-tarjetaBasico">Básico <span class="opt">(opcional)</span></label>
-            <div class="amount-field">
-              <span class="cur">S/</span>
-              <input type="number" id="of-tarjetaBasico" name="tarjetaBasico" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
-            </div>
+            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-tarjetaBasico" min="0" step="0.5" placeholder="0.00"></div>
           </div>
-          <div class="field" data-field="tarjetaComplejo">
+          <div class="field">
             <label for="of-tarjetaComplejo">Complejo <span class="opt">(opcional)</span></label>
-            <div class="amount-field">
-              <span class="cur">S/</span>
-              <input type="number" id="of-tarjetaComplejo" name="tarjetaComplejo" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
-            </div>
+            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-tarjetaComplejo" min="0" step="0.5" placeholder="0.00"></div>
           </div>
         </div>
       </div>
 
       <div class="rate-group" data-field="volanteGroup">
         <div class="rate-group-title"><span class="sq"></span><h3>Volante publicitario</h3></div>
-        <p class="rate-group-note">Indica al menos un precio para este producto.</p>
-        <div class="rate-group-error">Indica al menos una tarifa de volante (básico o complejo).</div>
+        <p class="rate-group-note">Indica al menos un precio.</p>
+        <div class="rate-group-error">Indica al menos una tarifa para volante.</div>
         <div class="row">
-          <div class="field" data-field="volanteBasico">
+          <div class="field">
             <label for="of-volanteBasico">Básico <span class="opt">(opcional)</span></label>
-            <div class="amount-field">
-              <span class="cur">S/</span>
-              <input type="number" id="of-volanteBasico" name="volanteBasico" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
-            </div>
+            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-volanteBasico" min="0" step="0.5" placeholder="0.00"></div>
           </div>
-          <div class="field" data-field="volanteComplejo">
+          <div class="field">
             <label for="of-volanteComplejo">Complejo <span class="opt">(opcional)</span></label>
-            <div class="amount-field">
-              <span class="cur">S/</span>
-              <input type="number" id="of-volanteComplejo" name="volanteComplejo" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
-            </div>
+            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-volanteComplejo" min="0" step="0.5" placeholder="0.00"></div>
           </div>
         </div>
       </div>
@@ -897,43 +293,32 @@
       <div class="field" data-field="portafolio">
         <label for="of-portafolio">Enlace directo<span class="req">*</span></label>
         <input type="url" id="of-portafolio" name="portafolio" placeholder="https://www.behance.net/tu-usuario o @tu_usuario" required>
-        <div class="field-hint">Behance, Instagram, Drive u otro enlace donde se aprecie tu trabajo.</div>
-        <div class="error-msg">Ingresa un enlace válido de tu portafolio o perfil.</div>
+        <div class="error-msg">Ingresa un enlace o usuario válido.</div>
       </div>
 
-      <!-- Microcopy de beneficio / confianza (positivo en verde) -->
       <div class="trust-badge">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         <span>LA TARIFA SE PUEDE NEGOCIAR CON EL CLIENTE Y GANAS EL 100% DE LO ACORDADO</span>
       </div>
 
-      <!-- Honeypot anti-spam: invisible para personas -->
-      <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
-        <label for="of-sitioWeb">No completar este campo</label>
+      <!-- Honeypot anti-spam -->
+      <div style="position:absolute;left:-9999px;" aria-hidden="true">
         <input type="text" id="of-sitioWeb" name="sitioWeb" tabindex="-1" autocomplete="off">
       </div>
 
       <div class="submit-row">
         <button type="submit" class="submit" id="of-submitBtn">Enviar ficha</button>
-        <span class="submit-note">Los campos marcados con <span style="color:#C81D2C;">*</span> son obligatorios.</span>
       </div>
     </section>
   </form>
 </div>
 
 <footer class="stamp">OFICIAL</footer>
-
-</div><!-- /#of-form -->
+</div>
 
 <script>
 (function(){
   "use strict";
 
-  if (typeof document !== "undefined" && !document.title) {
-    document.title = "Registro Oficial de Diseñadores | OFICIAL";
-  }
-
-  var root = document.getElementById("of-form");
   var form = document.getElementById("of-designerForm");
   var banner = document.getElementById("of-formBanner");
   var bannerMsg = document.getElementById("of-bannerMsg");
@@ -941,238 +326,96 @@
   var submitBtn = document.getElementById("of-submitBtn");
 
   var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbw2BR_XKsAf6WWohwlD0E1tKGBmigcRXfubripW-yCXk2w6oUd5HQ6C_Fd1jSaCuz4Z/exec";
-  var STORAGE_KEY = "of_designer_form_draft_v3";
+  var DRAFT_KEY = "of_designer_form_draft";
+  var isSubmitting = false;
 
-  /* ---------- Selector Día / Mes / Año ---------- */
-  var now = new Date();
-  var diaSel = document.getElementById("of-dia");
-  for (var d = 1; d <= 31; d++) {
-    var opt = document.createElement("option");
-    opt.value = String(d);
-    opt.textContent = String(d);
-    diaSel.appendChild(opt);
-  }
-
-  var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-  var mesSel = document.getElementById("of-mes");
-  meses.forEach(function(nombreMes, i){
-    var opt = document.createElement("option");
-    opt.value = String(i + 1);
-    opt.textContent = nombreMes;
-    mesSel.appendChild(opt);
-  });
-
-  var anioSel = document.getElementById("of-anio");
-  var currentYear = now.getFullYear();
-  var minAge = 16, maxAge = 80;
-  for (var y = currentYear - minAge; y >= currentYear - maxAge; y--) {
-    var opt = document.createElement("option");
-    opt.value = String(y);
-    opt.textContent = String(y);
-    anioSel.appendChild(opt);
-  }
-
-  /* ---------- Distritos de Lima y Callao ---------- */
+  // --- DISTRITOS (50 OFICIALES) ---
   var distritos = [
-    "Ancón","Ate","Barranco","Bellavista","Breña","Callao","Carabayllo",
-    "Carmen de La Legua-Reynoso","Chaclacayo","Chorrillos","Cieneguilla","Comas",
-    "El Agustino","Independencia","Jesús María","La Molina","La Perla","La Punta",
-    "La Victoria","Lima","Lince","Los Olivos","Lurigancho","Lurín",
-    "Magdalena del Mar","Mi Perú","Miraflores","Pachacámac","Pucusana","Pueblo Libre",
-    "Puente Piedra","Punta Hermosa","Punta Negra","Rímac","San Bartolo","San Borja",
-    "San Isidro","San Juan de Lurigancho","San Juan de Miraflores","San Luis",
-    "San Martín de Porres","San Miguel","Santa Anita","Santa María del Mar",
-    "Santa Rosa","Santiago de Surco","Surquillo","Ventanilla","Villa El Salvador",
-    "Villa María del Triunfo"
+    "Ancón","Ate","Barranco","Bellavista","Breña","Callao","Carabayllo","Carmen de La Legua-Reynoso",
+    "Chaclacayo","Chorrillos","Cieneguilla","Comas","El Agustino","Independencia","Jesús María",
+    "La Molina","La Perla","La Punta","La Victoria","Lima","Lince","Los Olivos","Lurigancho","Lurín",
+    "Magdalena del Mar","Mi Perú","Miraflores","Pachacámac","Pucusana","Pueblo Libre","Puente Piedra",
+    "Punta Hermosa","Punta Negra","Rímac","San Bartolo","San Borja","San Isidro","San Juan de Lurigancho",
+    "San Juan de Miraflores","San Luis","San Martín de Porres","San Miguel","Santa Anita",
+    "Santa María del Mar","Santa Rosa","Santiago de Surco","Surquillo","Ventanilla","Villa El Salvador","Villa María del Triunfo"
   ];
-  var distritosDatalist = document.getElementById("of-distritos-list");
-  var distritosMap = {};
-  distritos.forEach(function(nombreDistrito){
+  
+  var dl = document.getElementById("of-distritos-list");
+  var distMap = {};
+  distritos.forEach(function(d){
     var opt = document.createElement("option");
-    opt.value = nombreDistrito;
-    distritosDatalist.appendChild(opt);
-    distritosMap[nombreDistrito.toLowerCase()] = nombreDistrito;
+    opt.value = d;
+    dl.appendChild(opt);
+    distMap[d.toLowerCase()] = d;
   });
 
-  /* ---------- Formateo inteligente de Teléfono (Celular Perú: inicia en 9, máx 9 dígitos) ---------- */
+  // --- FECHA DE NACIMIENTO (COMBOS Y VALIDACIÓN DÍAS REALES) ---
+  var selDia = document.getElementById("of-nacDia");
+  var selMes = document.getElementById("of-nacMes");
+  var selAnio = document.getElementById("of-nacAnio");
+  var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+  for (var d = 1; d <= 31; d++) {
+    selDia.add(new Option(d < 10 ? "0" + d : d, d));
+  }
+  meses.forEach(function(m, idx){ selMes.add(new Option(m, idx + 1)); });
+
+  var currentYear = new Date().getFullYear();
+  for (var a = currentYear - 16; a >= currentYear - 80; a--) {
+    selAnio.add(new Option(a, a));
+  }
+
+  function isValidBirthDate(day, month, year) {
+    if (!day || !month || !year) return false;
+    var d = parseInt(day, 10), m = parseInt(month, 10) - 1, y = parseInt(year, 10);
+    var dateObj = new Date(y, m, d);
+    return dateObj.getFullYear() === y && dateObj.getMonth() === m && dateObj.getDate() === d;
+  }
+
+  // --- MÁSCARA DE TELÉFONO ---
   var telInput = document.getElementById("of-telefono");
-  function formatPhone(val) {
-    var clean = (val || "").replace(/\D/g, "");
-    if (clean.length === 0) return "";
-    if (clean.length > 9) clean = clean.slice(0, 9);
-    if (clean.length <= 3) return clean;
-    if (clean.length <= 6) return clean.slice(0, 3) + " " + clean.slice(3);
-    return clean.slice(0, 3) + " " + clean.slice(3, 6) + " " + clean.slice(6, 9);
-  }
-
   telInput.addEventListener("input", function(){
-    var formatted = formatPhone(this.value);
-    this.value = formatted;
-    validateTelefono();
+    var clean = this.value.replace(/\D/g, "").slice(0, 9);
+    if (clean.length > 6) this.value = clean.slice(0,3) + " " + clean.slice(3,6) + " " + clean.slice(6);
+    else if (clean.length > 3) this.value = clean.slice(0,3) + " " + clean.slice(3);
+    else this.value = clean;
     saveDraft();
   });
 
-  /* ---------- Tarifas: no negativos ---------- */
-  root.querySelectorAll('.amount-field input[type=number]').forEach(function(input){
-    input.addEventListener("input", function(){
-      if (this.value !== "" && parseFloat(this.value) < 0) this.value = "0";
-      validateRates();
-      saveDraft();
-    });
-  });
-
-  /* ---------- Sanitización flexible y segura de Portafolio ---------- */
-  function sanitizePortfolioUrl(raw) {
-    var val = (raw || "").trim();
+  // --- PORTAFOLIO Y SEGURIDAD XSS ---
+  function sanitizePortfolioUrl(val) {
+    val = (val || "").trim();
     if (!val) return "";
-    if (val.indexOf("@") === 0) {
-      return "https://instagram.com/" + encodeURIComponent(val.slice(1));
-    }
-    if (!/^https?:\/\//i.test(val)) {
-      return "https://" + val;
-    }
-    return val;
+    if (/^javascript:/i.test(val)) return "";
+    if (val.startsWith("@")) return "https://instagram.com/" + encodeURIComponent(val.slice(1));
+    return /^https?:\/\//i.test(val) ? val : "https://" + val;
   }
 
-  function isValidUrl(value) {
-    var val = sanitizePortfolioUrl(value);
-    try {
-      var u = new URL(val);
-      return (u.protocol === "http:" || u.protocol === "https:") && u.hostname.indexOf(".") > 0;
-    } catch (e) { return false; }
-  }
-
-  /* ---------- Validaciones y Feedback en vivo ---------- */
-  function setError(fieldName, hasError) {
-    var field = form.querySelector('[data-field="' + fieldName + '"]');
-    if (!field) return;
-    field.classList.toggle("error", hasError);
-  }
-
-  function validateNombres() {
-    var val = form.nombres.value.trim();
-    var ok = val.length >= 2;
-    setError("nombres", !ok);
-    return ok;
-  }
-
-  function validateApellidos() {
-    var val = form.apellidos.value.trim();
-    var ok = val.length >= 2;
-    setError("apellidos", !ok);
-    return ok;
-  }
-
-  function validateGenero() {
-    var genero = form.querySelector('input[name="genero"]:checked');
-    var ok = !!genero;
-    setError("genero", !ok);
-    return ok;
-  }
-
-  function validateDob() {
-    var dia = form.dia.value, mes = form.mes.value, anio = form.anio.value;
-    var count = [dia, mes, anio].filter(Boolean).length;
-    var ok = (count === 0 || count === 3);
-    setError("fechaNacimiento", !ok);
-    return ok;
-  }
-
-  function validateDistrito() {
-    var val = form.distrito.value.trim();
-    var canonical = distritosMap[val.toLowerCase()];
-    var ok = !!canonical;
-    if (canonical && val !== canonical) {
-      form.distrito.value = canonical;
-    }
-    setError("distrito", !ok);
-    return ok;
-  }
-
-  function validateTelefono() {
-    var digits = form.telefono.value.replace(/\D/g, "");
-    var ok = (digits.length === 9 && digits.charAt(0) === "9");
-    setError("telefono", !ok);
-    return ok;
-  }
-
-  function validateRates() {
-    var tBasico = form.tarjetaBasico.value.trim();
-    var tComplejo = form.tarjetaComplejo.value.trim();
-    var tGroup = form.querySelector('[data-field="tarjetaGroup"]');
-    var tOk = !!(tBasico || tComplejo);
-    tGroup.classList.toggle("error", !tOk);
-
-    var vBasico = form.volanteBasico.value.trim();
-    var vComplejo = form.volanteComplejo.value.trim();
-    var vGroup = form.querySelector('[data-field="volanteGroup"]');
-    var vOk = !!(vBasico || vComplejo);
-    vGroup.classList.toggle("error", !vOk);
-
-    return tOk && vOk;
-  }
-
-  function validatePortafolio() {
-    var val = form.portafolio.value.trim();
-    var ok = !!val && isValidUrl(val);
-    setError("portafolio", !ok);
-    return ok;
-  }
-
-  // Listeners en vivo (blur e input)
-  form.nombres.addEventListener("blur", validateNombres);
-  form.nombres.addEventListener("input", function(){ if (this.value.trim()) validateNombres(); saveDraft(); });
-
-  form.apellidos.addEventListener("blur", validateApellidos);
-  form.apellidos.addEventListener("input", function(){ if (this.value.trim()) validateApellidos(); saveDraft(); });
-
-  form.querySelectorAll('input[name="genero"]').forEach(function(r){
-    r.addEventListener("change", function(){ validateGenero(); saveDraft(); });
-  });
-
-  [diaSel, mesSel, anioSel].forEach(function(s){
-    s.addEventListener("change", function(){ validateDob(); saveDraft(); });
-  });
-
-  form.distrito.addEventListener("blur", validateDistrito);
-  form.distrito.addEventListener("input", function(){ saveDraft(); });
-
-  form.portafolio.addEventListener("blur", function(){
-    var cleaned = sanitizePortfolioUrl(this.value);
-    if (cleaned && cleaned !== this.value) {
-      this.value = cleaned;
-    }
-    validatePortafolio();
-    saveDraft();
-  });
-  form.portafolio.addEventListener("input", function(){ saveDraft(); });
-
-  /* ---------- LocalStorage (Auto-guardado y restauración) ---------- */
+  // --- LOCALSTORAGE (BORRADOR AUTOMÁTICO) ---
   function saveDraft() {
-    try {
-      var gen = form.querySelector('input[name="genero"]:checked');
-      var draft = {
-        nombres: form.nombres.value,
-        apellidos: form.apellidos.value,
-        genero: gen ? gen.value : "",
-        dia: form.dia.value,
-        mes: form.mes.value,
-        anio: form.anio.value,
-        distrito: form.distrito.value,
-        telefono: form.telefono.value,
-        tarjetaBasico: form.tarjetaBasico.value,
-        tarjetaComplejo: form.tarjetaComplejo.value,
-        volanteBasico: form.volanteBasico.value,
-        volanteComplejo: form.volanteComplejo.value,
-        portafolio: form.portafolio.value
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-    } catch (e) {}
+    if (isSubmitting) return;
+    var gen = form.querySelector('input[name="genero"]:checked');
+    var draft = {
+      nombres: form.nombres.value,
+      apellidos: form.apellidos.value,
+      genero: gen ? gen.value : "",
+      nacDia: selDia.value,
+      nacMes: selMes.value,
+      nacAnio: selAnio.value,
+      distrito: form.distrito.value,
+      telefono: telInput.value,
+      tarjetaBasico: document.getElementById("of-tarjetaBasico").value,
+      tarjetaComplejo: document.getElementById("of-tarjetaComplejo").value,
+      volanteBasico: document.getElementById("of-volanteBasico").value,
+      volanteComplejo: document.getElementById("of-volanteComplejo").value,
+      portafolio: form.portafolio.value
+    };
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch(e){}
   }
 
-  function restoreDraft() {
+  function loadDraft() {
     try {
-      var raw = localStorage.getItem(STORAGE_KEY);
+      var raw = localStorage.getItem(DRAFT_KEY);
       if (!raw) return;
       var draft = JSON.parse(raw);
       if (draft.nombres) form.nombres.value = draft.nombres;
@@ -1181,101 +424,110 @@
         var r = form.querySelector('input[name="genero"][value="' + draft.genero + '"]');
         if (r) r.checked = true;
       }
-      if (draft.dia) form.dia.value = draft.dia;
-      if (draft.mes) form.mes.value = draft.mes;
-      if (draft.anio) form.anio.value = draft.anio;
+      if (draft.nacDia) selDia.value = draft.nacDia;
+      if (draft.nacMes) selMes.value = draft.nacMes;
+      if (draft.nacAnio) selAnio.value = draft.nacAnio;
       if (draft.distrito) form.distrito.value = draft.distrito;
-      if (draft.telefono) form.telefono.value = formatPhone(draft.telefono);
-      if (draft.tarjetaBasico) form.tarjetaBasico.value = draft.tarjetaBasico;
-      if (draft.tarjetaComplejo) form.tarjetaComplejo.value = draft.tarjetaComplejo;
-      if (draft.volanteBasico) form.volanteBasico.value = draft.volanteBasico;
-      if (draft.volanteComplejo) form.volanteComplejo.value = draft.volanteComplejo;
+      if (draft.telefono) telInput.value = draft.telefono;
+      if (draft.tarjetaBasico) document.getElementById("of-tarjetaBasico").value = draft.tarjetaBasico;
+      if (draft.tarjetaComplejo) document.getElementById("of-tarjetaComplejo").value = draft.tarjetaComplejo;
+      if (draft.volanteBasico) document.getElementById("of-volanteBasico").value = draft.volanteBasico;
+      if (draft.volanteComplejo) document.getElementById("of-volanteComplejo").value = draft.volanteComplejo;
       if (draft.portafolio) form.portafolio.value = draft.portafolio;
-    } catch (e) {}
+    } catch(e){}
   }
 
-  function clearDraft() {
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  form.addEventListener("input", saveDraft);
+  form.addEventListener("change", saveDraft);
+  loadDraft();
+
+  // --- VALIDACIONES ESTRUCTURALES ---
+  function setError(name, hasError) {
+    var f = form.querySelector('[data-field="' + name + '"]');
+    if (f) f.classList.toggle("error", hasError);
   }
 
-  restoreDraft();
+  function validate() {
+    var nombresOk = form.nombres.value.trim().length >= 2;
+    setError("nombres", !nombresOk);
 
-  /* ---------- Manejo del Envío ---------- */
-  function showBanner(message, isError, showStamp) {
-    bannerMsg.textContent = message;
-    if (isError) {
-      banner.classList.add("show", "err");
-      stampSeal.style.display = "none";
-    } else {
-      banner.classList.remove("err");
-      banner.classList.add("show");
-      stampSeal.style.display = showStamp ? "inline-block" : "none";
+    var apellidosOk = form.apellidos.value.trim().length >= 2;
+    setError("apellidos", !apellidosOk);
+
+    var gen = form.querySelector('input[name="genero"]:checked');
+    setError("genero", !gen);
+
+    var dateOk = isValidBirthDate(selDia.value, selMes.value, selAnio.value);
+    setError("fechaNacimiento", !dateOk);
+
+    var distVal = form.distrito.value.trim();
+    var distOk = !!distMap[distVal.toLowerCase()];
+    if (distOk) form.distrito.value = distMap[distVal.toLowerCase()];
+    setError("distrito", !distOk);
+
+    var phoneDigits = form.telefono.value.replace(/\D/g, "");
+    var phoneOk = phoneDigits.length === 9 && phoneDigits.startsWith("9");
+    setError("telefono", !phoneOk);
+
+    var tOk = !!(document.getElementById("of-tarjetaBasico").value.trim() || document.getElementById("of-tarjetaComplejo").value.trim());
+    form.querySelector('[data-field="tarjetaGroup"]').classList.toggle("error", !tOk);
+
+    var vOk = !!(document.getElementById("of-volanteBasico").value.trim() || document.getElementById("of-volanteComplejo").value.trim());
+    form.querySelector('[data-field="volanteGroup"]').classList.toggle("error", !vOk);
+
+    var portVal = sanitizePortfolioUrl(form.portafolio.value);
+    var portOk = false;
+    if (portVal) {
+      try {
+        var u = new URL(portVal);
+        portOk = (u.protocol === "http:" || u.protocol === "https:") && u.hostname.includes(".");
+      } catch(e){}
     }
-    banner.scrollIntoView({ behavior: "smooth", block: "center" });
+    setError("portafolio", !portOk);
+
+    return nombresOk && apellidosOk && !!gen && dateOk && distOk && phoneOk && tOk && vOk && portOk;
   }
 
+  // --- ENVÍO VÍA FETCH ---
   form.addEventListener("submit", function(e){
     e.preventDefault();
-    banner.classList.remove("show", "err");
-    stampSeal.style.display = "none";
-
-    var vNombres = validateNombres();
-    var vApellidos = validateApellidos();
-    var vGenero = validateGenero();
-    var vDob = validateDob();
-    var vDistrito = validateDistrito();
-    var vTelefono = validateTelefono();
-    var vRates = validateRates();
-    var vPortafolio = validatePortafolio();
-
-    var valid = vNombres && vApellidos && vGenero && vDob && vDistrito && vTelefono && vRates && vPortafolio;
-
-    if (!valid) {
-      var firstInvalid = form.querySelector('.field.error, .rate-group.error');
-      showBanner("Revisa los campos marcados en rojo antes de enviar.", true, false);
-      if (firstInvalid) {
-        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
-        var focusable = firstInvalid.querySelector("input, select");
-        if (focusable) focusable.focus();
-      }
+    
+    if (!validate()) {
+      bannerMsg.textContent = "Revisa los campos marcados en rojo antes de enviar.";
+      banner.className = "banner show err";
+      stampSeal.style.display = "none";
       return;
     }
 
-    var esBot = form.sitioWeb.value.trim() !== "";
-    if (esBot) {
-      showBanner("¡Ficha enviada correctamente!", false, true);
+    // Honeypot
+    if (document.getElementById("of-sitioWeb").value.trim() !== "") {
+      bannerMsg.textContent = "¡Ficha enviada correctamente!";
+      banner.className = "banner show";
+      stampSeal.style.display = "inline-block";
+      localStorage.removeItem(DRAFT_KEY);
       form.reset();
-      clearDraft();
       return;
     }
 
-    var nombres = form.nombres.value.trim();
-    var apellidos = form.apellidos.value.trim();
-    var genero = form.querySelector('input[name="genero"]:checked').value;
-    var dia = form.dia.value, mes = form.mes.value, anio = form.anio.value;
-    var dobStr = (dia && mes && anio) ? (anio + "-" + String(mes).padStart(2,"0") + "-" + String(dia).padStart(2,"0")) : "";
-    var distrito = form.distrito.value.trim();
-    var telefonoDigits = form.telefono.value.replace(/\D/g, "");
-    var tarjetaBasico = form.tarjetaBasico.value.trim();
-    var tarjetaComplejo = form.tarjetaComplejo.value.trim();
-    var volanteBasico = form.volanteBasico.value.trim();
-    var volanteComplejo = form.volanteComplejo.value.trim();
-    var portafolioUrl = sanitizePortfolioUrl(form.portafolio.value);
+    var dStr = selDia.value < 10 ? "0" + parseInt(selDia.value,10) : selDia.value;
+    var mStr = selMes.value < 10 ? "0" + parseInt(selMes.value,10) : selMes.value;
+    var fechaNacFormatted = selAnio.value + "-" + mStr + "-" + dStr;
 
     var payload = {
-      nombres: nombres,
-      apellidos: apellidos,
-      genero: genero,
-      fechaNacimiento: dobStr,
-      distrito: distrito,
-      telefono: telefonoDigits,
-      tarjetaBasico: tarjetaBasico,
-      tarjetaComplejo: tarjetaComplejo,
-      volanteBasico: volanteBasico,
-      volanteComplejo: volanteComplejo,
-      portafolio: portafolioUrl
+      nombres: form.nombres.value.trim(),
+      apellidos: form.apellidos.value.trim(),
+      genero: form.querySelector('input[name="genero"]:checked').value,
+      fechaNacimiento: fechaNacFormatted,
+      distrito: form.distrito.value.trim(),
+      telefono: form.telefono.value.replace(/\D/g, ""),
+      tarjetaBasico: document.getElementById("of-tarjetaBasico").value.trim(),
+      tarjetaComplejo: document.getElementById("of-tarjetaComplejo").value.trim(),
+      volanteBasico: document.getElementById("of-volanteBasico").value.trim(),
+      volanteComplejo: document.getElementById("of-volanteComplejo").value.trim(),
+      portafolio: sanitizePortfolioUrl(form.portafolio.value)
     };
 
+    isSubmitting = true;
     submitBtn.disabled = true;
     submitBtn.textContent = "Enviando ficha…";
 
@@ -1284,77 +536,32 @@
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        if (data && data.result === "success") {
-          var successMsg = data.updated
-            ? "Tus datos se actualizaron correctamente. ¡Gracias, " + nombres + "!"
-            : "¡Ficha enviada correctamente! Gracias, " + nombres + ".";
-          showBanner(successMsg, false, true);
-          form.reset();
-          clearDraft();
-        } else {
-          showBanner((data && data.message) || "No se pudo guardar tu ficha. Intenta nuevamente.", true, false);
-        }
-      })
-      .catch(function(){
-        showBanner("No se pudo conectar con el servidor. Revisa tu conexión e intenta nuevamente.", true, false);
-      })
-      .finally(function(){
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Enviar ficha";
-      });
-  });
-
-})();
-</script>
-
-<script>
-(function () {
-  var KEY = "of_version";
-  var VERSION_URL = "/version.json";
-
-  function isUserBusy() {
-    var activeTag = document.activeElement ? document.activeElement.tagName : "";
-    var isTyping = (activeTag === "INPUT" || activeTag === "SELECT" || activeTag === "TEXTAREA");
-    var submitBtn = document.getElementById("of-submitBtn");
-    var isSubmitting = submitBtn && submitBtn.disabled;
-    return isTyping || isSubmitting;
-  }
-
-  function checkVersion() {
-    fetch(VERSION_URL + "?_=" + Date.now(), {
-      cache: "no-store"
-    })
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (data) {
-      var current = sessionStorage.getItem(KEY);
-
-      if (!current) {
-        sessionStorage.setItem(KEY, data.v);
-        return;
-      }
-
-      if (current !== data.v) {
-        sessionStorage.setItem(KEY, data.v);
-        if (!isUserBusy()) {
-          window.location.reload();
-        }
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if (data && data.result === "success") {
+        bannerMsg.textContent = data.updated
+          ? "Tus datos se actualizaron correctamente. ¡Gracias, " + payload.nombres + "!"
+          : "¡Ficha enviada correctamente! Gracias, " + payload.nombres + ".";
+        banner.className = "banner show";
+        stampSeal.style.display = "inline-block";
+        localStorage.removeItem(DRAFT_KEY);
+        form.reset();
+      } else {
+        bannerMsg.textContent = (data && data.message) || "Ocurrió un error al guardar.";
+        banner.className = "banner show err";
+        stampSeal.style.display = "none";
       }
     })
-    .catch(function () {});
-  }
-
-  checkVersion();
-
-  setInterval(checkVersion, 5 * 60 * 1000);
-
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) {
-      checkVersion();
-    }
+    .catch(function(){
+      bannerMsg.textContent = "Error de conexión con el servidor.";
+      banner.className = "banner show err";
+      stampSeal.style.display = "none";
+    })
+    .finally(function(){
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Enviar ficha";
+    });
   });
 })();
 </script>
