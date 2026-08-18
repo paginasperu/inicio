@@ -1308,5 +1308,55 @@
 
 })();
 </script>
+
+<script>
+(function () {
+  var KEY = "of_version";
+  var VERSION_URL = "/version.json";
+
+  function isUserBusy() {
+    var activeTag = document.activeElement ? document.activeElement.tagName : "";
+    var isTyping = (activeTag === "INPUT" || activeTag === "SELECT" || activeTag === "TEXTAREA");
+    var submitBtn = document.getElementById("of-submitBtn");
+    var isSubmitting = submitBtn && submitBtn.disabled;
+    return isTyping || isSubmitting;
+  }
+
+  function checkVersion() {
+    fetch(VERSION_URL + "?_=" + Date.now(), {
+      cache: "no-store"
+    })
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      var current = sessionStorage.getItem(KEY);
+
+      if (!current) {
+        sessionStorage.setItem(KEY, data.v);
+        return;
+      }
+
+      if (current !== data.v) {
+        sessionStorage.setItem(KEY, data.v);
+        if (!isUserBusy()) {
+          window.location.reload();
+        }
+      }
+    })
+    .catch(function () {});
+  }
+
+  checkVersion();
+
+  setInterval(checkVersion, 5 * 60 * 1000);
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+      checkVersion();
+    }
+  });
+})();
+</script>
 </body>
 </html>
