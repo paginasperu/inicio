@@ -1,281 +1,737 @@
-<!-- ============================================================
-     OFICIAL — Registro Oficial de Diseñadores (versión para WordPress)
-     ------------------------------------------------------------
-     Cómo usarlo:
-     1. Crea una página nueva en WordPress (o edita una existente).
-     2. Añade un bloque "HTML personalizado" (busca "Custom HTML"
-        si tu WordPress está en inglés).
-     3. Pega TODO este archivo dentro de ese bloque.
-     4. Publica. Listo — no usa WPForms, envía directo a Google
-        Sheets con el mismo Apps Script que ya configuraste.
-     5. Recuerda reemplazar SHEET_ENDPOINT más abajo con tu URL real.
-     ============================================================ -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Registro Oficial de Diseñadores | OFICIAL</title>
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-<title>Registro Oficial de Diseñadores | OFICIAL</title>
+  /* Reset global seguro */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    background: #F3F0E7;
+  }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  /* Todo vive bajo #of-form para encapsulación total */
+  #of-form {
+    --paper: #F3F0E7;
+    --paper-raised: #FBFAF6;
+    --ink: #17161B;
+    --accent: #C81D2C;
+    --accent-ink: #8F1420;
+    --line: #D8D2BE;
+    --muted: #726C5D;
+    --ok: #2B6B4A;
+    --ok-bg: #EEF6F1;
+    --radius: 2px;
 
-/* Todo vive bajo #of-form para que el CSS del tema no lo toque */
-#of-form{
-  --paper:#F3F0E7;
-  --paper-raised:#FBFAF6;
-  --ink:#17161B;
-  --accent:#C81D2C;
-  --accent-ink:#8F1420;
-  --line:#D8D2BE;
-  --muted:#726C5D;
-  --ok:#2B6B4A;
-  --ok-bg:#EEF6F1;
-  --radius:2px;
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    line-height: 1.5 !important;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(20px, 4vw, 48px) clamp(12px, 3vw, 16px) clamp(32px, 5vw, 64px) !important;
+    background-image: radial-gradient(circle, rgba(23,22,27,0.06) 1px, transparent 1px) !important;
+    background-size: 22px 22px !important;
+    display: block;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
 
-  background:var(--paper) !important;
-  color:var(--ink) !important;
-  font-family:'Inter',system-ui,sans-serif !important;
-  line-height:1.5 !important;
-  -webkit-font-smoothing:antialiased;
-  padding:48px 16px 64px !important;
-  background-image:radial-gradient(circle, rgba(23,22,27,0.06) 1px, transparent 1px) !important;
-  background-size:22px 22px !important;
-  display:block;
-}
-#of-form *{ box-sizing:border-box !important; }
-#of-form h1,#of-form h3,#of-form p,#of-form ul,#of-form li,#of-form label,#of-form button{
-  margin:0; padding:0; text-align:left; list-style:none; border:0; background:none;
-  font:inherit; color:inherit; line-height:inherit;
-}
+  #of-form * {
+    box-sizing: border-box !important;
+  }
 
-#of-form .sheet{
-  max-width:720px !important;
-  margin:0 auto !important;
-  background:var(--paper-raised) !important;
-  position:relative !important;
-  border:1px solid var(--ink) !important;
-  box-shadow:6px 6px 0 var(--ink) !important;
-}
+  #of-form h1, #of-form h3, #of-form p, #of-form ul, #of-form li, #of-form label, #of-form button {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    list-style: none;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    line-height: inherit;
+  }
 
-/* Marcas de registro (esquinas) */
-#of-form .crop{ position:absolute !important; width:20px !important; height:20px !important; pointer-events:none !important; }
-#of-form .crop::before,#of-form .crop::after{ content:"" !important; position:absolute !important; background:var(--ink) !important; }
-#of-form .crop::before{ width:100% !important; height:1px !important; top:50% !important; left:0 !important; }
-#of-form .crop::after{ width:1px !important; height:100% !important; left:50% !important; top:0 !important; }
-#of-form .crop.tl{ top:-10px !important; left:-10px !important; }
-#of-form .crop.tr{ top:-10px !important; right:-10px !important; }
-#of-form .crop.bl{ bottom:-10px !important; left:-10px !important; }
-#of-form .crop.br{ bottom:-10px !important; right:-10px !important; }
+  #of-form .sheet {
+    max-width: 720px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    background: var(--paper-raised) !important;
+    position: relative !important;
+    border: 1px solid var(--ink) !important;
+    box-shadow: 6px 6px 0 var(--ink) !important;
+  }
 
-#of-form header.masthead{ padding:36px 44px 26px !important; border-bottom:2px solid var(--ink) !important; }
-#of-form .masthead-top{
-  display:flex !important;
-  justify-content:space-between !important;
-  align-items:center !important;
-  gap:12px !important;
-  flex-wrap:wrap !important;
-  margin-bottom:14px !important;
-}
-#of-form .masthead-brand{
-  font-family:'IBM Plex Mono',monospace !important;
-  font-size:12px !important;
-  letter-spacing:.16em !important;
-  font-weight:700 !important;
-  color:var(--accent-ink) !important;
-  text-transform:uppercase !important;
-  display:flex !important;
-  align-items:center !important;
-  gap:8px !important;
-}
-#of-form .masthead-brand::before{ content:"" !important; width:8px !important; height:8px !important; border-radius:50% !important; background:var(--accent) !important; display:inline-block !important; }
+  /* Marcas de registro (esquinas) */
+  #of-form .crop {
+    position: absolute !important;
+    width: 20px !important;
+    height: 20px !important;
+    pointer-events: none !important;
+  }
+  #of-form .crop::before, #of-form .crop::after {
+    content: "" !important;
+    position: absolute !important;
+    background: var(--ink) !important;
+  }
+  #of-form .crop::before {
+    width: 100% !important;
+    height: 1px !important;
+    top: 50% !important;
+    left: 0 !important;
+  }
+  #of-form .crop::after {
+    width: 1px !important;
+    height: 100% !important;
+    left: 50% !important;
+    top: 0 !important;
+  }
+  #of-form .crop.tl { top: -10px !important; left: -10px !important; }
+  #of-form .crop.tr { top: -10px !important; right: -10px !important; }
+  #of-form .crop.bl { bottom: -10px !important; left: -10px !important; }
+  #of-form .crop.br { bottom: -10px !important; right: -10px !important; }
 
-#of-form .whatsapp-help{
-  display:inline-flex !important;
-  align-items:center !important;
-  gap:7px !important;
-  font-family:'IBM Plex Mono',monospace !important;
-  font-size:11.5px !important;
-  color:var(--ink) !important;
-  text-decoration:none !important;
-  background:#fff !important;
-  padding:6px 12px !important;
-  border:1px solid var(--ink) !important;
-  border-radius:var(--radius) !important;
-  transition:background .15s ease, color .15s ease, transform .1s ease !important;
-}
-#of-form .whatsapp-help:hover{
-  background:var(--ink) !important;
-  color:#fff !important;
-  transform:translateY(-1px) !important;
-}
-#of-form .whatsapp-help strong{ font-weight:600 !important; }
+  #of-form header.masthead {
+    padding: clamp(24px, 4vw, 36px) clamp(18px, 5vw, 44px) clamp(20px, 3.5vw, 26px) !important;
+    border-bottom: 2px solid var(--ink) !important;
+  }
 
-#of-form h1{ font-family:'Archivo Black',sans-serif !important; font-size:clamp(26px,4.8vw,36px) !important; line-height:1.08 !important; margin:0 0 10px !important; letter-spacing:-0.01em !important; display:block !important; text-transform:uppercase !important; }
-#of-form .masthead p{ color:var(--muted) !important; font-size:15px !important; max-width:54ch !important; display:block !important; }
+  #of-form .masthead-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 14px !important;
+  }
 
-#of-form form{ padding:8px 44px 44px !important; }
-#of-form .section{ padding:34px 0 6px !important; }
-#of-form .section + .section{ border-top:1px dashed var(--line) !important; position:relative !important; }
-#of-form .section + .section::before,#of-form .section + .section::after{
-  content:"" !important; position:absolute !important; top:-5px !important; width:10px !important; height:10px !important;
-  border-radius:50% !important; background:var(--paper) !important; border:1px solid var(--line) !important;
-}
-#of-form .section + .section::before{ left:-54px !important; }
-#of-form .section + .section::after{ right:-54px !important; }
+  #of-form .masthead-brand {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 13px !important;
+    letter-spacing: .16em !important;
+    font-weight: 700 !important;
+    color: var(--accent-ink) !important;
+    text-transform: uppercase !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  #of-form .masthead-brand::before {
+    content: "" !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background: var(--accent) !important;
+    display: inline-block !important;
+  }
 
-#of-form .section-head{ display:flex !important; align-items:baseline !important; gap:12px !important; margin-bottom:6px !important; }
-#of-form .section-num{ font-family:'IBM Plex Mono',monospace !important; font-size:13px !important; color:var(--accent) !important; font-weight:600 !important; }
-#of-form .section-title{ font-family:'Archivo Black',sans-serif !important; font-size:19px !important; text-transform:uppercase !important; letter-spacing:.01em !important; }
-#of-form .section-note{ font-size:13.5px !important; color:var(--muted) !important; margin:6px 0 22px !important; max-width:60ch !important; display:block !important; }
+  /* Botón interactivo directo de WhatsApp */
+  #of-form .whatsapp-help {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 12px !important;
+    color: var(--ink) !important;
+    text-decoration: none !important;
+    background: #fff !important;
+    padding: 8px 14px !important;
+    border: 1px solid var(--ink) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    transition: all .15s ease !important;
+    cursor: pointer !important;
+  }
+  #of-form .whatsapp-help:hover {
+    background: var(--ink) !important;
+    color: #fff !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 var(--accent) !important;
+  }
+  #of-form .whatsapp-help:active {
+    transform: translate(1px, 1px) !important;
+    box-shadow: 1px 1px 0 var(--ink) !important;
+  }
+  #of-form .whatsapp-help svg {
+    flex: none !important;
+    transition: transform .15s ease !important;
+  }
+  #of-form .whatsapp-help:hover svg {
+    transform: scale(1.1) !important;
+  }
+  #of-form .whatsapp-help strong {
+    font-weight: 700 !important;
+    letter-spacing: .02em !important;
+  }
 
-#of-form .row{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:20px !important; }
-#of-form .row.dob{ grid-template-columns:.8fr 1.3fr 1fr !important; }
-@media (max-width:560px){
-  #of-form .row, #of-form .row.dob{ grid-template-columns:1fr !important; }
-}
+  #of-form h1 {
+    font-family: 'Archivo Black', sans-serif !important;
+    font-size: clamp(24px, 4.8vw, 36px) !important;
+    line-height: 1.1 !important;
+    margin: 0 0 10px !important;
+    letter-spacing: -0.01em !important;
+    display: block !important;
+    text-transform: uppercase !important;
+  }
 
-#of-form .field{ margin-bottom:20px !important; }
-#of-form .field label{ display:block !important; font-size:12.5px !important; font-weight:600 !important; text-transform:uppercase !important; letter-spacing:.05em !important; margin-bottom:7px !important; }
-#of-form .field label .req{ color:var(--accent) !important; margin-left:2px !important; }
-#of-form .field label .opt{ font-weight:400 !important; text-transform:none !important; color:var(--muted) !important; letter-spacing:0 !important; font-size:11.5px !important; }
+  #of-form .masthead p {
+    color: var(--muted) !important;
+    font-size: clamp(14px, 2vw, 15px) !important;
+    max-width: 54ch !important;
+    display: block !important;
+  }
 
-#of-form input[type=text],#of-form input[type=tel],#of-form input[type=url],#of-form input[type=number],#of-form select{
-  width:100% !important; font-family:'Inter',sans-serif !important; font-size:15px !important; padding:11px 12px !important;
-  border:1px solid var(--ink) !important; border-radius:var(--radius) !important; background:#fff !important; color:var(--ink) !important;
-  appearance:none !important; -webkit-appearance:none !important; box-shadow:none !important;
-  transition:box-shadow .15s ease, border-color .15s ease !important;
-}
-#of-form select{
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%2317161B' stroke-width='1.6' fill='none' fill-rule='evenodd'/></svg>") !important;
-  background-repeat:no-repeat !important; background-position:right 12px center !important; padding-right:32px !important;
-}
-#of-form input:focus,#of-form select:focus{ outline:none !important; border-color:var(--accent) !important; box-shadow:0 0 0 3px rgba(200,29,44,0.15) !important; }
-#of-form input::placeholder{ color:#A7A296 !important; }
+  #of-form form {
+    padding: 8px clamp(18px, 5vw, 44px) clamp(24px, 5vw, 44px) !important;
+  }
 
-#of-form .field.error input,#of-form .field.error select{ border-color:var(--accent) !important; background:#FBEDEC !important; }
-#of-form .error-msg{ display:none !important; font-family:'IBM Plex Mono',monospace !important; font-size:11.5px !important; color:var(--accent-ink) !important; margin-top:6px !important; }
-#of-form .field.error .error-msg{ display:block !important; }
+  #of-form .section {
+    padding: 32px 0 6px !important;
+  }
+  #of-form .section + .section {
+    border-top: 1px dashed var(--line) !important;
+    position: relative !important;
+  }
+  #of-form .section + .section::before,
+  #of-form .section + .section::after {
+    content: "" !important;
+    position: absolute !important;
+    top: -5px !important;
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+  }
+  #of-form .section + .section::before { left: -54px !important; }
+  #of-form .section + .section::after { right: -54px !important; }
 
-/* Género — control segmentado */
-#of-form .segmented{ display:flex !important; border:1px solid var(--ink) !important; border-radius:var(--radius) !important; overflow:hidden !important; }
-#of-form .segmented input{ position:absolute !important; opacity:0 !important; pointer-events:none !important; }
-#of-form .segmented label{
-  flex:1 !important; text-align:center !important; padding:11px 8px !important; font-size:14px !important; font-weight:600 !important;
-  text-transform:none !important; letter-spacing:0 !important; cursor:pointer !important; color:var(--muted) !important;
-  background:#fff !important; border:none !important; margin:0 !important; transition:background .15s ease, color .15s ease !important;
-}
-#of-form .segmented label + label{ border-left:1px solid var(--ink) !important; }
-#of-form .segmented input:checked + label{ background:var(--ink) !important; color:#fff !important; }
-#of-form .segmented input:focus-visible + label{ outline:2px solid var(--accent) !important; outline-offset:-2px !important; }
+  #of-form .section-head {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 12px !important;
+    margin-bottom: 6px !important;
+  }
+  #of-form .section-num {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 13px !important;
+    color: var(--accent) !important;
+    font-weight: 700 !important;
+  }
+  #of-form .section-title {
+    font-family: 'Archivo Black', sans-serif !important;
+    font-size: clamp(17px, 3vw, 19px) !important;
+    text-transform: uppercase !important;
+    letter-spacing: .01em !important;
+  }
+  #of-form .section-note {
+    font-size: 13.5px !important;
+    color: var(--muted) !important;
+    margin: 6px 0 22px !important;
+    max-width: 60ch !important;
+    display: block !important;
+  }
 
-/* Teléfono con prefijo */
-#of-form .prefix-field{ position:relative !important; }
-#of-form .prefix-field .prefix{
-  position:absolute !important; left:1px !important; top:1px !important; bottom:1px !important; display:flex !important; align-items:center !important;
-  padding:0 10px !important; font-family:'IBM Plex Mono',monospace !important; font-size:14px !important; color:var(--muted) !important;
-  background:#EFEBDF !important; border-right:1px solid var(--ink) !important; border-radius:1px 0 0 1px !important;
-}
-#of-form .prefix-field input{ padding-left:52px !important; font-family:'IBM Plex Mono',monospace !important; letter-spacing:.04em !important; }
+  #of-form .row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+  #of-form .row.dob {
+    grid-template-columns: 0.85fr 1.35fr 1fr !important;
+    gap: 10px !important;
+  }
 
-/* Tarifas */
-#of-form .rate-group{ margin-bottom:30px !important; padding:20px 20px 6px !important; border:1px solid var(--line) !important; border-radius:var(--radius) !important; background:#FDFCF9 !important; }
-#of-form .rate-group.error{ border-color:var(--accent) !important; background:#FBEDEC !important; }
-#of-form .rate-group-title{ display:flex !important; align-items:center !important; gap:12px !important; margin-bottom:4px !important; }
-#of-form .rate-group-title .sq{ width:10px !important; height:10px !important; background:var(--accent) !important; flex:none !important; }
-#of-form .rate-group-title h3{ font-family:'Archivo Black',sans-serif !important; font-size:18px !important; text-transform:uppercase !important; letter-spacing:.01em !important; margin:0 !important; display:block !important; }
-#of-form .rate-group-title::after{ content:"" !important; flex:1 !important; height:2px !important; background:var(--line) !important; }
-#of-form .rate-group-note{ font-family:'IBM Plex Mono',monospace !important; font-size:11.5px !important; color:var(--muted) !important; margin:0 0 18px !important; display:block !important; }
-#of-form .rate-group-error{ display:none !important; font-family:'IBM Plex Mono',monospace !important; font-size:11.5px !important; color:var(--accent-ink) !important; margin:-8px 0 16px !important; }
-#of-form .rate-group.error .rate-group-error{ display:block !important; }
-#of-form .amount-field{ position:relative !important; }
-#of-form .amount-field .cur{
-  position:absolute !important; left:1px !important; top:1px !important; bottom:1px !important; display:flex !important; align-items:center !important;
-  padding:0 10px !important; font-family:'IBM Plex Mono',monospace !important; font-size:13px !important; color:var(--muted) !important;
-  background:#EFEBDF !important; border-right:1px solid var(--ink) !important;
-}
-#of-form .amount-field input{ padding-left:44px !important; font-family:'IBM Plex Mono',monospace !important; }
-#of-form .amount-field input::-webkit-outer-spin-button,#of-form .amount-field input::-webkit-inner-spin-button{ -webkit-appearance:none !important; margin:0 !important; }
-#of-form .amount-field input[type=number]{ -moz-appearance:textfield !important; }
+  #of-form .field {
+    margin-bottom: 20px !important;
+  }
+  #of-form .field label {
+    display: block !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    margin-bottom: 7px !important;
+  }
+  #of-form .field label .req {
+    color: var(--accent) !important;
+    margin-left: 2px !important;
+  }
+  #of-form .field label .opt {
+    font-weight: 400 !important;
+    text-transform: none !important;
+    color: var(--muted) !important;
+    letter-spacing: 0 !important;
+    font-size: 11.5px !important;
+  }
 
-#of-form .field-hint{ font-size:11.5px !important; color:var(--muted) !important; margin-top:6px !important; display:block !important; }
+  #of-form input[type=text],
+  #of-form input[type=tel],
+  #of-form input[type=url],
+  #of-form input[type=number],
+  #of-form select {
+    width: 100% !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-size: 16px !important; /* 16px previene el zoom forzado en móviles iOS/Android */
+    line-height: 1.4 !important;
+    min-height: 46px !important;
+    padding: 11px 12px !important;
+    border: 1px solid var(--ink) !important;
+    border-radius: var(--radius) !important;
+    background: #fff !important;
+    color: var(--ink) !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    box-shadow: none !important;
+    transition: box-shadow .15s ease, border-color .15s ease !important;
+  }
 
-/* Microcopy de beneficio / confianza (positivo en verde) */
-#of-form .trust-badge{
-  margin:24px 0 16px !important;
-  padding:14px 18px !important;
-  background:#EEF6F1 !important;
-  border-left:4px solid var(--ok) !important;
-  border-top:1px solid rgba(43,107,74,0.25) !important;
-  border-right:1px solid rgba(43,107,74,0.25) !important;
-  border-bottom:1px solid rgba(43,107,74,0.25) !important;
-  display:flex !important;
-  align-items:center !important;
-  gap:12px !important;
-  font-family:'IBM Plex Mono',monospace !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  color:var(--ok) !important;
-  line-height:1.45 !important;
-  letter-spacing:.02em !important;
-  border-radius:var(--radius) !important;
-}
-#of-form .trust-badge svg{ flex:none !important; color:var(--ok) !important; }
+  #of-form select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%2317161B' stroke-width='1.6' fill='none' fill-rule='evenodd'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    padding-right: 32px !important;
+  }
 
-/* Envío */
-#of-form .submit-row{ margin-top:24px !important; display:flex !important; align-items:center !important; gap:18px !important; flex-wrap:wrap !important; }
-#of-form button.submit{
-  font-family:'IBM Plex Mono',monospace !important; font-size:13px !important; letter-spacing:.08em !important; text-transform:uppercase !important;
-  font-weight:600 !important; background:var(--ink) !important; color:#fff !important; border:1px solid var(--ink) !important;
-  padding:15px 30px !important; border-radius:var(--radius) !important; cursor:pointer !important; display:inline-block !important;
-  transition:background .15s ease, transform .1s ease !important;
-}
-#of-form button.submit:hover{ background:var(--accent-ink) !important; border-color:var(--accent-ink) !important; }
-#of-form button.submit:active{ transform:translateY(1px) !important; }
-#of-form button.submit:disabled{ opacity:.6 !important; cursor:not-allowed !important; }
-#of-form .submit-note{ font-size:12px !important; color:var(--muted) !important; }
+  #of-form input:focus, #of-form select:focus {
+    outline: none !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(200,29,44,0.15) !important;
+  }
+  #of-form input::placeholder {
+    color: #A7A296 !important;
+  }
 
-/* Banner y Sello Animado */
-#of-form .banner{
-  display:none !important;
-  margin:22px 44px 0 !important;
-  padding:20px 22px !important;
-  border:1.5px solid var(--ok) !important;
-  background:var(--ok-bg) !important;
-  color:var(--ok) !important;
-  border-radius:var(--radius) !important;
-  line-height:1.45 !important;
-}
-#of-form .banner.show{ display:block !important; }
-#of-form .banner.err{ border-color:var(--accent) !important; background:#FBEDEC !important; color:var(--accent-ink) !important; }
+  #of-form .field.error input, #of-form .field.error select {
+    border-color: var(--accent) !important;
+    background: #FBEDEC !important;
+  }
+  #of-form .error-msg {
+    display: none !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 11.5px !important;
+    color: var(--accent-ink) !important;
+    margin-top: 6px !important;
+  }
+  #of-form .field.error .error-msg {
+    display: block !important;
+  }
 
-@keyframes stampDrop{
-  0%{ opacity:0; transform:scale(2.2) rotate(-14deg); }
-  60%{ opacity:1; transform:scale(0.95) rotate(-3deg); }
-  80%{ transform:scale(1.04) rotate(-5deg); }
-  100%{ opacity:1; transform:scale(1) rotate(-4deg); }
-}
-#of-form .stamp-seal{
-  display:inline-block !important;
-  border:2.5px double var(--ok) !important;
-  padding:6px 14px !important;
-  margin-bottom:12px !important;
-  color:var(--ok) !important;
-  font-family:'IBM Plex Mono',monospace !important;
-  font-weight:700 !important;
-  text-transform:uppercase !important;
-  letter-spacing:.12em !important;
-  animation:stampDrop .45s cubic-bezier(.175,.885,.32,1.275) forwards !important;
-  background:rgba(43,107,74,0.06) !important;
-  border-radius:2px !important;
-}
-#of-form .stamp-seal .stamp-main{ font-size:13px !important; line-height:1.2 !important; display:block !important; }
-#of-form .stamp-seal .stamp-sub{ font-size:9.5px !important; letter-spacing:.16em !important; opacity:.85 !important; display:block !important; margin-top:2px !important; }
-#of-form .banner.err .stamp-seal{ display:none !important; }
-#of-form .banner-msg{ font-size:15px !important; font-weight:600 !important; }
+  /* Género — control segmentado */
+  #of-form .segmented {
+    display: flex !important;
+    border: 1px solid var(--ink) !important;
+    border-radius: var(--radius) !important;
+    overflow: hidden !important;
+    min-height: 46px !important;
+  }
+  #of-form .segmented input {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  #of-form .segmented label {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 11px 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    cursor: pointer !important;
+    color: var(--muted) !important;
+    background: #fff !important;
+    border: none !important;
+    margin: 0 !important;
+    transition: background .15s ease, color .15s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  #of-form .segmented label + label {
+    border-left: 1px solid var(--ink) !important;
+  }
+  #of-form .segmented input:checked + label {
+    background: var(--ink) !important;
+    color: #fff !important;
+  }
+  #of-form .segmented input:focus-visible + label {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: -2px !important;
+  }
 
-#of-form footer.stamp{ text-align:center !important; margin-top:26px !important; font-family:'IBM Plex Mono',monospace !important; font-size:11px !important; letter-spacing:.1em !important; color:var(--muted) !important; text-transform:uppercase !important; display:block !important; }
+  /* Teléfono con prefijo */
+  #of-form .prefix-field {
+    position: relative !important;
+  }
+  #of-form .prefix-field .prefix {
+    position: absolute !important;
+    left: 1px !important;
+    top: 1px !important;
+    bottom: 1px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 14px !important;
+    color: var(--muted) !important;
+    background: #EFEBDF !important;
+    border-right: 1px solid var(--ink) !important;
+    border-radius: 1px 0 0 1px !important;
+    pointer-events: none !important;
+  }
+  #of-form .prefix-field input {
+    padding-left: 54px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    letter-spacing: .04em !important;
+  }
 
-@media (prefers-reduced-motion: reduce){
-  #of-form *{ transition:none !important; animation:none !important; }
-}
-</style>
+  /* Tarifas */
+  #of-form .rate-group {
+    margin-bottom: 28px !important;
+    padding: 20px 20px 6px !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    background: #FDFCF9 !important;
+  }
+  #of-form .rate-group.error {
+    border-color: var(--accent) !important;
+    background: #FBEDEC !important;
+  }
+  #of-form .rate-group-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-bottom: 4px !important;
+  }
+  #of-form .rate-group-title .sq {
+    width: 10px !important;
+    height: 10px !important;
+    background: var(--accent) !important;
+    flex: none !important;
+  }
+  #of-form .rate-group-title h3 {
+    font-family: 'Archivo Black', sans-serif !important;
+    font-size: 18px !important;
+    text-transform: uppercase !important;
+    letter-spacing: .01em !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+  #of-form .rate-group-title::after {
+    content: "" !important;
+    flex: 1 !important;
+    height: 2px !important;
+    background: var(--line) !important;
+  }
+  #of-form .rate-group-note {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 11.5px !important;
+    color: var(--muted) !important;
+    margin: 0 0 18px !important;
+    display: block !important;
+  }
+  #of-form .rate-group-error {
+    display: none !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 11.5px !important;
+    color: var(--accent-ink) !important;
+    margin: -8px 0 16px !important;
+  }
+  #of-form .rate-group.error .rate-group-error {
+    display: block !important;
+  }
+  #of-form .amount-field {
+    position: relative !important;
+  }
+  #of-form .amount-field .cur {
+    position: absolute !important;
+    left: 1px !important;
+    top: 1px !important;
+    bottom: 1px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 13px !important;
+    color: var(--muted) !important;
+    background: #EFEBDF !important;
+    border-right: 1px solid var(--ink) !important;
+    pointer-events: none !important;
+  }
+  #of-form .amount-field input {
+    padding-left: 46px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+  }
+  #of-form .amount-field input::-webkit-outer-spin-button,
+  #of-form .amount-field input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+  #of-form .amount-field input[type=number] {
+    -moz-appearance: textfield !important;
+  }
+
+  #of-form .field-hint {
+    font-size: 11.5px !important;
+    color: var(--muted) !important;
+    margin-top: 6px !important;
+    display: block !important;
+  }
+
+  /* Microcopy de beneficio / confianza (positivo en verde) */
+  #of-form .trust-badge {
+    margin: 24px 0 16px !important;
+    padding: 14px 18px !important;
+    background: #EEF6F1 !important;
+    border-left: 4px solid var(--ok) !important;
+    border-top: 1px solid rgba(43,107,74,0.25) !important;
+    border-right: 1px solid rgba(43,107,74,0.25) !important;
+    border-bottom: 1px solid rgba(43,107,74,0.25) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--ok) !important;
+    line-height: 1.45 !important;
+    letter-spacing: .02em !important;
+    border-radius: var(--radius) !important;
+  }
+  #of-form .trust-badge svg {
+    flex: none !important;
+    color: var(--ok) !important;
+  }
+
+  /* Envío */
+  #of-form .submit-row {
+    margin-top: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 18px !important;
+    flex-wrap: wrap !important;
+  }
+  #of-form button.submit {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 13px !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+    background: var(--ink) !important;
+    color: #fff !important;
+    border: 1px solid var(--ink) !important;
+    padding: 15px 30px !important;
+    border-radius: var(--radius) !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    transition: background .15s ease, transform .1s ease, box-shadow .15s ease !important;
+    box-shadow: 3px 3px 0 rgba(23,22,27,0.3) !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  #of-form button.submit:hover {
+    background: var(--accent-ink) !important;
+    border-color: var(--accent-ink) !important;
+    box-shadow: 4px 4px 0 var(--ink) !important;
+  }
+  #of-form button.submit:active {
+    transform: translate(1px, 1px) !important;
+    box-shadow: 1px 1px 0 var(--ink) !important;
+  }
+  #of-form button.submit:disabled {
+    opacity: .6 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+  }
+  #of-form .submit-note {
+    font-size: 12px !important;
+    color: var(--muted) !important;
+  }
+
+  /* Banner y Sello Animado */
+  #of-form .banner {
+    display: none !important;
+    margin: 22px clamp(18px, 5vw, 44px) 0 !important;
+    padding: 20px 22px !important;
+    border: 1.5px solid var(--ok) !important;
+    background: var(--ok-bg) !important;
+    color: var(--ok) !important;
+    border-radius: var(--radius) !important;
+    line-height: 1.45 !important;
+  }
+  #of-form .banner.show {
+    display: block !important;
+  }
+  #of-form .banner.err {
+    border-color: var(--accent) !important;
+    background: #FBEDEC !important;
+    color: var(--accent-ink) !important;
+  }
+
+  @keyframes stampDrop {
+    0% { opacity: 0; transform: scale(2.2) rotate(-14deg); }
+    60% { opacity: 1; transform: scale(0.95) rotate(-3deg); }
+    80% { transform: scale(1.04) rotate(-5deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-4deg); }
+  }
+  #of-form .stamp-seal {
+    display: inline-block !important;
+    border: 2.5px double var(--ok) !important;
+    padding: 6px 14px !important;
+    margin-bottom: 12px !important;
+    color: var(--ok) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .12em !important;
+    animation: stampDrop .45s cubic-bezier(.175,.885,.32,1.275) forwards !important;
+    background: rgba(43,107,74,0.06) !important;
+    border-radius: 2px !important;
+  }
+  #of-form .stamp-seal .stamp-main {
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    display: block !important;
+  }
+  #of-form .stamp-seal .stamp-sub {
+    font-size: 9.5px !important;
+    letter-spacing: .16em !important;
+    opacity: .85 !important;
+    display: block !important;
+    margin-top: 2px !important;
+  }
+  #of-form .banner.err .stamp-seal {
+    display: none !important;
+  }
+  #of-form .banner-msg {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+  }
+
+  /* Pie de página oficial */
+  #of-form footer.stamp {
+    text-align: center !important;
+    margin-top: 26px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: .18em !important;
+    color: var(--muted) !important;
+    text-transform: uppercase !important;
+    display: block !important;
+  }
+
+  /* ========================================================
+     MEDIA QUERIES ULTRA RESPONSIVAS (MÓVILES & TABLETS)
+     ======================================================== */
+  @media (max-width: 640px) {
+    #of-form {
+      padding: 20px 10px 48px !important;
+    }
+    #of-form .sheet {
+      box-shadow: 4px 4px 0 var(--ink) !important;
+    }
+    #of-form header.masthead {
+      padding: 22px 16px 18px !important;
+    }
+    #of-form form {
+      padding: 6px 16px 26px !important;
+    }
+    #of-form .section {
+      padding: 24px 0 4px !important;
+    }
+    #of-form .section + .section::before { left: -20px !important; }
+    #of-form .section + .section::after { right: -20px !important; }
+
+    #of-form .row {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+    #of-form .row.dob {
+      grid-template-columns: 0.85fr 1.35fr 1fr !important;
+      gap: 6px !important;
+    }
+    #of-form .row.dob select {
+      font-size: 14.5px !important;
+      padding: 10px 8px !important;
+      padding-right: 22px !important;
+      background-position: right 6px center !important;
+    }
+    #of-form .rate-group {
+      padding: 16px 12px 4px !important;
+      margin-bottom: 22px !important;
+    }
+    #of-form .banner {
+      margin: 16px 16px 0 !important;
+      padding: 16px 14px !important;
+    }
+    #of-form .submit-row {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 12px !important;
+    }
+    #of-form button.submit {
+      width: 100% !important;
+      text-align: center !important;
+      padding: 14px 20px !important;
+    }
+    #of-form .submit-note {
+      text-align: center !important;
+    }
+    #of-form .trust-badge {
+      padding: 12px 14px !important;
+      font-size: 11px !important;
+      gap: 10px !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    #of-form {
+      padding: 16px 6px 36px !important;
+    }
+    #of-form header.masthead {
+      padding: 18px 12px 16px !important;
+    }
+    #of-form form {
+      padding: 4px 12px 22px !important;
+    }
+    #of-form .masthead-top {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 10px !important;
+    }
+    #of-form .whatsapp-help {
+      width: 100% !important;
+      justify-content: center !important;
+      font-size: 11.5px !important;
+      padding: 9px 10px !important;
+    }
+    #of-form .crop {
+      display: none !important; /* Elimina riesgos de desbordamiento horizontal en móviles angostos */
+    }
+    #of-form .section + .section::before,
+    #of-form .section + .section::after {
+      display: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #of-form * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  </style>
+</head>
+<body>
 
 <div id="of-form">
 
@@ -286,16 +742,16 @@
   <header class="masthead">
     <div class="masthead-top">
       <div class="masthead-brand">OFICIAL</div>
-      <a href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores" target="_blank" rel="noopener noreferrer" class="whatsapp-help" title="Contactar por WhatsApp al 950 141414">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
-        <span>¿Tienes preguntas? Escríbenos por WhatsApp (<strong>950 141414</strong>)</span>
+      <a href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores" target="_blank" rel="noopener noreferrer" class="whatsapp-help" title="Contactar por WhatsApp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+        <span>¿Tienes dudas? <strong>Escribir por WhatsApp</strong></span>
       </a>
     </div>
     <h1>Registro Oficial de Diseñadores</h1>
     <p>Completa tus datos y tarifas para que OFICIAL te derive trabajos de diseño según presupuesto del cliente.</p>
   </header>
 
-  <div class="banner" id="of-formBanner" role="alert">
+  <div class="banner" id="of-formBanner" role="alert" aria-live="polite">
     <div class="stamp-seal" id="of-stampSeal" style="display:none;">
       <span class="stamp-main">✓ REGISTRO RECIBIDO</span>
       <span class="stamp-sub">REGISTRO OFICIAL DE DISEÑADORES</span>
@@ -315,12 +771,12 @@
       <div class="row">
         <div class="field" data-field="nombres">
           <label for="of-nombres">Nombres<span class="req">*</span></label>
-          <input type="text" id="of-nombres" name="nombres" placeholder="Ej. María" autocomplete="given-name">
+          <input type="text" id="of-nombres" name="nombres" placeholder="Ej. María" autocomplete="given-name" required>
           <div class="error-msg">Ingresa tus nombres.</div>
         </div>
         <div class="field" data-field="apellidos">
           <label for="of-apellidos">Apellidos<span class="req">*</span></label>
-          <input type="text" id="of-apellidos" name="apellidos" placeholder="Ej. Quispe Rojas" autocomplete="family-name">
+          <input type="text" id="of-apellidos" name="apellidos" placeholder="Ej. Quispe Rojas" autocomplete="family-name" required>
           <div class="error-msg">Ingresa tus apellidos.</div>
         </div>
       </div>
@@ -339,7 +795,7 @@
 
         <div class="field" data-field="fechaNacimiento">
           <label>Fecha de nacimiento <span class="opt">(opcional)</span></label>
-          <div class="row dob" style="margin-bottom:0;gap:10px;">
+          <div class="row dob" style="margin-bottom:0;">
             <select id="of-dia" name="dia" aria-label="Día">
               <option value="" selected>Día</option>
             </select>
@@ -357,7 +813,7 @@
       <div class="row">
         <div class="field" data-field="distrito">
           <label for="of-distrito">Distrito<span class="req">*</span></label>
-          <input type="text" id="of-distrito" name="distrito" list="of-distritos-list" placeholder="Escribe o elige un distrito (ej. Miraflores)" autocomplete="off">
+          <input type="text" id="of-distrito" name="distrito" list="of-distritos-list" placeholder="Escribe o elige un distrito (ej. Miraflores)" autocomplete="off" required>
           <datalist id="of-distritos-list"></datalist>
           <div class="error-msg">Selecciona un distrito válido de Lima/Callao.</div>
         </div>
@@ -366,7 +822,7 @@
           <label for="of-telefono">Teléfono celular<span class="req">*</span></label>
           <div class="prefix-field">
             <span class="prefix">+51</span>
-            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" inputmode="numeric" maxlength="11">
+            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" inputmode="numeric" maxlength="11" required>
           </div>
           <div class="error-msg">Ingresa un número celular de 9 dígitos que empiece con 9.</div>
         </div>
@@ -395,14 +851,14 @@
             <label for="of-tarjetaBasico">Básico <span class="opt">(opcional)</span></label>
             <div class="amount-field">
               <span class="cur">S/</span>
-              <input type="number" id="of-tarjetaBasico" name="tarjetaBasico" min="0" step="0.5" placeholder="0.00">
+              <input type="number" id="of-tarjetaBasico" name="tarjetaBasico" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
             </div>
           </div>
           <div class="field" data-field="tarjetaComplejo">
             <label for="of-tarjetaComplejo">Complejo <span class="opt">(opcional)</span></label>
             <div class="amount-field">
               <span class="cur">S/</span>
-              <input type="number" id="of-tarjetaComplejo" name="tarjetaComplejo" min="0" step="0.5" placeholder="0.00">
+              <input type="number" id="of-tarjetaComplejo" name="tarjetaComplejo" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
             </div>
           </div>
         </div>
@@ -417,14 +873,14 @@
             <label for="of-volanteBasico">Básico <span class="opt">(opcional)</span></label>
             <div class="amount-field">
               <span class="cur">S/</span>
-              <input type="number" id="of-volanteBasico" name="volanteBasico" min="0" step="0.5" placeholder="0.00">
+              <input type="number" id="of-volanteBasico" name="volanteBasico" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
             </div>
           </div>
           <div class="field" data-field="volanteComplejo">
             <label for="of-volanteComplejo">Complejo <span class="opt">(opcional)</span></label>
             <div class="amount-field">
               <span class="cur">S/</span>
-              <input type="number" id="of-volanteComplejo" name="volanteComplejo" min="0" step="0.5" placeholder="0.00">
+              <input type="number" id="of-volanteComplejo" name="volanteComplejo" min="0" step="0.5" inputmode="decimal" placeholder="0.00">
             </div>
           </div>
         </div>
@@ -440,14 +896,14 @@
 
       <div class="field" data-field="portafolio">
         <label for="of-portafolio">Enlace directo<span class="req">*</span></label>
-        <input type="url" id="of-portafolio" name="portafolio" placeholder="https://www.behance.net/tu-usuario o @tu_usuario">
+        <input type="url" id="of-portafolio" name="portafolio" placeholder="https://www.behance.net/tu-usuario o @tu_usuario" required>
         <div class="field-hint">Behance, Instagram, Drive u otro enlace donde se aprecie tu trabajo.</div>
         <div class="error-msg">Ingresa un enlace válido de tu portafolio o perfil.</div>
       </div>
 
       <!-- Microcopy de beneficio / confianza (positivo en verde) -->
       <div class="trust-badge">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         <span>LA TARIFA SE PUEDE NEGOCIAR CON EL CLIENTE Y GANAS EL 100% DE LO ACORDADO</span>
       </div>
 
@@ -465,7 +921,7 @@
   </form>
 </div>
 
-<footer class="stamp">Registro Oficial de Diseñadores</footer>
+<footer class="stamp">OFICIAL</footer>
 
 </div><!-- /#of-form -->
 
@@ -487,12 +943,13 @@
   var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbw2BR_XKsAf6WWohwlD0E1tKGBmigcRXfubripW-yCXk2w6oUd5HQ6C_Fd1jSaCuz4Z/exec";
   var STORAGE_KEY = "of_designer_form_draft_v3";
 
-  /* ---------- Día / Mes / Año ---------- */
+  /* ---------- Selector Día / Mes / Año ---------- */
   var now = new Date();
   var diaSel = document.getElementById("of-dia");
   for (var d = 1; d <= 31; d++) {
     var opt = document.createElement("option");
-    opt.value = String(d); opt.textContent = String(d);
+    opt.value = String(d);
+    opt.textContent = String(d);
     diaSel.appendChild(opt);
   }
 
@@ -500,7 +957,8 @@
   var mesSel = document.getElementById("of-mes");
   meses.forEach(function(nombreMes, i){
     var opt = document.createElement("option");
-    opt.value = String(i + 1); opt.textContent = nombreMes;
+    opt.value = String(i + 1);
+    opt.textContent = nombreMes;
     mesSel.appendChild(opt);
   });
 
@@ -509,7 +967,8 @@
   var minAge = 16, maxAge = 80;
   for (var y = currentYear - minAge; y >= currentYear - maxAge; y--) {
     var opt = document.createElement("option");
-    opt.value = String(y); opt.textContent = String(y);
+    opt.value = String(y);
+    opt.textContent = String(y);
     anioSel.appendChild(opt);
   }
 
@@ -540,7 +999,6 @@
   function formatPhone(val) {
     var clean = (val || "").replace(/\D/g, "");
     if (clean.length === 0) return "";
-    // Si escribe un primer dígito distinto de 9, forzarlo o conservarlo para validación
     if (clean.length > 9) clean = clean.slice(0, 9);
     if (clean.length <= 3) return clean;
     if (clean.length <= 6) return clean.slice(0, 3) + " " + clean.slice(3);
@@ -563,7 +1021,7 @@
     });
   });
 
-  /* ---------- Sanitización flexible de Portafolio ---------- */
+  /* ---------- Sanitización flexible y segura de Portafolio ---------- */
   function sanitizePortfolioUrl(raw) {
     var val = (raw || "").trim();
     if (!val) return "";
@@ -819,7 +1277,7 @@
     };
 
     submitBtn.disabled = true;
-    submitBtn.textContent = "Enviando…";
+    submitBtn.textContent = "Enviando ficha…";
 
     fetch(SHEET_ENDPOINT, {
       method: "POST",
@@ -850,3 +1308,5 @@
 
 })();
 </script>
+</body>
+</html>
