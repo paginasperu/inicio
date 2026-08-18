@@ -9,15 +9,15 @@ function doPost(e) {
     // Si la hoja está vacía, creamos los encabezados automáticamente
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        "Fecha Envíi", "Ticket ID", "Nombres", "Apellidos", "Género", 
-        "Fecha Nacimiento", "Distrito", "Teléfono", 
-        "Tarjeta Básico", "Tarjeta Intermedio", "Tarjeta Avanzado",
-        "Volante Básico", "Volante Intermedio", "Volante Avanzado", "Portafolio"
+        "Fecha de envío", "Nombres", "Apellidos", "Género", 
+        "Fecha de nacimiento", "Distrito", "Teléfono", 
+        "Tarjeta (básico)", "Tarjeta (intermedio)", "Tarjeta (avanzado)",
+        "Volante (básico)", "Volante (intermedio)", "Volante (avanzado)", "Portafolio"
       ]);
     }
 
     var rows = sheet.getDataRange().getValues();
-    var telefonoIndex = 7; // Columna H (Teléfono)
+    var telefonoIndex = 6; // Columna G (Teléfono)
     var rowIndexToUpdate = -1;
 
     // Buscar si el teléfono ya está registrado (omitimos la fila 0 de encabezados)
@@ -30,7 +30,6 @@ function doPost(e) {
 
     var rowData = [
       new Date(),
-      data.ticketId,
       data.nombres,
       data.apellidos,
       data.genero,
