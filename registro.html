@@ -97,11 +97,12 @@
   #of-form .date-triplet { display: grid; grid-template-columns: 1fr 1.4fr 1.1fr; gap: 8px; }
 
   /* Segmented Gender */
-  #of-form .segmented { display: flex; border: 1px solid #17161B; border-radius: 2px; overflow: hidden; min-height: 46px; }
+  #of-form .segmented { display: flex; border: 1px solid #17161B; border-radius: 2px; overflow: hidden; min-height: 46px; background: #fff; }
   #of-form .segmented input { position: absolute; opacity: 0; pointer-events: none; }
   #of-form .segmented label {
     flex: 1; display: flex; align-items: center; justify-content: center;
-    padding: 11px 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: #726C5D; background: #fff;
+    padding: 11px 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: #726C5D; background: transparent;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   #of-form .segmented label + label { border-left: 1px solid #17161B; }
   #of-form .segmented input:checked + label { background: #17161B; color: #fff; }
@@ -141,7 +142,7 @@
   #of-form button.submit:hover { background: #8F1420; border-color: #8F1420; box-shadow: 4px 4px 0 #17161B; }
   #of-form button.submit:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
 
-  #of-form .banner { display: none; margin: 22px clamp(18px, 5vw, 44px) 0; padding: 20px 22px; border: 1.5px solid #2B6B4A; background: #EEF6F1; color: #2B6B4A; }
+  #of-form .banner { display: none; margin-top: 20px; padding: 20px 22px; border: 1.5px solid #2B6B4A; background: #EEF6F1; color: #2B6B4A; }
   #of-form .banner.show { display: block; }
   #of-form .banner.err { border-color: #C81D2C; background: #FBEDEC; color: #8F1420; }
   #of-form .stamp-seal { display: inline-block; border: 2.5px double #2B6B4A; padding: 6px 14px; margin-bottom: 12px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; text-transform: uppercase; }
@@ -174,11 +175,6 @@
     <p>Completa tus datos y tarifas para que OFICIAL te derive trabajos de diseño según presupuesto del cliente.</p>
   </header>
 
-  <div class="banner" id="of-formBanner" role="alert" aria-live="polite">
-    <div class="stamp-seal" id="of-stampSeal" style="display:none;">✓ REGISTRO RECIBIDO</div>
-    <div id="of-bannerMsg"></div>
-  </div>
-
   <form id="of-designerForm" novalidate>
     <!-- 01 — Datos personales -->
     <section class="section">
@@ -190,12 +186,12 @@
       <div class="row">
         <div class="field" data-field="nombres">
           <label for="of-nombres">Nombres<span class="req">*</span></label>
-          <input type="text" id="of-nombres" name="nombres" required>
+          <input type="text" id="of-nombres" name="nombres" maxlength="60" required>
           <div class="error-msg">Ingresa tus nombres.</div>
         </div>
         <div class="field" data-field="apellidos">
           <label for="of-apellidos">Apellidos<span class="req">*</span></label>
-          <input type="text" id="of-apellidos" name="apellidos" required>
+          <input type="text" id="of-apellidos" name="apellidos" maxlength="60" required>
           <div class="error-msg">Ingresa tus apellidos.</div>
         </div>
       </div>
@@ -226,8 +222,9 @@
       <div class="row">
         <div class="field" data-field="distrito">
           <label for="of-distrito">Distrito<span class="req">*</span></label>
-          <input type="text" id="of-distrito" name="distrito" list="of-distritos-list" placeholder="Escribe tu distrito" required>
-          <datalist id="of-distritos-list"></datalist>
+          <select id="of-distrito" name="distrito" required>
+            <option value="">Selecciona tu distrito</option>
+          </select>
           <div class="error-msg">Selecciona un distrito válido de Lima/Callao.</div>
         </div>
 
@@ -235,7 +232,7 @@
           <label for="of-telefono">Teléfono celular<span class="req">*</span></label>
           <div class="prefix-field">
             <span class="prefix">+51</span>
-            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" maxlength="11" required>
+            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" maxlength="11" inputmode="numeric" required>
           </div>
           <div class="error-msg">Ingresa un celular de 9 dígitos que empiece con 9.</div>
         </div>
@@ -308,6 +305,12 @@
       <div class="submit-row">
         <button type="submit" class="submit" id="of-submitBtn">Enviar ficha</button>
       </div>
+
+      <!-- Aviso de envío posicionado abajo -->
+      <div class="banner" id="of-formBanner" role="alert" aria-live="polite">
+        <div class="stamp-seal" id="of-stampSeal" style="display:none;">✓ REGISTRO RECIBIDO</div>
+        <div id="of-bannerMsg"></div>
+      </div>
     </section>
   </form>
 </div>
@@ -340,12 +343,13 @@
     "Santa María del Mar","Santa Rosa","Santiago de Surco","Surquillo","Ventanilla","Villa El Salvador","Villa María del Triunfo"
   ];
   
-  var dl = document.getElementById("of-distritos-list");
+  var selDistrito = document.getElementById("of-distrito");
   var distMap = {};
   distritos.forEach(function(d){
     var opt = document.createElement("option");
     opt.value = d;
-    dl.appendChild(opt);
+    opt.textContent = d;
+    selDistrito.appendChild(opt);
     distMap[d.toLowerCase()] = d;
   });
 
@@ -402,7 +406,7 @@
       nacDia: selDia.value,
       nacMes: selMes.value,
       nacAnio: selAnio.value,
-      distrito: form.distrito.value,
+      distrito: selDistrito.value,
       telefono: telInput.value,
       tarjetaBasico: document.getElementById("of-tarjetaBasico").value,
       tarjetaComplejo: document.getElementById("of-tarjetaComplejo").value,
@@ -427,7 +431,7 @@
       if (draft.nacDia) selDia.value = draft.nacDia;
       if (draft.nacMes) selMes.value = draft.nacMes;
       if (draft.nacAnio) selAnio.value = draft.nacAnio;
-      if (draft.distrito) form.distrito.value = draft.distrito;
+      if (draft.distrito) selDistrito.value = draft.distrito;
       if (draft.telefono) telInput.value = draft.telefono;
       if (draft.tarjetaBasico) document.getElementById("of-tarjetaBasico").value = draft.tarjetaBasico;
       if (draft.tarjetaComplejo) document.getElementById("of-tarjetaComplejo").value = draft.tarjetaComplejo;
@@ -460,9 +464,8 @@
     var dateOk = isValidBirthDate(selDia.value, selMes.value, selAnio.value);
     setError("fechaNacimiento", !dateOk);
 
-    var distVal = form.distrito.value.trim();
+    var distVal = selDistrito.value.trim();
     var distOk = !!distMap[distVal.toLowerCase()];
-    if (distOk) form.distrito.value = distMap[distVal.toLowerCase()];
     setError("distrito", !distOk);
 
     var phoneDigits = form.telefono.value.replace(/\D/g, "");
@@ -518,7 +521,7 @@
       apellidos: form.apellidos.value.trim(),
       genero: form.querySelector('input[name="genero"]:checked').value,
       fechaNacimiento: fechaNacFormatted,
-      distrito: form.distrito.value.trim(),
+      distrito: selDistrito.value.trim(),
       telefono: form.telefono.value.replace(/\D/g, ""),
       tarjetaBasico: document.getElementById("of-tarjetaBasico").value.trim(),
       tarjetaComplejo: document.getElementById("of-tarjetaComplejo").value.trim(),
@@ -536,7 +539,10 @@
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     })
-    .then(function(res){ return res.json(); })
+    .then(function(res){
+      if (!res.ok) throw new Error("Server response not ok");
+      return res.json();
+    })
     .then(function(data){
       if (data && data.result === "success") {
         bannerMsg.textContent = data.updated
