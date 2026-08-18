@@ -11,8 +11,8 @@ function doPost(e) {
       sheet.appendRow([
         "Fecha de envío", "Nombres", "Apellidos", "Género", 
         "Fecha de nacimiento", "Distrito", "Teléfono", 
-        "Tarjeta (básico)", "Tarjeta (intermedio)", "Tarjeta (avanzado)",
-        "Volante (básico)", "Volante (intermedio)", "Volante (avanzado)", "Portafolio"
+        "Tarjeta (básico)", "Tarjeta (complejo)",
+        "Volante (básico)", "Volante (complejo)", "Portafolio"
       ]);
     }
 
@@ -37,11 +37,9 @@ function doPost(e) {
       data.distrito,
       "'" + data.telefono, // Apostrofe para forzar formato texto en el teléfono
       data.tarjetaBasico,
-      data.tarjetaIntermedio,
-      data.tarjetaAvanzado,
+      data.tarjetaComplejo,
       data.volanteBasico,
-      data.volanteIntermedio,
-      data.volanteAvanzado,
+      data.volanteComplejo,
       data.portafolio
     ];
 
