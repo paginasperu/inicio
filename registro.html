@@ -62,15 +62,8 @@
 #of-form .crop.br{ bottom:-10px !important; right:-10px !important; }
 
 #of-form header.masthead{ padding:40px 44px 28px !important; border-bottom:2px solid var(--ink) !important; }
-#of-form .masthead .kicker{
-  font-family:'IBM Plex Mono',monospace !important; font-size:12px !important; letter-spacing:.14em !important;
-  text-transform:uppercase !important; color:var(--accent-ink) !important; display:flex !important;
-  align-items:center !important; gap:8px !important; margin-bottom:14px !important;
-}
-#of-form .masthead .kicker::before{ content:"" !important; width:9px !important; height:9px !important; border-radius:50% !important; background:var(--accent) !important; display:inline-block !important; }
 #of-form h1{ font-family:'Archivo Black',sans-serif !important; font-size:clamp(28px,5vw,38px) !important; line-height:1.05 !important; margin:0 0 10px !important; letter-spacing:-0.01em !important; display:block !important; }
 #of-form .masthead p{ color:var(--muted) !important; font-size:15px !important; max-width:46ch !important; display:block !important; }
-#of-form .ticket-id{ font-family:'IBM Plex Mono',monospace !important; font-size:11px !important; color:var(--muted) !important; margin-top:18px !important; letter-spacing:.05em !important; }
 
 #of-form form{ padding:8px 44px 44px !important; }
 #of-form .section{ padding:34px 0 6px !important; }
@@ -172,7 +165,7 @@
 #of-form button.submit:disabled{ opacity:.6 !important; cursor:not-allowed !important; }
 #of-form .submit-note{ font-size:12px !important; color:var(--muted) !important; }
 
-#of-form .banner{ display:none !important; margin:0 44px 0 !important; padding:16px 18px !important; border:1px solid var(--ok) !important; background:#EEF6F1 !important; color:var(--ok) !important; font-size:14px !important; font-weight:600 !important; }
+#of-form .banner{ display:none !important; margin:20px 44px 0 !important; padding:16px 20px !important; border:1.5px solid var(--ok) !important; background:#EEF6F1 !important; color:var(--ok) !important; font-size:15px !important; font-weight:600 !important; border-radius:var(--radius) !important; line-height:1.4 !important; }
 #of-form .banner.show{ display:block !important; }
 #of-form .banner.err{ border-color:var(--accent) !important; background:#FBEDEC !important; color:var(--accent-ink) !important; }
 
@@ -190,10 +183,8 @@
   <span class="crop bl"></span><span class="crop br"></span>
 
   <header class="masthead">
-    <div class="kicker">Ficha de registro · Red de diseñadores</div>
     <h1>Registro de diseñadores</h1>
     <p>Completa tus datos y tarifas para que OFICIAL te derive trabajos de diseño según presupuesto del cliente.</p>
-    <div class="ticket-id" id="of-ticketId"></div>
   </header>
 
   <div class="banner" id="of-formBanner"></div>
@@ -379,11 +370,7 @@
 
   var root = document.getElementById("of-form");
 
-  /* ---------- Ticket id ---------- */
   var now = new Date();
-  var ticketId = "OF-DIS-" + now.getFullYear() + String(now.getMonth()+1).padStart(2,"0") + String(now.getDate()).padStart(2,"0")
-    + "-" + Math.floor(1000 + Math.random()*9000);
-  document.getElementById("of-ticketId").textContent = ticketId;
 
   /* ---------- Día / Mes / Año ---------- */
   var diaSel = document.getElementById("of-dia");
@@ -541,14 +528,16 @@
     }
 
     if (esBot) {
-      banner.textContent = "Ficha enviada correctamente.";
+      banner.textContent = "¡Ficha enviada correctamente!";
+      banner.classList.remove("err");
       banner.classList.add("show");
+      banner.scrollIntoView({ behavior: "smooth", block: "center" });
       form.reset();
       return;
     }
 
     var payload = {
-      ticketId: ticketId, nombres: nombres, apellidos: apellidos, genero: genero.value,
+      ticketId: "", nombres: nombres, apellidos: apellidos, genero: genero.value,
       fechaNacimiento: dobFilledCount === 3 ? (anio + "-" + String(mes).padStart(2,"0") + "-" + String(dia).padStart(2,"0")) : "",
       distrito: distrito, telefono: telefono,
       tarjetaBasico: tarjetaBasico, tarjetaIntermedio: tarjetaIntermedio, tarjetaAvanzado: tarjetaAvanzado,
@@ -568,19 +557,22 @@
       .then(function(data){
         if (data && data.result === "success") {
           banner.textContent = data.updated
-            ? "Ya tenías una ficha registrada con ese teléfono: se actualizó con tus datos nuevos. Gracias, " + nombres + "."
-            : "Ficha " + ticketId + " enviada correctamente. Gracias, " + nombres + ".";
+            ? "Tus datos se actualizaron correctamente. ¡Gracias, " + nombres + "!"
+            : "¡Ficha enviada correctamente! Gracias, " + nombres + ".";
           banner.classList.remove("err");
           banner.classList.add("show");
+          banner.scrollIntoView({ behavior: "smooth", block: "center" });
           form.reset();
         } else {
           banner.textContent = (data && data.message) || "No se pudo guardar tu ficha. Intenta nuevamente.";
           banner.classList.add("show", "err");
+          banner.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
       .catch(function(){
         banner.textContent = "No se pudo conectar con el servidor. Revisa tu conexión e intenta nuevamente.";
         banner.classList.add("show", "err");
+        banner.scrollIntoView({ behavior: "smooth", block: "center" });
       })
       .finally(function(){
         submitBtn.disabled = false;
