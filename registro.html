@@ -447,6 +447,12 @@
     if (f) f.classList.toggle("error", hasError);
   }
 
+  // Auxiliar para verificar que exista una tarifa numérica estrictamente mayor a 0
+  function hasValidRate(id) {
+    var val = parseFloat(document.getElementById(id).value);
+    return !isNaN(val) && val > 0;
+  }
+
   function validate() {
     var nombresOk = form.nombres.value.trim().length >= 2;
     setError("nombres", !nombresOk);
@@ -468,10 +474,11 @@
     var phoneOk = phoneDigits.length === 9 && phoneDigits.startsWith("9");
     setError("telefono", !phoneOk);
 
-    var tOk = !!(document.getElementById("of-tarjetaBasico").value.trim() || document.getElementById("of-tarjetaComplejo").value.trim());
+    // Validación de Tarifas: exige que al menos una tarifa sea > 0
+    var tOk = hasValidRate("of-tarjetaBasico") || hasValidRate("of-tarjetaComplejo");
     form.querySelector('[data-field="tarjetaGroup"]').classList.toggle("error", !tOk);
 
-    var vOk = !!(document.getElementById("of-volanteBasico").value.trim() || document.getElementById("of-volanteComplejo").value.trim());
+    var vOk = hasValidRate("of-volanteBasico") || hasValidRate("of-volanteComplejo");
     form.querySelector('[data-field="volanteGroup"]').classList.toggle("error", !vOk);
 
     var portVal = sanitizePortfolioUrl(form.portafolio.value);
