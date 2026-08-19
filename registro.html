@@ -441,6 +441,20 @@
   form.addEventListener("change", saveDraft);
   loadDraft();
 
+  // --- LIMPIEZA AUTOMÁTICA DE CEROS EN TARIFAS ---
+  var rateInputs = ["of-tarjetaBasico", "of-tarjetaComplejo", "of-volanteBasico", "of-volanteComplejo"];
+  rateInputs.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("blur", function() {
+      var val = parseFloat(this.value);
+      if (isNaN(val) || val <= 0) {
+        this.value = "";
+        saveDraft();
+      }
+    });
+  });
+
   // --- VALIDACIONES ESTRUCTURALES ---
   function setError(name, hasError) {
     var f = form.querySelector('[data-field="' + name + '"]');
