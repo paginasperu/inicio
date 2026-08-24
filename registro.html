@@ -534,6 +534,7 @@
     var fechaNacFormatted = selAnio.value + "-" + mStr + "-" + dStr;
 
     var payload = {
+      origen: "disenador",
       nombres: form.nombres.value.trim(),
       apellidos: form.apellidos.value.trim(),
       genero: form.querySelector('input[name="genero"]:checked').value,
