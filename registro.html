@@ -88,7 +88,7 @@
     background: #fff; color: #17161B; appearance: none; -webkit-appearance: none;
   }
   #of-form input:focus, #of-form select:focus { outline: none; border-color: #C81D2C; box-shadow: 0 0 0 3px rgba(200,29,44,0.15); }
-  
+
   #of-form .error-msg { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8F1420; margin-top: 6px; }
   #of-form .field.error input, #of-form .field.error select { border-color: #C81D2C; background: #FBEDEC; }
   #of-form .field.error .error-msg { display: block; }
@@ -324,7 +324,7 @@
   var stampSeal = document.getElementById("of-stampSeal");
   var submitBtn = document.getElementById("of-submitBtn");
 
-  var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbw2BR_XKsAf6WWohwlD0E1tKGBmigcRXfubripW-yCXk2w6oUd5HQ6C_Fd1jSaCuz4Z/exec";
+  var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbzAbqbr_PZUhjA6ssgeJQ7KCuob6Exdn7Q4yW3kZBcl1CAhr-PwK9FsVZMysty10r0d/exec";
   var DRAFT_KEY = "of_designer_form_draft";
   var isSubmitting = false;
 
@@ -338,7 +338,7 @@
     "San Juan de Miraflores","San Luis","San Martín de Porres","San Miguel","Santa Anita",
     "Santa María del Mar","Santa Rosa","Santiago de Surco","Surquillo","Ventanilla","Villa El Salvador","Villa María del Triunfo"
   ];
-  
+
   var selDistrito = document.getElementById("of-distrito");
   var distMap = {};
   distritos.forEach(function(d){
@@ -511,7 +511,7 @@
   // --- ENVÍO VÍA FETCH ---
   form.addEventListener("submit", function(e){
     e.preventDefault();
-    
+
     if (!validate()) {
       bannerMsg.textContent = "Revisa los campos marcados en rojo antes de enviar.";
       banner.className = "banner show err";
@@ -534,7 +534,6 @@
     var fechaNacFormatted = selAnio.value + "-" + mStr + "-" + dStr;
 
     var payload = {
-      origen: "disenador",
       nombres: form.nombres.value.trim(),
       apellidos: form.apellidos.value.trim(),
       genero: form.querySelector('input[name="genero"]:checked').value,
