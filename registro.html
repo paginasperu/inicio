@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Registro Oficial de Diseñadores | OFICIAL</title>
+
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 
-  /* Encapsulamiento total CSS bajo #of-form */
   #of-form {
     background: #F3F0E7;
     color: #17161B;
@@ -19,7 +19,11 @@
     box-sizing: border-box;
   }
 
-  #of-form * { box-sizing: border-box; margin: 0; padding: 0; }
+  #of-form * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
   #of-form .sheet {
     max-width: 720px;
@@ -30,561 +34,2647 @@
     box-shadow: 6px 6px 0 #17161B;
   }
 
-  /* Marcas de registro */
-  #of-form .crop { position: absolute; width: 20px; height: 20px; pointer-events: none; }
-  #of-form .crop::before, #of-form .crop::after { content: ""; position: absolute; background: #17161B; }
-  #of-form .crop::before { width: 100%; height: 1px; top: 50%; left: 0; }
-  #of-form .crop::after { width: 1px; height: 100%; left: 50%; top: 0; }
-  #of-form .tl { top: -10px; left: -10px; } #of-form .tr { top: -10px; right: -10px; }
-  #of-form .bl { bottom: -10px; left: -10px; } #of-form .br { bottom: -10px; right: -10px; }
+  #of-form .crop {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
+
+  #of-form .crop::before,
+  #of-form .crop::after {
+    content: "";
+    position: absolute;
+    background: #17161B;
+  }
+
+  #of-form .crop::before {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+  }
+
+  #of-form .crop::after {
+    width: 1px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+  }
+
+  #of-form .tl { top: -10px; left: -10px; }
+  #of-form .tr { top: -10px; right: -10px; }
+  #of-form .bl { bottom: -10px; left: -10px; }
+  #of-form .br { bottom: -10px; right: -10px; }
 
   #of-form header.masthead {
-    padding: clamp(24px, 4vw, 36px) clamp(18px, 5vw, 44px) clamp(20px, 3.5vw, 26px);
+    padding:
+      clamp(24px, 4vw, 36px)
+      clamp(18px, 5vw, 44px)
+      clamp(20px, 3.5vw, 26px);
     border-bottom: 2px solid #17161B;
   }
 
   #of-form .masthead-top {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
   }
 
   #of-form .masthead-brand {
-    font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .16em;
-    font-weight: 700; color: #8F1420; text-transform: uppercase;
-    display: flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .16em;
+    font-weight: 700;
+    color: #8F1420;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  #of-form .masthead-brand::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #C81D2C; }
+
+  #of-form .masthead-brand::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #C81D2C;
+  }
 
   #of-form .whatsapp-help {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #17161B;
-    text-decoration: none; background: #fff; padding: 8px 14px;
-    border: 1px solid #17161B; border-radius: 2px; box-shadow: 2px 2px 0 #17161B;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #17161B;
+    text-decoration: none;
+    background: #fff;
+    padding: 8px 14px;
+    border: 1px solid #17161B;
+    border-radius: 2px;
+    box-shadow: 2px 2px 0 #17161B;
     transition: all .15s ease;
   }
-  #of-form .whatsapp-help:hover { background: #17161B; color: #fff; transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #C81D2C; }
 
-  #of-form h1 { font-family: 'Archivo Black', sans-serif; font-size: clamp(24px, 4.8vw, 36px); line-height: 1.1; margin-bottom: 10px; text-transform: uppercase; }
-  #of-form .masthead p { color: #726C5D; font-size: clamp(14px, 2vw, 15px); max-width: 54ch; }
-
-  #of-form form { padding: 8px clamp(18px, 5vw, 44px) clamp(24px, 5vw, 44px); }
-  #of-form .section { padding: 32px 0 6px; }
-  #of-form .section + .section { border-top: 1px dashed #D8D2BE; }
-
-  #of-form .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
-  #of-form .section-num { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #C81D2C; font-weight: 700; }
-  #of-form .section-title { font-family: 'Archivo Black', sans-serif; font-size: clamp(17px, 3vw, 19px); text-transform: uppercase; }
-  #of-form .section-note { font-size: 13.5px; color: #726C5D; margin: 6px 0 22px; max-width: 60ch; }
-
-  #of-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  #of-form .field { margin-bottom: 20px; }
-  #of-form .field label { display: block; font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 7px; }
-  #of-form .field label .req { color: #C81D2C; margin-left: 2px; }
-  #of-form .field label .opt { font-weight: 400; text-transform: none; color: #726C5D; font-size: 11.5px; }
-
-  #of-form input[type=text], #of-form input[type=tel], #of-form input[type=url], #of-form input[type=number], #of-form select {
-    width: 100%; font-family: 'Inter', system-ui, sans-serif; font-size: 16px;
-    min-height: 46px; padding: 11px 12px; border: 1px solid #17161B; border-radius: 2px;
-    background: #fff; color: #17161B; appearance: none; -webkit-appearance: none;
+  #of-form .whatsapp-help:hover {
+    background: #17161B;
+    color: #fff;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #C81D2C;
   }
-  #of-form input:focus, #of-form select:focus { outline: none; border-color: #C81D2C; box-shadow: 0 0 0 3px rgba(200,29,44,0.15); }
 
-  #of-form .error-msg { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8F1420; margin-top: 6px; }
-  #of-form .field.error input, #of-form .field.error select { border-color: #C81D2C; background: #FBEDEC; }
-  #of-form .field.error .error-msg { display: block; }
-
-  /* Controles de Fecha Triples */
-  #of-form .date-triplet { display: grid; grid-template-columns: 1fr 1.4fr 1.1fr; gap: 8px; }
-
-  /* Segmented Gender */
-  #of-form .segmented { display: flex; border: 1px solid #17161B; border-radius: 2px; overflow: hidden; height: 42px; background: #fff; box-sizing: border-box; }
-  #of-form .segmented input[type="radio"] { display: none; }
-  #of-form .segmented label { flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; margin: 0; padding: 0; font-size: 14px; font-weight: 600; cursor: pointer; color: #726C5D; background: #fff; box-sizing: border-box; transition: background 0.15s ease, color 0.15s ease; }
-  #of-form .segmented label:first-of-type { border-right: 1px solid #17161B; }
-  #of-form .segmented input[type="radio"]:checked + label { background: #17161B; color: #fff; }
-
-  /* Prefijos */
-  #of-form .prefix-field, #of-form .amount-field { position: relative; }
-  #of-form .prefix-field .prefix, #of-form .amount-field .cur {
-    position: absolute; left: 1px; top: 1px; bottom: 1px; display: flex; align-items: center;
-    padding: 0 10px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #726C5D;
-    background: #EFEBDF; border-right: 1px solid #17161B; pointer-events: none;
+  #of-form h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(24px, 4.8vw, 36px);
+    line-height: 1.1;
+    margin-bottom: 10px;
+    text-transform: uppercase;
   }
-  #of-form .prefix-field input { padding-left: 54px; font-family: 'IBM Plex Mono', monospace; }
-  #of-form .amount-field input { padding-left: 46px; font-family: 'IBM Plex Mono', monospace; }
 
-  /* Tarifas */
-  #of-form .rate-group { margin-bottom: 28px; padding: 20px 20px 6px; border: 1px solid #D8D2BE; border-radius: 2px; background: #FDFCF9; }
-  #of-form .rate-group.error { border-color: #C81D2C; background: #FBEDEC; }
-  #of-form .rate-group-title { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
-  #of-form .rate-group-title .sq { width: 10px; height: 10px; background: #C81D2C; }
-  #of-form .rate-group-title h3 { font-family: 'Archivo Black', sans-serif; font-size: 18px; text-transform: uppercase; }
-  #of-form .rate-group-note { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #726C5D; margin-bottom: 18px; }
-  #of-form .rate-group-error { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8F1420; margin: -8px 0 16px; }
-  #of-form .rate-group.error .rate-group-error { display: block; }
+  #of-form .masthead p {
+    color: #726C5D;
+    font-size: clamp(14px, 2vw, 15px);
+    max-width: 54ch;
+  }
+
+  #of-form form {
+    padding:
+      8px
+      clamp(18px, 5vw, 44px)
+      clamp(24px, 5vw, 44px);
+  }
+
+  #of-form .section {
+    padding: 32px 0 6px;
+  }
+
+  #of-form .section + .section {
+    border-top: 1px dashed #D8D2BE;
+  }
+
+  #of-form .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  #of-form .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #C81D2C;
+    font-weight: 700;
+  }
+
+  #of-form .section-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(17px, 3vw, 19px);
+    text-transform: uppercase;
+  }
+
+  #of-form .section-note {
+    font-size: 13.5px;
+    color: #726C5D;
+    margin: 6px 0 22px;
+    max-width: 60ch;
+  }
+
+  #of-form .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  #of-form .field {
+    margin-bottom: 20px;
+  }
+
+  #of-form .field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 7px;
+  }
+
+  #of-form .field label .req {
+    color: #C81D2C;
+    margin-left: 2px;
+  }
+
+  #of-form .field label .opt {
+    font-weight: 400;
+    text-transform: none;
+    color: #726C5D;
+    font-size: 11.5px;
+  }
+
+  #of-form input[type=text],
+  #of-form input[type=tel],
+  #of-form input[type=url],
+  #of-form input[type=number],
+  #of-form select {
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    min-height: 46px;
+    padding: 11px 12px;
+    border: 1px solid #17161B;
+    border-radius: 2px;
+    background: #fff;
+    color: #17161B;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  #of-form input:focus,
+  #of-form select:focus {
+    outline: none;
+    border-color: #C81D2C;
+    box-shadow: 0 0 0 3px rgba(200,29,44,0.15);
+  }
+
+  #of-form .error-msg {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: #8F1420;
+    margin-top: 6px;
+  }
+
+  #of-form .field.error input,
+  #of-form .field.error select {
+    border-color: #C81D2C;
+    background: #FBEDEC;
+  }
+
+  #of-form .field.error .error-msg {
+    display: block;
+  }
+
+  #of-form .date-triplet {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1.1fr;
+    gap: 8px;
+  }
+
+  #of-form .segmented {
+    display: flex;
+    border: 1px solid #17161B;
+    border-radius: 2px;
+    overflow: hidden;
+    height: 42px;
+    background: #fff;
+  }
+
+  #of-form .segmented input[type="radio"] {
+    display: none;
+  }
+
+  #of-form .segmented label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #726C5D;
+    background: #fff;
+    transition: background .15s ease, color .15s ease;
+  }
+
+  #of-form .segmented label:first-of-type {
+    border-right: 1px solid #17161B;
+  }
+
+  #of-form .segmented input[type="radio"]:checked + label {
+    background: #17161B;
+    color: #fff;
+  }
+
+  #of-form .prefix-field,
+  #of-form .amount-field {
+    position: relative;
+  }
+
+  #of-form .prefix-field .prefix,
+  #of-form .amount-field .cur {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    bottom: 1px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #726C5D;
+    background: #EFEBDF;
+    border-right: 1px solid #17161B;
+    pointer-events: none;
+  }
+
+  #of-form .prefix-field input {
+    padding-left: 54px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  #of-form .amount-field input {
+    padding-left: 46px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* MODALIDADES */
+
+  #of-form .mode-group {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #D8D2BE;
+    background: #FDFCF9;
+  }
+
+  #of-form .mode-group-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  #of-form .mode-group-title .sq {
+    width: 10px;
+    height: 10px;
+    background: #C81D2C;
+    flex: 0 0 auto;
+  }
+
+  #of-form .mode-group-title h3 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+
+  #of-form .mode-description {
+    font-size: 13px;
+    color: #726C5D;
+    margin-bottom: 16px;
+  }
+
+  #of-form .activity-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  #of-form .activity {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 11px 12px;
+    border: 1px solid #D8D2BE;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  #of-form .activity:hover {
+    border-color: #17161B;
+  }
+
+  #of-form .activity input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    accent-color: #17161B;
+    cursor: pointer;
+  }
+
+  #of-form .activity strong {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  #of-form .activity span {
+    display: block;
+    font-size: 12.5px;
+    color: #726C5D;
+  }
+
+  #of-form .modes-wrap.error .mode-group {
+    border-color: #C81D2C;
+  }
+
+  #of-form .modes-error {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: #8F1420;
+    margin-top: 4px;
+  }
+
+  #of-form .modes-wrap.error .modes-error {
+    display: block;
+  }
+
+  /* TARIFAS */
+
+  #of-form .rate-group {
+    margin-bottom: 28px;
+    padding: 20px 20px 6px;
+    border: 1px solid #D8D2BE;
+    border-radius: 2px;
+    background: #FDFCF9;
+  }
+
+  #of-form .rate-group.error {
+    border-color: #C81D2C;
+    background: #FBEDEC;
+  }
+
+  #of-form .rate-group-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  #of-form .rate-group-title .sq {
+    width: 10px;
+    height: 10px;
+    background: #C81D2C;
+  }
+
+  #of-form .rate-group-title h3 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+
+  #of-form .rate-group-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: #726C5D;
+    margin-bottom: 18px;
+  }
+
+  #of-form .rate-group-error {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: #8F1420;
+    margin: -8px 0 16px;
+  }
+
+  #of-form .rate-group.error .rate-group-error {
+    display: block;
+  }
 
   #of-form .trust-badge {
-    margin: 24px 0 16px; padding: 14px 18px; background: #EEF6F1;
-    border: 1px solid rgba(43,107,74,0.25); border-left: 4px solid #2B6B4A; display: flex; align-items: center;
-    gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; color: #2B6B4A;
+    margin: 24px 0 16px;
+    padding: 14px 18px;
+    background: #EEF6F1;
+    border: 1px solid rgba(43,107,74,0.25);
+    border-left: 4px solid #2B6B4A;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2B6B4A;
   }
 
-  #of-form .submit-row { margin-top: 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  #of-form .submit-row {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
   #of-form button.submit {
-    font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
-    font-weight: 600; background: #17161B; color: #fff; border: 1px solid #17161B; padding: 15px 30px;
-    border-radius: 2px; cursor: pointer; box-shadow: 3px 3px 0 rgba(23,22,27,0.3); transition: all .15s ease;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: #17161B;
+    color: #fff;
+    border: 1px solid #17161B;
+    padding: 15px 30px;
+    border-radius: 2px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 rgba(23,22,27,0.3);
+    transition: all .15s ease;
   }
-  #of-form button.submit:hover { background: #8F1420; border-color: #8F1420; box-shadow: 4px 4px 0 #17161B; }
-  #of-form button.submit:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
 
-  #of-form .banner { display: none; margin-top: 20px; padding: 20px 22px; border: 1.5px solid #2B6B4A; background: #EEF6F1; color: #2B6B4A; }
-  #of-form .banner.show { display: block; }
-  #of-form .banner.err { border-color: #C81D2C; background: #FBEDEC; color: #8F1420; }
-  #of-form .stamp-seal { display: inline-block; border: 2.5px double #2B6B4A; padding: 6px 14px; margin-bottom: 12px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; text-transform: uppercase; }
+  #of-form button.submit:hover {
+    background: #8F1420;
+    border-color: #8F1420;
+    box-shadow: 4px 4px 0 #17161B;
+  }
 
-  #of-form footer.stamp { text-align: center; margin-top: 26px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: .18em; color: #726C5D; text-transform: uppercase; }
+  #of-form button.submit:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  #of-form .banner {
+    display: none;
+    margin-top: 20px;
+    padding: 20px 22px;
+    border: 1.5px solid #2B6B4A;
+    background: #EEF6F1;
+    color: #2B6B4A;
+  }
+
+  #of-form .banner.show {
+    display: block;
+  }
+
+  #of-form .banner.err {
+    border-color: #C81D2C;
+    background: #FBEDEC;
+    color: #8F1420;
+  }
+
+  #of-form .stamp-seal {
+    display: inline-block;
+    border: 2.5px double #2B6B4A;
+    padding: 6px 14px;
+    margin-bottom: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  #of-form footer.stamp {
+    text-align: center;
+    margin-top: 26px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    color: #726C5D;
+    text-transform: uppercase;
+  }
 
   @media (max-width: 640px) {
-    #of-form .row { grid-template-columns: 1fr; gap: 14px; }
-    #of-form .submit-row { flex-direction: column; align-items: stretch; }
-    #of-form button.submit { width: 100%; text-align: center; }
+
+    #of-form .row {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    #of-form .submit-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #of-form button.submit {
+      width: 100%;
+      text-align: center;
+    }
+
   }
   </style>
 </head>
+
 <body>
 
 <div id="of-form">
+
 <div class="sheet">
-  <span class="crop tl"></span><span class="crop tr"></span>
-  <span class="crop bl"></span><span class="crop br"></span>
+
+  <span class="crop tl"></span>
+  <span class="crop tr"></span>
+  <span class="crop bl"></span>
+  <span class="crop br"></span>
 
   <header class="masthead">
+
     <div class="masthead-top">
-      <div class="masthead-brand">OFICIAL</div>
-      <a href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores" target="_blank" rel="noopener" class="whatsapp-help">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
-        <span>¿Tienes dudas? <strong>Escribir por WhatsApp</strong></span>
+
+      <div class="masthead-brand">
+        OFICIAL
+      </div>
+
+      <a
+        href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores"
+        target="_blank"
+        rel="noopener"
+        class="whatsapp-help"
+      >
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+        </svg>
+
+        <span>
+          ¿Tienes dudas?
+          <strong>Escribir por WhatsApp</strong>
+        </span>
+
       </a>
+
     </div>
-    <h1>Registro Oficial de Diseñadores</h1>
-    <p>Completa tus datos y tarifas para que OFICIAL te derive trabajos de diseño según presupuesto del cliente.</p>
+
+    <h1>
+      Registro Oficial de Diseñadores
+    </h1>
+
+    <p>
+      Completa tus datos, modalidades y tarifas para que OFICIAL te derive trabajos según el perfil requerido.
+    </p>
+
   </header>
 
-  <form id="of-designerForm" novalidate>
-    <!-- 01 — Datos personales -->
+
+  <form
+    id="of-designerForm"
+    novalidate
+  >
+
+
+    <!-- =====================================================
+         01 — DATOS PERSONALES
+    ====================================================== -->
+
     <section class="section">
+
       <div class="section-head">
         <span class="section-num">01</span>
         <span class="section-title">Datos personales</span>
       </div>
 
-      <div class="row">
-        <div class="field" data-field="nombres">
-          <label for="of-nombres">Nombres<span class="req">*</span></label>
-          <input type="text" id="of-nombres" name="nombres" maxlength="60" required>
-          <div class="error-msg">Ingresa tus nombres.</div>
-        </div>
-        <div class="field" data-field="apellidos">
-          <label for="of-apellidos">Apellidos<span class="req">*</span></label>
-          <input type="text" id="of-apellidos" name="apellidos" maxlength="60" required>
-          <div class="error-msg">Ingresa tus apellidos.</div>
-        </div>
-      </div>
 
       <div class="row">
-        <div class="field" data-field="genero">
-          <label>Género<span class="req">*</span></label>
+
+        <div
+          class="field"
+          data-field="nombres"
+        >
+
+          <label for="of-nombres">
+            Nombres<span class="req">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="of-nombres"
+            name="nombres"
+            maxlength="60"
+            required
+          >
+
+          <div class="error-msg">
+            Ingresa tus nombres.
+          </div>
+
+        </div>
+
+
+        <div
+          class="field"
+          data-field="apellidos"
+        >
+
+          <label for="of-apellidos">
+            Apellidos<span class="req">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="of-apellidos"
+            name="apellidos"
+            maxlength="60"
+            required
+          >
+
+          <div class="error-msg">
+            Ingresa tus apellidos.
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="row">
+
+        <div
+          class="field"
+          data-field="genero"
+        >
+
+          <label>
+            Género<span class="req">*</span>
+          </label>
+
           <div class="segmented">
-            <input type="radio" id="of-genero-mujer" name="genero" value="Mujer">
-            <label for="of-genero-mujer">Mujer</label>
-            <input type="radio" id="of-genero-hombre" name="genero" value="Hombre">
-            <label for="of-genero-hombre">Hombre</label>
+
+            <input
+              type="radio"
+              id="of-genero-mujer"
+              name="genero"
+              value="Mujer"
+            >
+
+            <label for="of-genero-mujer">
+              Mujer
+            </label>
+
+
+            <input
+              type="radio"
+              id="of-genero-hombre"
+              name="genero"
+              value="Hombre"
+            >
+
+            <label for="of-genero-hombre">
+              Hombre
+            </label>
+
           </div>
-          <div class="error-msg">Selecciona una opción.</div>
+
+          <div class="error-msg">
+            Selecciona una opción.
+          </div>
+
         </div>
 
-        <div class="field" data-field="fechaNacimiento">
-          <label>Fecha de nacimiento<span class="req">*</span></label>
+
+        <div
+          class="field"
+          data-field="fechaNacimiento"
+        >
+
+          <label>
+            Fecha de nacimiento<span class="req">*</span>
+          </label>
+
           <div class="date-triplet">
-            <select id="of-nacDia" aria-label="Día de nacimiento"><option value="">Día</option></select>
-            <select id="of-nacMes" aria-label="Mes de nacimiento"><option value="">Mes</option></select>
-            <select id="of-nacAnio" aria-label="Año de nacimiento"><option value="">Año</option></select>
+
+            <select
+              id="of-nacDia"
+              aria-label="Día de nacimiento"
+            >
+              <option value="">Día</option>
+            </select>
+
+            <select
+              id="of-nacMes"
+              aria-label="Mes de nacimiento"
+            >
+              <option value="">Mes</option>
+            </select>
+
+            <select
+              id="of-nacAnio"
+              aria-label="Año de nacimiento"
+            >
+              <option value="">Año</option>
+            </select>
+
           </div>
-          <div class="error-msg">Selecciona tu fecha de nacimiento completa.</div>
+
+          <div class="error-msg">
+            Selecciona tu fecha de nacimiento completa.
+          </div>
+
         </div>
+
       </div>
+
 
       <div class="row">
-        <div class="field" data-field="distrito">
-          <label for="of-distrito">Distrito<span class="req">*</span></label>
-          <select id="of-distrito" name="distrito" required>
-            <option value="">Selecciona tu distrito</option>
+
+        <div
+          class="field"
+          data-field="distrito"
+        >
+
+          <label for="of-distrito">
+            Distrito<span class="req">*</span>
+          </label>
+
+          <select
+            id="of-distrito"
+            name="distrito"
+            required
+          >
+            <option value="">
+              Selecciona tu distrito
+            </option>
           </select>
-          <div class="error-msg">Selecciona un distrito válido de Lima/Callao.</div>
+
+          <div class="error-msg">
+            Selecciona un distrito válido de Lima/Callao.
+          </div>
+
         </div>
 
-        <div class="field" data-field="telefono">
-          <label for="of-telefono">Teléfono celular<span class="req">*</span></label>
+
+        <div
+          class="field"
+          data-field="telefono"
+        >
+
+          <label for="of-telefono">
+            Teléfono celular<span class="req">*</span>
+          </label>
+
           <div class="prefix-field">
-            <span class="prefix">+51</span>
-            <input type="tel" id="of-telefono" name="telefono" placeholder="987 654 321" maxlength="11" inputmode="numeric" required>
+
+            <span class="prefix">
+              +51
+            </span>
+
+            <input
+              type="tel"
+              id="of-telefono"
+              name="telefono"
+              placeholder="987 654 321"
+              maxlength="11"
+              inputmode="numeric"
+              required
+            >
+
           </div>
-          <div class="error-msg">Ingresa un celular de 9 dígitos que empiece con 9.</div>
+
+          <div class="error-msg">
+            Ingresa un celular de 9 dígitos que empiece con 9.
+          </div>
+
         </div>
+
       </div>
+
+
+      <div class="field">
+
+        <label for="of-usuarioWhatsapp">
+          Usuario de WhatsApp
+          <span class="opt">(opcional)</span>
+        </label>
+
+        <input
+          type="text"
+          id="of-usuarioWhatsapp"
+          name="usuarioWhatsapp"
+          maxlength="100"
+          placeholder="@usuario"
+          autocomplete="off"
+        >
+
+      </div>
+
     </section>
 
-    <!-- 02 — Tarifas de diseño -->
+
+    <!-- =====================================================
+         02 — MODALIDAD
+    ====================================================== -->
+
     <section class="section">
+
       <div class="section-head">
         <span class="section-num">02</span>
-        <span class="section-title">Tarifas de diseño</span>
-      </div>
-      <p class="section-note">Indica al menos una tarifa para cada producto según tu experiencia.</p>
-
-      <div class="rate-group" data-field="tarjetaGroup">
-        <div class="rate-group-title"><span class="sq"></span><h3>Tarjeta de presentación</h3></div>
-        <p class="rate-group-note">Indica al menos un precio.</p>
-        <div class="rate-group-error">Indica al menos una tarifa para tarjeta.</div>
-        <div class="row">
-          <div class="field">
-            <label for="of-tarjetaBasico">Básico <span class="opt">(opcional)</span></label>
-            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-tarjetaBasico" min="0" step="0.5" placeholder="0.00"></div>
-          </div>
-          <div class="field">
-            <label for="of-tarjetaComplejo">Complejo <span class="opt">(opcional)</span></label>
-            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-tarjetaComplejo" min="0" step="0.5" placeholder="0.00"></div>
-          </div>
-        </div>
+        <span class="section-title">Modalidad</span>
       </div>
 
-      <div class="rate-group" data-field="volanteGroup">
-        <div class="rate-group-title"><span class="sq"></span><h3>Volante publicitario</h3></div>
-        <p class="rate-group-note">Indica al menos un precio.</p>
-        <div class="rate-group-error">Indica al menos una tarifa para volante.</div>
-        <div class="row">
-          <div class="field">
-            <label for="of-volanteBasico">Básico <span class="opt">(opcional)</span></label>
-            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-volanteBasico" min="0" step="0.5" placeholder="0.00"></div>
+      <p class="section-note">
+        Selecciona una o más actividades que puedas realizar.
+      </p>
+
+
+      <div
+        class="modes-wrap"
+        id="of-modesWrap"
+      >
+
+
+        <!-- REMOTO -->
+
+        <div class="mode-group">
+
+          <div class="mode-group-title">
+            <span class="sq"></span>
+            <h3>Remoto</h3>
           </div>
-          <div class="field">
-            <label for="of-volanteComplejo">Complejo <span class="opt">(opcional)</span></label>
-            <div class="amount-field"><span class="cur">S/</span><input type="number" id="of-volanteComplejo" min="0" step="0.5" placeholder="0.00"></div>
+
+          <p class="mode-description">
+            Trabaja a distancia desde casa o desde donde prefieras.
+          </p>
+
+
+          <div class="activity-list">
+
+
+            <label class="activity">
+
+              <input
+                type="checkbox"
+                id="of-posts"
+              >
+
+              <span>
+                <strong>Posts</strong>
+                <span>
+                  Realizar publicaciones en redes sociales.
+                </span>
+              </span>
+
+            </label>
+
+
+            <label class="activity">
+
+              <input
+                type="checkbox"
+                id="of-lives"
+              >
+
+              <span>
+                <strong>Lives</strong>
+                <span>
+                  Realizar transmisiones en vivo en redes sociales.
+                </span>
+              </span>
+
+            </label>
+
+
+            <label class="activity">
+
+              <input
+                type="checkbox"
+                id="of-mensajes"
+              >
+
+              <span>
+                <strong>Mensajes</strong>
+                <span>
+                  Enviar mensajes directos por WhatsApp o redes sociales.
+                </span>
+              </span>
+
+            </label>
+
+
           </div>
+
         </div>
+
+
+        <!-- PRESENCIAL -->
+
+        <div class="mode-group">
+
+          <div class="mode-group-title">
+            <span class="sq"></span>
+            <h3>Presencial</h3>
+          </div>
+
+          <p class="mode-description">
+            Trabaja visitando negocios o atendiendo en puntos publicitarios.
+          </p>
+
+
+          <div class="activity-list">
+
+
+            <label class="activity">
+
+              <input
+                type="checkbox"
+                id="of-volanteo"
+              >
+
+              <span>
+                <strong>Volanteo</strong>
+                <span>
+                  Repartir volantes mano a mano.
+                </span>
+              </span>
+
+            </label>
+
+
+            <label class="activity">
+
+              <input
+                type="checkbox"
+                id="of-modulo"
+              >
+
+              <span>
+                <strong>Módulo</strong>
+                <span>
+                  Atender en un módulo publicitario dentro de mercados, galerías, centros comerciales, ferias o eventos.
+                </span>
+              </span>
+
+            </label>
+
+
+          </div>
+
+        </div>
+
+
+        <div class="modes-error">
+          Selecciona al menos una actividad.
+        </div>
+
+
       </div>
+
     </section>
 
-    <!-- 03 — Portafolio -->
+
+    <!-- =====================================================
+         03 — TARIFAS
+    ====================================================== -->
+
     <section class="section">
+
       <div class="section-head">
         <span class="section-num">03</span>
+        <span class="section-title">Tarifas de diseño</span>
+      </div>
+
+      <p class="section-note">
+        Indica al menos una tarifa para cada producto según tu experiencia.
+      </p>
+
+
+      <div
+        class="rate-group"
+        data-field="tarjetaGroup"
+      >
+
+        <div class="rate-group-title">
+          <span class="sq"></span>
+          <h3>Tarjeta de presentación</h3>
+        </div>
+
+        <p class="rate-group-note">
+          Indica al menos un precio.
+        </p>
+
+        <div class="rate-group-error">
+          Indica al menos una tarifa para tarjeta.
+        </div>
+
+
+        <div class="row">
+
+          <div class="field">
+
+            <label for="of-tarjetaBasico">
+              Básico
+              <span class="opt">(opcional)</span>
+            </label>
+
+            <div class="amount-field">
+
+              <span class="cur">
+                S/
+              </span>
+
+              <input
+                type="number"
+                id="of-tarjetaBasico"
+                min="0"
+                step="0.5"
+                placeholder="0.00"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="of-tarjetaComplejo">
+              Complejo
+              <span class="opt">(opcional)</span>
+            </label>
+
+            <div class="amount-field">
+
+              <span class="cur">
+                S/
+              </span>
+
+              <input
+                type="number"
+                id="of-tarjetaComplejo"
+                min="0"
+                step="0.5"
+                placeholder="0.00"
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="rate-group"
+        data-field="volanteGroup"
+      >
+
+        <div class="rate-group-title">
+          <span class="sq"></span>
+          <h3>Volante publicitario</h3>
+        </div>
+
+        <p class="rate-group-note">
+          Indica al menos un precio.
+        </p>
+
+        <div class="rate-group-error">
+          Indica al menos una tarifa para volante.
+        </div>
+
+
+        <div class="row">
+
+          <div class="field">
+
+            <label for="of-volanteBasico">
+              Básico
+              <span class="opt">(opcional)</span>
+            </label>
+
+            <div class="amount-field">
+
+              <span class="cur">
+                S/
+              </span>
+
+              <input
+                type="number"
+                id="of-volanteBasico"
+                min="0"
+                step="0.5"
+                placeholder="0.00"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="of-volanteComplejo">
+              Complejo
+              <span class="opt">(opcional)</span>
+            </label>
+
+            <div class="amount-field">
+
+              <span class="cur">
+                S/
+              </span>
+
+              <input
+                type="number"
+                id="of-volanteComplejo"
+                min="0"
+                step="0.5"
+                placeholder="0.00"
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         04 — PORTAFOLIO
+    ====================================================== -->
+
+    <section class="section">
+
+      <div class="section-head">
+        <span class="section-num">04</span>
         <span class="section-title">Portafolio</span>
       </div>
 
-      <div class="field" data-field="portafolio">
-        <label for="of-portafolio">Enlace directo<span class="req">*</span></label>
-        <input type="url" id="of-portafolio" name="portafolio" placeholder="https://www.behance.net/tu-usuario o @tu_usuario" required>
-        <div class="error-msg">Ingresa un enlace o usuario válido.</div>
+
+      <div
+        class="field"
+        data-field="portafolio"
+      >
+
+        <label for="of-portafolio">
+          Enlace directo<span class="req">*</span>
+        </label>
+
+        <input
+          type="url"
+          id="of-portafolio"
+          name="portafolio"
+          placeholder="https://www.behance.net/tu-usuario"
+          maxlength="500"
+          required
+        >
+
+        <div class="error-msg">
+          Ingresa un enlace directo completo con https://
+        </div>
+
       </div>
+
+
+      <p class="section-note">
+        Puede ser Behance, Instagram, TikTok, Facebook, YouTube, otra red social o tu propia web.
+      </p>
+
 
       <div class="trust-badge">
-        <span>LA TARIFA SE PUEDE NEGOCIAR CON EL CLIENTE Y GANAS EL 100% DE LO ACORDADO</span>
+        <span>
+          LA TARIFA SE PUEDE NEGOCIAR CON EL CLIENTE Y GANAS EL 100% DE LO ACORDADO
+        </span>
       </div>
+
 
       <!-- Honeypot anti-spam -->
-      <div style="position:absolute;left:-9999px;" aria-hidden="true">
-        <input type="text" id="of-sitioWeb" name="sitioWeb" tabindex="-1" autocomplete="off">
+
+      <div
+        style="position:absolute;left:-9999px;"
+        aria-hidden="true"
+      >
+
+        <input
+          type="text"
+          id="of-sitioWeb"
+          name="sitioWeb"
+          tabindex="-1"
+          autocomplete="off"
+        >
+
       </div>
+
 
       <div class="submit-row">
-        <button type="submit" class="submit" id="of-submitBtn">Enviar ficha</button>
+
+        <button
+          type="submit"
+          class="submit"
+          id="of-submitBtn"
+        >
+          Enviar ficha
+        </button>
+
       </div>
 
-      <!-- Aviso de envío posicionado abajo -->
-      <div class="banner" id="of-formBanner" role="alert" aria-live="polite">
-        <div class="stamp-seal" id="of-stampSeal" style="display:none;">✓ REGISTRO RECIBIDO</div>
+
+      <div
+        class="banner"
+        id="of-formBanner"
+        role="alert"
+        aria-live="polite"
+      >
+
+        <div
+          class="stamp-seal"
+          id="of-stampSeal"
+          style="display:none;"
+        >
+          ✓ REGISTRO RECIBIDO
+        </div>
+
         <div id="of-bannerMsg"></div>
+
       </div>
+
     </section>
+
+
   </form>
+
 </div>
 
-<footer class="stamp">OFICIAL</footer>
+
+<footer class="stamp">
+  OFICIAL
+</footer>
+
+
 </div>
+
+
 
 <script>
 (function(){
+
   "use strict";
 
-  var form = document.getElementById("of-designerForm");
-  var banner = document.getElementById("of-formBanner");
-  var bannerMsg = document.getElementById("of-bannerMsg");
-  var stampSeal = document.getElementById("of-stampSeal");
-  var submitBtn = document.getElementById("of-submitBtn");
 
-  var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbzAbqbr_PZUhjA6ssgeJQ7KCuob6Exdn7Q4yW3kZBcl1CAhr-PwK9FsVZMysty10r0d/exec";
-  var DRAFT_KEY = "of_designer_form_draft";
-  var isSubmitting = false;
+  /* =========================================================
+     ELEMENTOS
+  ========================================================= */
 
-  // --- DISTRITOS (50 OFICIALES) ---
+  var form =
+    document.getElementById(
+      "of-designerForm"
+    );
+
+  var banner =
+    document.getElementById(
+      "of-formBanner"
+    );
+
+  var bannerMsg =
+    document.getElementById(
+      "of-bannerMsg"
+    );
+
+  var stampSeal =
+    document.getElementById(
+      "of-stampSeal"
+    );
+
+  var submitBtn =
+    document.getElementById(
+      "of-submitBtn"
+    );
+
+
+  var SHEET_ENDPOINT =
+    "https://script.google.com/macros/s/AKfycbzAbqbr_PZUhjA6ssgeJQ7KCuob6Exdn7Q4yW3kZBcl1CAhr-PwK9FsVZMysty10r0d/exec";
+
+
+  var DRAFT_KEY =
+    "of_designer_form_draft";
+
+
+  var isSubmitting =
+    false;
+
+
+  /* =========================================================
+     DISTRITOS
+  ========================================================= */
+
   var distritos = [
-    "Ancón","Ate","Barranco","Bellavista","Breña","Callao","Carabayllo","Carmen de La Legua-Reynoso",
-    "Chaclacayo","Chorrillos","Cieneguilla","Comas","El Agustino","Independencia","Jesús María",
-    "La Molina","La Perla","La Punta","La Victoria","Lima","Lince","Los Olivos","Lurigancho","Lurín",
-    "Magdalena del Mar","Mi Perú","Miraflores","Pachacámac","Pucusana","Pueblo Libre","Puente Piedra",
-    "Punta Hermosa","Punta Negra","Rímac","San Bartolo","San Borja","San Isidro","San Juan de Lurigancho",
-    "San Juan de Miraflores","San Luis","San Martín de Porres","San Miguel","Santa Anita",
-    "Santa María del Mar","Santa Rosa","Santiago de Surco","Surquillo","Ventanilla","Villa El Salvador","Villa María del Triunfo"
+    "Ancón",
+    "Ate",
+    "Barranco",
+    "Bellavista",
+    "Breña",
+    "Callao",
+    "Carabayllo",
+    "Carmen de La Legua-Reynoso",
+    "Chaclacayo",
+    "Chorrillos",
+    "Cieneguilla",
+    "Comas",
+    "El Agustino",
+    "Independencia",
+    "Jesús María",
+    "La Molina",
+    "La Perla",
+    "La Punta",
+    "La Victoria",
+    "Lima",
+    "Lince",
+    "Los Olivos",
+    "Lurigancho",
+    "Lurín",
+    "Magdalena del Mar",
+    "Mi Perú",
+    "Miraflores",
+    "Pachacámac",
+    "Pucusana",
+    "Pueblo Libre",
+    "Puente Piedra",
+    "Punta Hermosa",
+    "Punta Negra",
+    "Rímac",
+    "San Bartolo",
+    "San Borja",
+    "San Isidro",
+    "San Juan de Lurigancho",
+    "San Juan de Miraflores",
+    "San Luis",
+    "San Martín de Porres",
+    "San Miguel",
+    "Santa Anita",
+    "Santa María del Mar",
+    "Santa Rosa",
+    "Santiago de Surco",
+    "Surquillo",
+    "Ventanilla",
+    "Villa El Salvador",
+    "Villa María del Triunfo"
   ];
 
-  var selDistrito = document.getElementById("of-distrito");
+
+  var selDistrito =
+    document.getElementById(
+      "of-distrito"
+    );
+
+
   var distMap = {};
-  distritos.forEach(function(d){
-    var opt = document.createElement("option");
-    opt.value = d;
-    opt.textContent = d;
-    selDistrito.appendChild(opt);
-    distMap[d.toLowerCase()] = d;
-  });
 
-  // --- FECHA DE NACIMIENTO (COMBOS Y VALIDACIÓN DÍAS REALES) ---
-  var selDia = document.getElementById("of-nacDia");
-  var selMes = document.getElementById("of-nacMes");
-  var selAnio = document.getElementById("of-nacAnio");
-  var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-  for (var d = 1; d <= 31; d++) {
-    selDia.add(new Option(d < 10 ? "0" + d : d, d));
+  distritos.forEach(
+    function(d) {
+
+      var opt =
+        document.createElement(
+          "option"
+        );
+
+      opt.value =
+        d;
+
+      opt.textContent =
+        d;
+
+      selDistrito.appendChild(
+        opt
+      );
+
+      distMap[
+        d.toLowerCase()
+      ] = d;
+
+    }
+  );
+
+
+  /* =========================================================
+     FECHA DE NACIMIENTO
+  ========================================================= */
+
+  var selDia =
+    document.getElementById(
+      "of-nacDia"
+    );
+
+  var selMes =
+    document.getElementById(
+      "of-nacMes"
+    );
+
+  var selAnio =
+    document.getElementById(
+      "of-nacAnio"
+    );
+
+
+  var meses = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre"
+  ];
+
+
+  for (
+    var d = 1;
+    d <= 31;
+    d++
+  ) {
+
+    selDia.add(
+      new Option(
+        d < 10
+          ? "0" + d
+          : d,
+        d
+      )
+    );
+
   }
-  meses.forEach(function(m, idx){ selMes.add(new Option(m, idx + 1)); });
 
-  var currentYear = new Date().getFullYear();
-  for (var a = currentYear - 16; a >= currentYear - 80; a--) {
-    selAnio.add(new Option(a, a));
+
+  meses.forEach(
+    function(m, idx) {
+
+      selMes.add(
+        new Option(
+          m,
+          idx + 1
+        )
+      );
+
+    }
+  );
+
+
+  var currentYear =
+    new Date()
+      .getFullYear();
+
+
+  for (
+    var a = currentYear - 16;
+    a >= currentYear - 80;
+    a--
+  ) {
+
+    selAnio.add(
+      new Option(
+        a,
+        a
+      )
+    );
+
   }
 
-  function isValidBirthDate(day, month, year) {
-    if (!day || !month || !year) return false;
-    var d = parseInt(day, 10), m = parseInt(month, 10) - 1, y = parseInt(year, 10);
-    var dateObj = new Date(y, m, d);
-    return dateObj.getFullYear() === y && dateObj.getMonth() === m && dateObj.getDate() === d;
+
+  function isValidBirthDate(
+    day,
+    month,
+    year
+  ) {
+
+    if (
+      !day ||
+      !month ||
+      !year
+    ) {
+      return false;
+    }
+
+
+    var d =
+      parseInt(
+        day,
+        10
+      );
+
+    var m =
+      parseInt(
+        month,
+        10
+      ) - 1;
+
+    var y =
+      parseInt(
+        year,
+        10
+      );
+
+
+    var dateObj =
+      new Date(
+        y,
+        m,
+        d
+      );
+
+
+    return (
+      dateObj.getFullYear() === y &&
+      dateObj.getMonth() === m &&
+      dateObj.getDate() === d
+    );
+
   }
 
-  // --- MÁSCARA DE TELÉFONO ---
-  var telInput = document.getElementById("of-telefono");
-  telInput.addEventListener("input", function(){
-    var clean = this.value.replace(/\D/g, "").slice(0, 9);
-    if (clean.length > 6) this.value = clean.slice(0,3) + " " + clean.slice(3,6) + " " + clean.slice(6);
-    else if (clean.length > 3) this.value = clean.slice(0,3) + " " + clean.slice(3);
-    else this.value = clean;
-    saveDraft();
-  });
 
-  // --- PORTAFOLIO Y SEGURIDAD XSS ---
-  function sanitizePortfolioUrl(val) {
-    val = (val || "").trim();
-    if (!val) return "";
-    if (/^javascript:/i.test(val)) return "";
-    if (val.startsWith("@")) return "https://instagram.com/" + encodeURIComponent(val.slice(1));
-    return /^https?:\/\//i.test(val) ? val : "https://" + val;
+  /* =========================================================
+     TELÉFONO
+  ========================================================= */
+
+  var telInput =
+    document.getElementById(
+      "of-telefono"
+    );
+
+
+  telInput.addEventListener(
+    "input",
+    function() {
+
+      var clean =
+        this.value
+          .replace(
+            /\D/g,
+            ""
+          )
+          .slice(
+            0,
+            9
+          );
+
+
+      if (
+        clean.length > 6
+      ) {
+
+        this.value =
+          clean.slice(0,3) +
+          " " +
+          clean.slice(3,6) +
+          " " +
+          clean.slice(6);
+
+      } else if (
+        clean.length > 3
+      ) {
+
+        this.value =
+          clean.slice(0,3) +
+          " " +
+          clean.slice(3);
+
+      } else {
+
+        this.value =
+          clean;
+
+      }
+
+
+      saveDraft();
+
+    }
+  );
+
+
+  /* =========================================================
+     MODALIDADES
+  ========================================================= */
+
+  var posts =
+    document.getElementById(
+      "of-posts"
+    );
+
+  var lives =
+    document.getElementById(
+      "of-lives"
+    );
+
+  var mensajes =
+    document.getElementById(
+      "of-mensajes"
+    );
+
+  var volanteo =
+    document.getElementById(
+      "of-volanteo"
+    );
+
+  var modulo =
+    document.getElementById(
+      "of-modulo"
+    );
+
+  var modesWrap =
+    document.getElementById(
+      "of-modesWrap"
+    );
+
+
+  function hasActivity() {
+
+    return (
+      posts.checked ||
+      lives.checked ||
+      mensajes.checked ||
+      volanteo.checked ||
+      modulo.checked
+    );
+
   }
 
-  // --- LOCALSTORAGE (BORRADOR AUTOMÁTICO) ---
+
+  /* =========================================================
+     PORTAFOLIO
+  ========================================================= */
+
+  function isValidPortfolioUrl(
+    val
+  ) {
+
+    val =
+      (val || "")
+        .trim();
+
+
+    if (
+      !/^https?:\/\//i.test(
+        val
+      )
+    ) {
+      return false;
+    }
+
+
+    try {
+
+      var url =
+        new URL(
+          val
+        );
+
+      return (
+        (
+          url.protocol === "http:" ||
+          url.protocol === "https:"
+        ) &&
+        url.hostname.includes(".")
+      );
+
+    } catch (e) {
+
+      return false;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     BORRADOR LOCAL
+  ========================================================= */
+
   function saveDraft() {
-    if (isSubmitting) return;
-    var gen = form.querySelector('input[name="genero"]:checked');
+
+    if (
+      isSubmitting
+    ) {
+      return;
+    }
+
+
+    var gen =
+      form.querySelector(
+        'input[name="genero"]:checked'
+      );
+
+
     var draft = {
-      nombres: form.nombres.value,
-      apellidos: form.apellidos.value,
-      genero: gen ? gen.value : "",
-      nacDia: selDia.value,
-      nacMes: selMes.value,
-      nacAnio: selAnio.value,
-      distrito: selDistrito.value,
-      telefono: telInput.value,
-      tarjetaBasico: document.getElementById("of-tarjetaBasico").value,
-      tarjetaComplejo: document.getElementById("of-tarjetaComplejo").value,
-      volanteBasico: document.getElementById("of-volanteBasico").value,
-      volanteComplejo: document.getElementById("of-volanteComplejo").value,
-      portafolio: form.portafolio.value
+
+      nombres:
+        form.nombres.value,
+
+      apellidos:
+        form.apellidos.value,
+
+      genero:
+        gen
+          ? gen.value
+          : "",
+
+      nacDia:
+        selDia.value,
+
+      nacMes:
+        selMes.value,
+
+      nacAnio:
+        selAnio.value,
+
+      distrito:
+        selDistrito.value,
+
+      telefono:
+        telInput.value,
+
+      usuarioWhatsapp:
+        document
+          .getElementById(
+            "of-usuarioWhatsapp"
+          )
+          .value,
+
+      posts:
+        posts.checked,
+
+      lives:
+        lives.checked,
+
+      mensajes:
+        mensajes.checked,
+
+      volanteo:
+        volanteo.checked,
+
+      modulo:
+        modulo.checked,
+
+      tarjetaBasico:
+        document
+          .getElementById(
+            "of-tarjetaBasico"
+          )
+          .value,
+
+      tarjetaComplejo:
+        document
+          .getElementById(
+            "of-tarjetaComplejo"
+          )
+          .value,
+
+      volanteBasico:
+        document
+          .getElementById(
+            "of-volanteBasico"
+          )
+          .value,
+
+      volanteComplejo:
+        document
+          .getElementById(
+            "of-volanteComplejo"
+          )
+          .value,
+
+      portafolio:
+        form.portafolio.value
+
     };
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch(e){}
+
+
+    try {
+
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify(
+          draft
+        )
+      );
+
+    } catch (e) {}
+
   }
+
 
   function loadDraft() {
+
     try {
-      var raw = localStorage.getItem(DRAFT_KEY);
-      if (!raw) return;
-      var draft = JSON.parse(raw);
-      if (draft.nombres) form.nombres.value = draft.nombres;
-      if (draft.apellidos) form.apellidos.value = draft.apellidos;
-      if (draft.genero) {
-        var r = form.querySelector('input[name="genero"][value="' + draft.genero + '"]');
-        if (r) r.checked = true;
+
+      var raw =
+        localStorage.getItem(
+          DRAFT_KEY
+        );
+
+
+      if (!raw) {
+        return;
       }
-      if (draft.nacDia) selDia.value = draft.nacDia;
-      if (draft.nacMes) selMes.value = draft.nacMes;
-      if (draft.nacAnio) selAnio.value = draft.nacAnio;
-      if (draft.distrito) selDistrito.value = draft.distrito;
-      if (draft.telefono) telInput.value = draft.telefono;
-      if (draft.tarjetaBasico) document.getElementById("of-tarjetaBasico").value = draft.tarjetaBasico;
-      if (draft.tarjetaComplejo) document.getElementById("of-tarjetaComplejo").value = draft.tarjetaComplejo;
-      if (draft.volanteBasico) document.getElementById("of-volanteBasico").value = draft.volanteBasico;
-      if (draft.volanteComplejo) document.getElementById("of-volanteComplejo").value = draft.volanteComplejo;
-      if (draft.portafolio) form.portafolio.value = draft.portafolio;
-    } catch(e){}
+
+
+      var draft =
+        JSON.parse(
+          raw
+        );
+
+
+      if (draft.nombres) {
+        form.nombres.value =
+          draft.nombres;
+      }
+
+
+      if (draft.apellidos) {
+        form.apellidos.value =
+          draft.apellidos;
+      }
+
+
+      if (draft.genero) {
+
+        var radio =
+          form.querySelector(
+            'input[name="genero"][value="' +
+            draft.genero +
+            '"]'
+          );
+
+        if (radio) {
+          radio.checked = true;
+        }
+
+      }
+
+
+      if (draft.nacDia) {
+        selDia.value =
+          draft.nacDia;
+      }
+
+
+      if (draft.nacMes) {
+        selMes.value =
+          draft.nacMes;
+      }
+
+
+      if (draft.nacAnio) {
+        selAnio.value =
+          draft.nacAnio;
+      }
+
+
+      if (draft.distrito) {
+        selDistrito.value =
+          draft.distrito;
+      }
+
+
+      if (draft.telefono) {
+        telInput.value =
+          draft.telefono;
+      }
+
+
+      if (draft.usuarioWhatsapp) {
+
+        document
+          .getElementById(
+            "of-usuarioWhatsapp"
+          )
+          .value =
+            draft.usuarioWhatsapp;
+
+      }
+
+
+      posts.checked =
+        draft.posts === true;
+
+      lives.checked =
+        draft.lives === true;
+
+      mensajes.checked =
+        draft.mensajes === true;
+
+      volanteo.checked =
+        draft.volanteo === true;
+
+      modulo.checked =
+        draft.modulo === true;
+
+
+      if (draft.tarjetaBasico) {
+
+        document
+          .getElementById(
+            "of-tarjetaBasico"
+          )
+          .value =
+            draft.tarjetaBasico;
+
+      }
+
+
+      if (draft.tarjetaComplejo) {
+
+        document
+          .getElementById(
+            "of-tarjetaComplejo"
+          )
+          .value =
+            draft.tarjetaComplejo;
+
+      }
+
+
+      if (draft.volanteBasico) {
+
+        document
+          .getElementById(
+            "of-volanteBasico"
+          )
+          .value =
+            draft.volanteBasico;
+
+      }
+
+
+      if (draft.volanteComplejo) {
+
+        document
+          .getElementById(
+            "of-volanteComplejo"
+          )
+          .value =
+            draft.volanteComplejo;
+
+      }
+
+
+      if (draft.portafolio) {
+        form.portafolio.value =
+          draft.portafolio;
+      }
+
+
+    } catch (e) {}
+
   }
 
-  form.addEventListener("input", saveDraft);
-  form.addEventListener("change", saveDraft);
+
+  form.addEventListener(
+    "input",
+    saveDraft
+  );
+
+
+  form.addEventListener(
+    "change",
+    saveDraft
+  );
+
+
   loadDraft();
 
-  // --- LIMPIEZA AUTOMÁTICA DE CEROS EN TARIFAS ---
-  var rateInputs = ["of-tarjetaBasico", "of-tarjetaComplejo", "of-volanteBasico", "of-volanteComplejo"];
-  rateInputs.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener("blur", function() {
-      var val = parseFloat(this.value);
-      if (isNaN(val) || val <= 0) {
-        this.value = "";
-        saveDraft();
+
+  /* =========================================================
+     TARIFAS
+  ========================================================= */
+
+  var rateInputs = [
+    "of-tarjetaBasico",
+    "of-tarjetaComplejo",
+    "of-volanteBasico",
+    "of-volanteComplejo"
+  ];
+
+
+  rateInputs.forEach(
+    function(id) {
+
+      var el =
+        document.getElementById(
+          id
+        );
+
+
+      if (!el) {
+        return;
       }
-    });
-  });
 
-  // --- VALIDACIONES ESTRUCTURALES ---
-  function setError(name, hasError) {
-    var f = form.querySelector('[data-field="' + name + '"]');
-    if (f) f.classList.toggle("error", hasError);
+
+      el.addEventListener(
+        "blur",
+        function() {
+
+          var val =
+            parseFloat(
+              this.value
+            );
+
+
+          if (
+            isNaN(val) ||
+            val <= 0
+          ) {
+
+            this.value =
+              "";
+
+            saveDraft();
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+  function hasValidRate(
+    id
+  ) {
+
+    var val =
+      parseFloat(
+        document
+          .getElementById(
+            id
+          )
+          .value
+      );
+
+
+    return (
+      !isNaN(val) &&
+      val > 0
+    );
+
   }
 
-  // Auxiliar para verificar que exista una tarifa numérica estrictamente mayor a 0
-  function hasValidRate(id) {
-    var val = parseFloat(document.getElementById(id).value);
-    return !isNaN(val) && val > 0;
+
+  /* =========================================================
+     VALIDACIÓN
+  ========================================================= */
+
+  function setError(
+    name,
+    hasError
+  ) {
+
+    var field =
+      form.querySelector(
+        '[data-field="' +
+        name +
+        '"]'
+      );
+
+
+    if (field) {
+
+      field
+        .classList
+        .toggle(
+          "error",
+          hasError
+        );
+
+    }
+
   }
+
 
   function validate() {
-    var nombresOk = form.nombres.value.trim().length >= 2;
-    setError("nombres", !nombresOk);
 
-    var apellidosOk = form.apellidos.value.trim().length >= 2;
-    setError("apellidos", !apellidosOk);
+    var nombresOk =
+      form.nombres
+        .value
+        .trim()
+        .length >= 2;
 
-    var gen = form.querySelector('input[name="genero"]:checked');
-    setError("genero", !gen);
 
-    var dateOk = isValidBirthDate(selDia.value, selMes.value, selAnio.value);
-    setError("fechaNacimiento", !dateOk);
+    setError(
+      "nombres",
+      !nombresOk
+    );
 
-    var distVal = selDistrito.value.trim();
-    var distOk = !!distMap[distVal.toLowerCase()];
-    setError("distrito", !distOk);
 
-    var phoneDigits = form.telefono.value.replace(/\D/g, "");
-    var phoneOk = phoneDigits.length === 9 && phoneDigits.startsWith("9");
-    setError("telefono", !phoneOk);
+    var apellidosOk =
+      form.apellidos
+        .value
+        .trim()
+        .length >= 2;
 
-    // Validación de Tarifas: exige que al menos una tarifa sea > 0
-    var tOk = hasValidRate("of-tarjetaBasico") || hasValidRate("of-tarjetaComplejo");
-    form.querySelector('[data-field="tarjetaGroup"]').classList.toggle("error", !tOk);
 
-    var vOk = hasValidRate("of-volanteBasico") || hasValidRate("of-volanteComplejo");
-    form.querySelector('[data-field="volanteGroup"]').classList.toggle("error", !vOk);
+    setError(
+      "apellidos",
+      !apellidosOk
+    );
 
-    var portVal = sanitizePortfolioUrl(form.portafolio.value);
-    var portOk = false;
-    if (portVal) {
-      try {
-        var u = new URL(portVal);
-        portOk = (u.protocol === "http:" || u.protocol === "https:") && u.hostname.includes(".");
-      } catch(e){}
-    }
-    setError("portafolio", !portOk);
 
-    return nombresOk && apellidosOk && !!gen && dateOk && distOk && phoneOk && tOk && vOk && portOk;
+    var gen =
+      form.querySelector(
+        'input[name="genero"]:checked'
+      );
+
+
+    setError(
+      "genero",
+      !gen
+    );
+
+
+    var dateOk =
+      isValidBirthDate(
+        selDia.value,
+        selMes.value,
+        selAnio.value
+      );
+
+
+    setError(
+      "fechaNacimiento",
+      !dateOk
+    );
+
+
+    var distVal =
+      selDistrito
+        .value
+        .trim();
+
+
+    var distOk =
+      !!distMap[
+        distVal.toLowerCase()
+      ];
+
+
+    setError(
+      "distrito",
+      !distOk
+    );
+
+
+    var phoneDigits =
+      form.telefono
+        .value
+        .replace(
+          /\D/g,
+          ""
+        );
+
+
+    var phoneOk =
+      phoneDigits.length === 9 &&
+      phoneDigits.startsWith("9");
+
+
+    setError(
+      "telefono",
+      !phoneOk
+    );
+
+
+    var activityOk =
+      hasActivity();
+
+
+    modesWrap
+      .classList
+      .toggle(
+        "error",
+        !activityOk
+      );
+
+
+    var tarjetaOk =
+      hasValidRate(
+        "of-tarjetaBasico"
+      ) ||
+      hasValidRate(
+        "of-tarjetaComplejo"
+      );
+
+
+    form
+      .querySelector(
+        '[data-field="tarjetaGroup"]'
+      )
+      .classList
+      .toggle(
+        "error",
+        !tarjetaOk
+      );
+
+
+    var volanteOk =
+      hasValidRate(
+        "of-volanteBasico"
+      ) ||
+      hasValidRate(
+        "of-volanteComplejo"
+      );
+
+
+    form
+      .querySelector(
+        '[data-field="volanteGroup"]'
+      )
+      .classList
+      .toggle(
+        "error",
+        !volanteOk
+      );
+
+
+    var portVal =
+      form.portafolio
+        .value
+        .trim();
+
+
+    var portOk =
+      isValidPortfolioUrl(
+        portVal
+      );
+
+
+    setError(
+      "portafolio",
+      !portOk
+    );
+
+
+    return (
+      nombresOk &&
+      apellidosOk &&
+      !!gen &&
+      dateOk &&
+      distOk &&
+      phoneOk &&
+      activityOk &&
+      tarjetaOk &&
+      volanteOk &&
+      portOk
+    );
+
   }
 
-  // --- ENVÍO VÍA FETCH ---
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
 
-    if (!validate()) {
-      bannerMsg.textContent = "Revisa los campos marcados en rojo antes de enviar.";
-      banner.className = "banner show err";
-      stampSeal.style.display = "none";
-      return;
-    }
+  /* =========================================================
+     ENVÍO
+  ========================================================= */
 
-    // Honeypot
-    if (document.getElementById("of-sitioWeb").value.trim() !== "") {
-      bannerMsg.textContent = "¡Ficha enviada correctamente!";
-      banner.className = "banner show";
-      stampSeal.style.display = "inline-block";
-      localStorage.removeItem(DRAFT_KEY);
-      form.reset();
-      return;
-    }
+  form.addEventListener(
+    "submit",
+    function(e) {
 
-    var dStr = selDia.value < 10 ? "0" + parseInt(selDia.value,10) : selDia.value;
-    var mStr = selMes.value < 10 ? "0" + parseInt(selMes.value,10) : selMes.value;
-    var fechaNacFormatted = selAnio.value + "-" + mStr + "-" + dStr;
+      e.preventDefault();
 
-    var payload = {
-      nombres: form.nombres.value.trim(),
-      apellidos: form.apellidos.value.trim(),
-      genero: form.querySelector('input[name="genero"]:checked').value,
-      fechaNacimiento: fechaNacFormatted,
-      distrito: selDistrito.value.trim(),
-      telefono: form.telefono.value.replace(/\D/g, ""),
-      tarjetaBasico: document.getElementById("of-tarjetaBasico").value.trim(),
-      tarjetaComplejo: document.getElementById("of-tarjetaComplejo").value.trim(),
-      volanteBasico: document.getElementById("of-volanteBasico").value.trim(),
-      volanteComplejo: document.getElementById("of-volanteComplejo").value.trim(),
-      portafolio: sanitizePortfolioUrl(form.portafolio.value)
-    };
 
-    isSubmitting = true;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Enviando ficha…";
+      if (
+        !validate()
+      ) {
 
-    fetch(SHEET_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    })
-    .then(function(res){
-      if (!res.ok) throw new Error("Server response not ok");
-      return res.json();
-    })
-    .then(function(data){
-      if (data && data.result === "success") {
-        bannerMsg.textContent = "¡Ficha enviada correctamente! Gracias, " + payload.nombres + ".";
-        banner.className = "banner show";
-        stampSeal.style.display = "inline-block";
-        localStorage.removeItem(DRAFT_KEY);
-        form.reset();
-      } else {
-        bannerMsg.textContent = (data && data.message) || "Ocurrió un error al guardar.";
-        banner.className = "banner show err";
-        stampSeal.style.display = "none";
+        bannerMsg.textContent =
+          "Revisa los campos marcados en rojo antes de enviar.";
+
+        banner.className =
+          "banner show err";
+
+        stampSeal.style.display =
+          "none";
+
+        return;
+
       }
-    })
-    .catch(function(){
-      bannerMsg.textContent = "Error de conexión con el servidor.";
-      banner.className = "banner show err";
-      stampSeal.style.display = "none";
-    })
-    .finally(function(){
-      isSubmitting = false;
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Enviar ficha";
-    });
-  });
+
+
+      /* Honeypot */
+
+      if (
+        document
+          .getElementById(
+            "of-sitioWeb"
+          )
+          .value
+          .trim() !== ""
+      ) {
+
+        bannerMsg.textContent =
+          "¡Ficha enviada correctamente!";
+
+        banner.className =
+          "banner show";
+
+        stampSeal.style.display =
+          "inline-block";
+
+        localStorage.removeItem(
+          DRAFT_KEY
+        );
+
+        form.reset();
+
+        return;
+
+      }
+
+
+      var dStr =
+        selDia.value < 10
+          ? "0" +
+            parseInt(
+              selDia.value,
+              10
+            )
+          : selDia.value;
+
+
+      var mStr =
+        selMes.value < 10
+          ? "0" +
+            parseInt(
+              selMes.value,
+              10
+            )
+          : selMes.value;
+
+
+      var fechaNacFormatted =
+        selAnio.value +
+        "-" +
+        mStr +
+        "-" +
+        dStr;
+
+
+      var payload = {
+
+        nombres:
+          form.nombres
+            .value
+            .trim(),
+
+        apellidos:
+          form.apellidos
+            .value
+            .trim(),
+
+        genero:
+          form
+            .querySelector(
+              'input[name="genero"]:checked'
+            )
+            .value,
+
+        fechaNacimiento:
+          fechaNacFormatted,
+
+        distrito:
+          selDistrito
+            .value
+            .trim(),
+
+        telefono:
+          form.telefono
+            .value
+            .replace(
+              /\D/g,
+              ""
+            ),
+
+        usuarioWhatsapp:
+          document
+            .getElementById(
+              "of-usuarioWhatsapp"
+            )
+            .value
+            .trim(),
+
+        posts:
+          posts.checked,
+
+        lives:
+          lives.checked,
+
+        mensajes:
+          mensajes.checked,
+
+        volanteo:
+          volanteo.checked,
+
+        modulo:
+          modulo.checked,
+
+        tarjetaBasico:
+          document
+            .getElementById(
+              "of-tarjetaBasico"
+            )
+            .value
+            .trim(),
+
+        tarjetaComplejo:
+          document
+            .getElementById(
+              "of-tarjetaComplejo"
+            )
+            .value
+            .trim(),
+
+        volanteBasico:
+          document
+            .getElementById(
+              "of-volanteBasico"
+            )
+            .value
+            .trim(),
+
+        volanteComplejo:
+          document
+            .getElementById(
+              "of-volanteComplejo"
+            )
+            .value
+            .trim(),
+
+        portafolio:
+          form.portafolio
+            .value
+            .trim()
+
+      };
+
+
+      isSubmitting =
+        true;
+
+
+      submitBtn.disabled =
+        true;
+
+
+      submitBtn.textContent =
+        "Enviando ficha…";
+
+
+      fetch(
+        SHEET_ENDPOINT,
+        {
+
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "text/plain;charset=utf-8"
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+
+        }
+      )
+
+      .then(
+        function(res) {
+
+          if (
+            !res.ok
+          ) {
+            throw new Error(
+              "Server response not ok"
+            );
+          }
+
+          return res.json();
+
+        }
+      )
+
+      .then(
+        function(data) {
+
+          if (
+            data &&
+            data.result ===
+              "success"
+          ) {
+
+            bannerMsg.textContent =
+              "¡Ficha enviada correctamente! Gracias, " +
+              payload.nombres +
+              ".";
+
+            banner.className =
+              "banner show";
+
+            stampSeal.style.display =
+              "inline-block";
+
+            localStorage.removeItem(
+              DRAFT_KEY
+            );
+
+            form.reset();
+
+            return;
+
+          }
+
+
+          bannerMsg.textContent =
+            (
+              data &&
+              data.message
+            )
+              ? data.message
+              : "Ocurrió un error al guardar.";
+
+
+          banner.className =
+            "banner show err";
+
+
+          stampSeal.style.display =
+            "none";
+
+        }
+      )
+
+      .catch(
+        function() {
+
+          bannerMsg.textContent =
+            "Error de conexión con el servidor.";
+
+          banner.className =
+            "banner show err";
+
+          stampSeal.style.display =
+            "none";
+
+        }
+      )
+
+      .finally(
+        function() {
+
+          isSubmitting =
+            false;
+
+          submitBtn.disabled =
+            false;
+
+          submitBtn.textContent =
+            "Enviar ficha";
+
+        }
+      );
+
+    }
+  );
+
 })();
 </script>
+
 </body>
 </html>
