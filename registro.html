@@ -1001,7 +1001,7 @@
       </div>
 
       <p class="section-note">
-        Indica cuánto cobras por cada diseño. Ambas tarifas son obligatorias y deben ser números enteros desde S/5.
+        Indica cuánto cobras por cada diseño. Ambas tarifas son obligatorias y deben ser números enteros.
       </p>
 
       <div class="trust-badge">
@@ -1031,17 +1031,17 @@
                 type="number"
                 id="of-tarifaTarjeta"
                 name="tarifaTarjeta"
-                min="5"
+                min="1"
                 step="1"
                 inputmode="numeric"
-                placeholder="5"
+                placeholder="1"
                 required
               >
 
             </div>
 
             <div class="error-msg">
-              Ingresa un número entero desde S/5.
+              Ingresa un número entero mayor a 0.
             </div>
 
           </div>
@@ -1069,17 +1069,17 @@
                 type="number"
                 id="of-tarifaVolante"
                 name="tarifaVolante"
-                min="5"
+                min="1"
                 step="1"
                 inputmode="numeric"
-                placeholder="5"
+                placeholder="1"
                 required
               >
 
             </div>
 
             <div class="error-msg">
-              Ingresa un número entero desde S/5.
+              Ingresa un número entero mayor a 0.
             </div>
 
           </div>
@@ -1448,7 +1448,7 @@
     return (
       Number.isFinite(num) &&
       Number.isInteger(num) &&
-      num >= 5
+      num >= 1
     );
   }
 
