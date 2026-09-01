@@ -138,7 +138,7 @@
   #of-form .masthead p {
     color: #726C5D;
     font-size: clamp(14px, 2vw, 15px);
-    max-width: 54ch;
+    max-width: 58ch;
   }
 
   #of-form form {
@@ -180,7 +180,7 @@
     font-size: 13.5px;
     color: #726C5D;
     margin: 6px 0 22px;
-    max-width: 60ch;
+    max-width: 62ch;
   }
 
   #of-form .row {
@@ -193,7 +193,8 @@
     margin-bottom: 20px;
   }
 
-  #of-form .field label {
+  #of-form .field > label,
+  #of-form .question-title {
     display: block;
     font-size: 12.5px;
     font-weight: 600;
@@ -202,12 +203,12 @@
     margin-bottom: 7px;
   }
 
-  #of-form .field label .req {
+  #of-form .req {
     color: #C81D2C;
     margin-left: 2px;
   }
 
-  #of-form .field label .opt {
+  #of-form .opt {
     font-weight: 400;
     text-transform: none;
     color: #726C5D;
@@ -216,6 +217,7 @@
 
   #of-form input[type=text],
   #of-form input[type=tel],
+  #of-form input[type=email],
   #of-form input[type=url],
   #of-form input[type=number],
   #of-form select {
@@ -233,7 +235,9 @@
   }
 
   #of-form input:focus,
-  #of-form select:focus {
+  #of-form select:focus,
+  #of-form button:focus-visible,
+  #of-form a:focus-visible {
     outline: none;
     border-color: #C81D2C;
     box-shadow: 0 0 0 3px rgba(200,29,44,0.15);
@@ -248,12 +252,18 @@
   }
 
   #of-form .field.error input,
-  #of-form .field.error select {
+  #of-form .field.error select,
+  #of-form .opportunity.error {
     border-color: #C81D2C;
+  }
+
+  #of-form .field.error input,
+  #of-form .field.error select {
     background: #FBEDEC;
   }
 
-  #of-form .field.error .error-msg {
+  #of-form .field.error .error-msg,
+  #of-form .opportunity.error .error-msg {
     display: block;
   }
 
@@ -268,12 +278,14 @@
     border: 1px solid #17161B;
     border-radius: 2px;
     overflow: hidden;
-    height: 42px;
+    height: 46px;
     background: #fff;
   }
 
   #of-form .segmented input[type="radio"] {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
   }
 
   #of-form .segmented label {
@@ -333,165 +345,102 @@
     font-family: 'IBM Plex Mono', monospace;
   }
 
-  /* MODALIDADES */
+  /* OPORTUNIDADES */
 
-  #of-form .mode-group {
+  #of-form .opportunity {
     margin-bottom: 20px;
     padding: 20px;
     border: 1px solid #D8D2BE;
     background: #FDFCF9;
   }
 
-  #of-form .mode-group-title {
-    display: flex;
+  #of-form .opportunity-prompt {
+    font-size: 12.5px;
+    color: #726C5D;
+    margin-bottom: 10px;
+  }
+
+  #of-form .explain-toggle {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-
-  #of-form .mode-group-title .sq {
-    width: 10px;
-    height: 10px;
-    background: #C81D2C;
-    flex: 0 0 auto;
-  }
-
-  #of-form .mode-group-title h3 {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 18px;
-    text-transform: uppercase;
-  }
-
-  #of-form .mode-description {
-    font-size: 13px;
-    color: #726C5D;
-    margin-bottom: 16px;
-  }
-
-  #of-form .activity-list {
-    display: grid;
-    gap: 8px;
-  }
-
-  #of-form .activity {
-    display: grid;
-    grid-template-columns: 22px 1fr;
-    gap: 10px;
-    align-items: start;
-    padding: 11px 12px;
-    border: 1px solid #D8D2BE;
-    background: #fff;
-    cursor: pointer;
-  }
-
-  #of-form .activity:hover {
-    border-color: #17161B;
-  }
-
-  #of-form .activity input[type="checkbox"] {
-    width: 17px;
-    height: 17px;
-    margin-top: 2px;
-    accent-color: #17161B;
-    cursor: pointer;
-  }
-
-  #of-form .activity strong {
-    display: block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-
-  #of-form .activity span {
-    display: block;
-    font-size: 12.5px;
-    color: #726C5D;
-  }
-
-  #of-form .modes-wrap.error .mode-group {
-    border-color: #C81D2C;
-  }
-
-  #of-form .modes-error {
-    display: none;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
+    gap: 7px;
+    border: 0;
+    background: transparent;
     color: #8F1420;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-bottom: 14px;
+  }
+
+  #of-form .explanation {
+    display: none;
+    margin: 0 0 16px;
+    padding: 16px;
+    border-left: 3px solid #C81D2C;
+    background: #F5F1E7;
+    font-size: 13px;
+    color: #4E493E;
+  }
+
+  #of-form .explanation.open {
+    display: block;
+  }
+
+  #of-form .explanation p + p {
+    margin-top: 10px;
+  }
+
+  #of-form .explanation ul {
+    margin: 10px 0 0 18px;
+  }
+
+  #of-form .explanation li + li {
     margin-top: 4px;
   }
 
-  #of-form .modes-wrap.error .modes-error {
-    display: block;
+  #of-form .explanation strong {
+    color: #17161B;
+  }
+
+  #of-form .explanation a {
+    display: inline-block;
+    margin-top: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #8F1420;
   }
 
   /* TARIFAS */
 
-  #of-form .rate-group {
-    margin-bottom: 28px;
-    padding: 20px 20px 6px;
-    border: 1px solid #D8D2BE;
-    border-radius: 2px;
-    background: #FDFCF9;
-  }
-
-  #of-form .rate-group.error {
-    border-color: #C81D2C;
-    background: #FBEDEC;
-  }
-
-  #of-form .rate-group-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 4px;
-  }
-
-  #of-form .rate-group-title .sq {
-    width: 10px;
-    height: 10px;
-    background: #C81D2C;
-  }
-
-  #of-form .rate-group-title h3 {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 18px;
-    text-transform: uppercase;
-  }
-
-  #of-form .rate-group-note {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    color: #726C5D;
-    margin-bottom: 18px;
-  }
-
-  #of-form .rate-group-error {
-    display: none;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    color: #8F1420;
-    margin: -8px 0 16px;
-  }
-
-  #of-form .rate-group.error .rate-group-error {
-    display: block;
-  }
-
   #of-form .trust-badge {
-    margin: 24px 0 16px;
+    margin: 2px 0 22px;
     padding: 14px 18px;
     background: #EEF6F1;
     border: 1px solid rgba(43,107,74,0.25);
     border-left: 4px solid #2B6B4A;
-    display: flex;
-    align-items: center;
-    gap: 12px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
     font-weight: 700;
     color: #2B6B4A;
+  }
+
+  #of-form .rate-card {
+    margin-bottom: 20px;
+    padding: 20px 20px 0;
+    border: 1px solid #D8D2BE;
+    background: #FDFCF9;
+  }
+
+  #of-form .rate-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 17px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
   }
 
   #of-form .submit-row {
@@ -571,7 +520,6 @@
   }
 
   @media (max-width: 640px) {
-
     #of-form .row {
       grid-template-columns: 1fr;
       gap: 14px;
@@ -586,7 +534,6 @@
       width: 100%;
       text-align: center;
     }
-
   }
   </style>
 </head>
@@ -613,23 +560,13 @@
       <a
         href="https://wa.me/51950141414?text=Hola%2C%20tengo%20preguntas%20sobre%20el%20Registro%20Oficial%20de%20Dise%C3%B1adores"
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         class="whatsapp-help"
       >
-        <svg
-          width="15"
-          height="15"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.838.814 2.796.814 3.181 0 5.767-2.587 5.768-5.766.001-3.181-2.586-5.768-5.768-5.768zm3.364 8.163c-.14.394-.712.753-1.002.802-.27.045-.615.084-1.782-.401-1.493-.621-2.454-2.14-2.528-2.24-.075-.1-.611-.813-.611-1.549 0-.736.386-1.099.522-1.248.136-.149.297-.186.396-.186.099 0 .198.001.284.005.091.005.213-.034.333.255.125.298.423 1.034.46 1.109.037.075.062.162.012.261-.05.1-.075.162-.149.248-.075.087-.157.194-.224.261-.075.075-.153.156-.065.307.087.151.389.641.834 1.038.572.509 1.055.666 1.205.741.15.075.238.063.326-.037.087-.1.374-.435.474-.585.1-.15.199-.125.336-.075.137.05.867.409 1.016.484.15.075.249.112.286.174.037.063.037.362-.103.756zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.396A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
-        </svg>
-
         <span>
           ¿Tienes dudas?
           <strong>Escribir por WhatsApp</strong>
         </span>
-
       </a>
 
     </div>
@@ -639,21 +576,16 @@
     </h1>
 
     <p>
-      Completa tus datos, modalidades y tarifas para que OFICIAL te derive trabajos según el perfil requerido.
+      Completa tus datos, oportunidades y tarifas para que OFICIAL te derive trabajos según el perfil requerido.
     </p>
 
   </header>
 
 
-  <form
-    id="of-designerForm"
-    novalidate
-  >
+  <form id="of-designerForm" novalidate>
 
 
-    <!-- =====================================================
-         01 — DATOS PERSONALES
-    ====================================================== -->
+    <!-- 01 — DATOS PERSONALES -->
 
     <section class="section">
 
@@ -665,11 +597,7 @@
 
       <div class="row">
 
-        <div
-          class="field"
-          data-field="nombres"
-        >
-
+        <div class="field" data-field="nombres">
           <label for="of-nombres">
             Nombres<span class="req">*</span>
           </label>
@@ -679,21 +607,17 @@
             id="of-nombres"
             name="nombres"
             maxlength="60"
+            autocomplete="given-name"
             required
           >
 
           <div class="error-msg">
             Ingresa tus nombres.
           </div>
-
         </div>
 
 
-        <div
-          class="field"
-          data-field="apellidos"
-        >
-
+        <div class="field" data-field="apellidos">
           <label for="of-apellidos">
             Apellidos<span class="req">*</span>
           </label>
@@ -703,13 +627,13 @@
             id="of-apellidos"
             name="apellidos"
             maxlength="60"
+            autocomplete="family-name"
             required
           >
 
           <div class="error-msg">
             Ingresa tus apellidos.
           </div>
-
         </div>
 
       </div>
@@ -717,10 +641,7 @@
 
       <div class="row">
 
-        <div
-          class="field"
-          data-field="genero"
-        >
+        <div class="field" data-field="genero">
 
           <label>
             Género<span class="req">*</span>
@@ -734,11 +655,7 @@
               name="genero"
               value="Mujer"
             >
-
-            <label for="of-genero-mujer">
-              Mujer
-            </label>
-
+            <label for="of-genero-mujer">Mujer</label>
 
             <input
               type="radio"
@@ -746,10 +663,7 @@
               name="genero"
               value="Hombre"
             >
-
-            <label for="of-genero-hombre">
-              Hombre
-            </label>
+            <label for="of-genero-hombre">Hombre</label>
 
           </div>
 
@@ -760,10 +674,7 @@
         </div>
 
 
-        <div
-          class="field"
-          data-field="fechaNacimiento"
-        >
+        <div class="field" data-field="fechaNacimiento">
 
           <label>
             Fecha de nacimiento<span class="req">*</span>
@@ -771,24 +682,15 @@
 
           <div class="date-triplet">
 
-            <select
-              id="of-nacDia"
-              aria-label="Día de nacimiento"
-            >
+            <select id="of-nacDia" aria-label="Día de nacimiento">
               <option value="">Día</option>
             </select>
 
-            <select
-              id="of-nacMes"
-              aria-label="Mes de nacimiento"
-            >
+            <select id="of-nacMes" aria-label="Mes de nacimiento">
               <option value="">Mes</option>
             </select>
 
-            <select
-              id="of-nacAnio"
-              aria-label="Año de nacimiento"
-            >
+            <select id="of-nacAnio" aria-label="Año de nacimiento">
               <option value="">Año</option>
             </select>
 
@@ -805,23 +707,14 @@
 
       <div class="row">
 
-        <div
-          class="field"
-          data-field="distrito"
-        >
+        <div class="field" data-field="distrito">
 
           <label for="of-distrito">
             Distrito<span class="req">*</span>
           </label>
 
-          <select
-            id="of-distrito"
-            name="distrito"
-            required
-          >
-            <option value="">
-              Selecciona tu distrito
-            </option>
+          <select id="of-distrito" name="distrito" required>
+            <option value="">Selecciona tu distrito</option>
           </select>
 
           <div class="error-msg">
@@ -831,31 +724,25 @@
         </div>
 
 
-        <div
-          class="field"
-          data-field="telefono"
-        >
+        <div class="field" data-field="telefono">
 
           <label for="of-telefono">
             Teléfono celular<span class="req">*</span>
           </label>
 
           <div class="prefix-field">
-
-            <span class="prefix">
-              +51
-            </span>
+            <span class="prefix">+51</span>
 
             <input
               type="tel"
               id="of-telefono"
               name="telefono"
-              placeholder="987 654 321"
+              placeholder="950 141 414"
               maxlength="11"
               inputmode="numeric"
+              autocomplete="tel"
               required
             >
-
           </div>
 
           <div class="error-msg">
@@ -867,191 +754,244 @@
       </div>
 
 
-      <div class="field">
+      <div class="row">
 
-        <label for="of-usuarioWhatsapp">
-          Usuario de WhatsApp
-          <span class="opt">(opcional)</span>
-        </label>
+        <div class="field">
 
-        <input
-          type="text"
-          id="of-usuarioWhatsapp"
-          name="usuarioWhatsapp"
-          maxlength="100"
-          placeholder="@usuario"
-          autocomplete="off"
-        >
+          <label for="of-usuarioWhatsapp">
+            Usuario de WhatsApp
+            <span class="opt">(opcional)</span>
+          </label>
+
+          <input
+            type="text"
+            id="of-usuarioWhatsapp"
+            name="usuarioWhatsapp"
+            maxlength="100"
+            placeholder="@usuario"
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <div class="field" data-field="correo">
+
+          <label for="of-correo">
+            Correo electrónico<span class="req">*</span>
+          </label>
+
+          <input
+            type="email"
+            id="of-correo"
+            name="correo"
+            maxlength="254"
+            autocomplete="email"
+            placeholder="nombre@correo.com"
+            required
+          >
+
+          <div class="error-msg">
+            Ingresa un correo electrónico válido.
+          </div>
+
+        </div>
 
       </div>
 
     </section>
 
 
-    <!-- =====================================================
-         02 — MODALIDAD
-    ====================================================== -->
+    <!-- 02 — OPORTUNIDADES -->
 
     <section class="section">
 
       <div class="section-head">
         <span class="section-num">02</span>
-        <span class="section-title">Modalidad</span>
+        <span class="section-title">Oportunidades</span>
       </div>
 
       <p class="section-note">
-        Selecciona una o más actividades que puedas realizar.
+        Realiza tareas adicionales a tu servicio de diseño regular y consigue oportunidades de contactos y de negocio.
       </p>
 
 
-      <div
-        class="modes-wrap"
-        id="of-modesWrap"
-      >
+      <div class="opportunity" data-field="disenosGratuitos">
 
+        <span class="question-title">
+          Realizar diseños gratuitos<span class="req">*</span>
+        </span>
 
-        <!-- REMOTO -->
+        <p class="opportunity-prompt">
+          Antes de responder, revisa de qué se trata esta oportunidad.
+        </p>
 
-        <div class="mode-group">
+        <button
+          type="button"
+          class="explain-toggle"
+          data-target="of-exp-gratis"
+          aria-expanded="false"
+        >
+          ⓘ Leer explicación
+        </button>
 
-          <div class="mode-group-title">
-            <span class="sq"></span>
-            <h3>Remoto</h3>
-          </div>
-
-          <p class="mode-description">
-            Trabaja a distancia desde casa o desde donde prefieras.
+        <div
+          class="explanation"
+          id="of-exp-gratis"
+        >
+          <p>
+            <strong>Oportunidad para generar contactos valiosos de clientes potenciales.</strong>
           </p>
 
-
-          <div class="activity-list">
-
-
-            <label class="activity">
-
-              <input
-                type="checkbox"
-                id="of-posts"
-              >
-
-              <span>
-                <strong>Posts</strong>
-                <span>
-                  Realizar publicaciones en redes sociales.
-                </span>
-              </span>
-
-            </label>
-
-
-            <label class="activity">
-
-              <input
-                type="checkbox"
-                id="of-lives"
-              >
-
-              <span>
-                <strong>Lives</strong>
-                <span>
-                  Realizar transmisiones en vivo en redes sociales.
-                </span>
-              </span>
-
-            </label>
-
-
-            <label class="activity">
-
-              <input
-                type="checkbox"
-                id="of-mensajes"
-              >
-
-              <span>
-                <strong>Mensajes</strong>
-                <span>
-                  Enviar mensajes directos por WhatsApp o redes sociales.
-                </span>
-              </span>
-
-            </label>
-
-
-          </div>
-
-        </div>
-
-
-        <!-- PRESENCIAL -->
-
-        <div class="mode-group">
-
-          <div class="mode-group-title">
-            <span class="sq"></span>
-            <h3>Presencial</h3>
-          </div>
-
-          <p class="mode-description">
-            Trabaja visitando negocios o atendiendo en puntos publicitarios.
+          <p>
+            No buscamos vender de inmediato. Primero mostramos nuestro trabajo y dejamos que el cliente perciba su valor. Para ello buscamos negocios con mejores condiciones para convertirse en clientes reales.
           </p>
 
+          <p>
+            Nuestra agencia anuncia diariamente una promoción agresiva: <strong>volantes y tarjetas a solo S/27 por millar</strong>, con diseño gratis, delivery gratis y pago contra entrega. Los diseñadores se encargan del diseño y OFICIAL se encarga de la impresión y entrega.
+          </p>
 
-          <div class="activity-list">
+          <a
+            href="https://drive.google.com/file/d/1Xo_KsEUov4f5qbl4pvACgSEPk1nMlKB5/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver anuncio
+          </a>
 
+          <p>
+            La promoción incluye condiciones para limitar la oferta a negocios confiables, consolidados, interesados en publicidad y con un mínimo de conocimiento digital. Esto genera oportunidades para ofrecer posteriormente servicios adicionales a precio regular, como diseño de logo o retoque fotográfico.
+          </p>
 
-            <label class="activity">
+          <p>
+            Además, todos los diseñadores tendrán exposición ante los negocios atendidos durante el día. A cada negocio se le enviará un PDF con anuncios y datos de contacto de los diseñadores participantes.
+          </p>
 
-              <input
-                type="checkbox"
-                id="of-volanteo"
-              >
+          <p>
+            Por ejemplo: si hoy participan 10 diseñadores y cada uno realiza 1 diseño gratuito, tendremos 10 negocios beneficiados. Cada uno de esos negocios podrá conocer y contactar a los 10 diseñadores.
+          </p>
+        </div>
 
-              <span>
-                <strong>Volanteo</strong>
-                <span>
-                  Repartir volantes mano a mano.
-                </span>
-              </span>
+        <div class="segmented">
 
-            </label>
+          <input
+            type="radio"
+            id="of-gratis-si"
+            name="disenosGratuitos"
+            value="SI"
+          >
+          <label for="of-gratis-si">SÍ</label>
 
-
-            <label class="activity">
-
-              <input
-                type="checkbox"
-                id="of-modulo"
-              >
-
-              <span>
-                <strong>Módulo</strong>
-                <span>
-                  Atender en un módulo publicitario dentro de mercados, galerías, centros comerciales, ferias o eventos.
-                </span>
-              </span>
-
-            </label>
-
-
-          </div>
+          <input
+            type="radio"
+            id="of-gratis-no"
+            name="disenosGratuitos"
+            value="NO"
+          >
+          <label for="of-gratis-no">NO</label>
 
         </div>
 
-
-        <div class="modes-error">
-          Selecciona al menos una actividad.
+        <div class="error-msg">
+          Selecciona SÍ o NO.
         </div>
 
+      </div>
+
+
+      <div class="opportunity" data-field="vendedorFreelance">
+
+        <span class="question-title">
+          Trabajar como vendedor freelance<span class="req">*</span>
+        </span>
+
+        <p class="opportunity-prompt">
+          Antes de responder, revisa de qué se trata esta oportunidad.
+        </p>
+
+        <button
+          type="button"
+          class="explain-toggle"
+          data-target="of-exp-freelance"
+          aria-expanded="false"
+        >
+          ⓘ Leer explicación
+        </button>
+
+        <div
+          class="explanation"
+          id="of-exp-freelance"
+        >
+          <p>
+            <strong>Oportunidad para ganar dinero extra</strong> mediante la venta de volantes publicitarios y tarjetas personales, en modalidad remota o presencial, además de tu servicio regular de diseño.
+          </p>
+
+          <p>
+            El trabajo es independiente. En remoto puedes trabajar mediante posts, lives y mensajes. Presencialmente, mediante volanteo y atención en módulo. El lugar, día y horario son flexibles y dependen de tu disponibilidad y preferencia.
+          </p>
+
+          <p>
+            El pago es por comisiones:
+          </p>
+
+          <ul>
+            <li><strong>S/5</strong> por impresión a 1 cara.</li>
+            <li><strong>S/15</strong> por impresión a 2 caras.</li>
+            <li><strong>S/10</strong> por cada servicio de volanteo vendido; tú solo lo ofreces, no realizas el volanteo.</li>
+            <li><strong>100%</strong> de lo que cotices por el diseño.</li>
+          </ul>
+
+          <p>
+            Se proporcionan materiales, capacitaciones y se coordinan videollamadas grupales.
+          </p>
+
+          <p>
+            También invertimos en los vendedores con mejor desempeño mediante anuncios pagados en redes sociales, premios para sus lives, chip para mensajes masivos y merchandising para trabajo presencial.
+          </p>
+
+          <p>
+            Para conocer todos los detalles y entender la campaña completa, revisa nuestra carpeta de capacitación con videos e imágenes.
+          </p>
+
+          <a
+            href="https://drive.google.com/drive/folders/1KKnzt_ebKrT6sAe4GAPTiSh0lLQH2YrZ"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver carpeta de capacitación
+          </a>
+        </div>
+
+        <div class="segmented">
+
+          <input
+            type="radio"
+            id="of-freelance-si"
+            name="vendedorFreelance"
+            value="SI"
+          >
+          <label for="of-freelance-si">SÍ</label>
+
+          <input
+            type="radio"
+            id="of-freelance-no"
+            name="vendedorFreelance"
+            value="NO"
+          >
+          <label for="of-freelance-no">NO</label>
+
+        </div>
+
+        <div class="error-msg">
+          Selecciona SÍ o NO.
+        </div>
 
       </div>
 
     </section>
 
 
-    <!-- =====================================================
-         03 — TARIFAS
-    ====================================================== -->
+    <!-- 03 — TARIFAS -->
 
     <section class="section">
 
@@ -1061,155 +1001,85 @@
       </div>
 
       <p class="section-note">
-        Indica al menos una tarifa para cada producto según tu experiencia.
+        Indica cuánto cobras por cada diseño. Ambas tarifas son obligatorias y deben ser números enteros desde S/5.
       </p>
 
-
-      <div
-        class="rate-group"
-        data-field="tarjetaGroup"
-      >
-
-        <div class="rate-group-title">
-          <span class="sq"></span>
-          <h3>Tarjeta de presentación</h3>
-        </div>
-
-        <p class="rate-group-note">
-          Indica al menos un precio.
-        </p>
-
-        <div class="rate-group-error">
-          Indica al menos una tarifa para tarjeta.
-        </div>
-
-
-        <div class="row">
-
-          <div class="field">
-
-            <label for="of-tarjetaBasico">
-              Básico
-              <span class="opt">(opcional)</span>
-            </label>
-
-            <div class="amount-field">
-
-              <span class="cur">
-                S/
-              </span>
-
-              <input
-                type="number"
-                id="of-tarjetaBasico"
-                min="0"
-                step="0.5"
-                placeholder="0.00"
-              >
-
-            </div>
-
-          </div>
-
-
-          <div class="field">
-
-            <label for="of-tarjetaComplejo">
-              Complejo
-              <span class="opt">(opcional)</span>
-            </label>
-
-            <div class="amount-field">
-
-              <span class="cur">
-                S/
-              </span>
-
-              <input
-                type="number"
-                id="of-tarjetaComplejo"
-                min="0"
-                step="0.5"
-                placeholder="0.00"
-              >
-
-            </div>
-
-          </div>
-
-        </div>
-
+      <div class="trust-badge">
+        LA TARIFA SE PUEDE NEGOCIAR CON EL CLIENTE Y GANAS EL 100% DE LO ACORDADO
       </div>
 
 
-      <div
-        class="rate-group"
-        data-field="volanteGroup"
-      >
+      <div class="row">
 
-        <div class="rate-group-title">
-          <span class="sq"></span>
-          <h3>Volante publicitario</h3>
-        </div>
+        <div class="rate-card">
 
-        <p class="rate-group-note">
-          Indica al menos un precio.
-        </p>
+          <div class="rate-title">
+            Tarjeta de presentación
+          </div>
 
-        <div class="rate-group-error">
-          Indica al menos una tarifa para volante.
-        </div>
+          <div class="field" data-field="tarifaTarjeta">
 
-
-        <div class="row">
-
-          <div class="field">
-
-            <label for="of-volanteBasico">
-              Básico
-              <span class="opt">(opcional)</span>
+            <label for="of-tarifaTarjeta">
+              Tarifa<span class="req">*</span>
             </label>
 
             <div class="amount-field">
 
-              <span class="cur">
-                S/
-              </span>
+              <span class="cur">S/</span>
 
               <input
                 type="number"
-                id="of-volanteBasico"
-                min="0"
-                step="0.5"
-                placeholder="0.00"
+                id="of-tarifaTarjeta"
+                name="tarifaTarjeta"
+                min="5"
+                step="1"
+                inputmode="numeric"
+                placeholder="5"
+                required
               >
 
             </div>
 
+            <div class="error-msg">
+              Ingresa un número entero desde S/5.
+            </div>
+
           </div>
 
+        </div>
 
-          <div class="field">
 
-            <label for="of-volanteComplejo">
-              Complejo
-              <span class="opt">(opcional)</span>
+        <div class="rate-card">
+
+          <div class="rate-title">
+            Volante publicitario
+          </div>
+
+          <div class="field" data-field="tarifaVolante">
+
+            <label for="of-tarifaVolante">
+              Tarifa<span class="req">*</span>
             </label>
 
             <div class="amount-field">
 
-              <span class="cur">
-                S/
-              </span>
+              <span class="cur">S/</span>
 
               <input
                 type="number"
-                id="of-volanteComplejo"
-                min="0"
-                step="0.5"
-                placeholder="0.00"
+                id="of-tarifaVolante"
+                name="tarifaVolante"
+                min="5"
+                step="1"
+                inputmode="numeric"
+                placeholder="5"
+                required
               >
 
+            </div>
+
+            <div class="error-msg">
+              Ingresa un número entero desde S/5.
             </div>
 
           </div>
@@ -1221,9 +1091,7 @@
     </section>
 
 
-    <!-- =====================================================
-         04 — PORTAFOLIO
-    ====================================================== -->
+    <!-- 04 — PORTAFOLIO -->
 
     <section class="section">
 
@@ -1233,10 +1101,7 @@
       </div>
 
 
-      <div
-        class="field"
-        data-field="portafolio"
-      >
+      <div class="field" data-field="portafolio">
 
         <label for="of-portafolio">
           Enlace directo<span class="req">*</span>
@@ -1263,20 +1128,7 @@
       </p>
 
 
-      <div class="trust-badge">
-        <span>
-          LA TARIFA SE PUEDE NEGOCIAR CON EL CLIENTE Y GANAS EL 100% DE LO ACORDADO
-        </span>
-      </div>
-
-
-      <!-- Honeypot anti-spam -->
-
-      <div
-        style="position:absolute;left:-9999px;"
-        aria-hidden="true"
-      >
-
+      <div style="position:absolute;left:-9999px;" aria-hidden="true">
         <input
           type="text"
           id="of-sitioWeb"
@@ -1284,7 +1136,6 @@
           tabindex="-1"
           autocomplete="off"
         >
-
       </div>
 
 
@@ -1343,51 +1194,32 @@
   "use strict";
 
 
-  /* =========================================================
-     ELEMENTOS
-  ========================================================= */
-
   var form =
-    document.getElementById(
-      "of-designerForm"
-    );
+    document.getElementById("of-designerForm");
 
   var banner =
-    document.getElementById(
-      "of-formBanner"
-    );
+    document.getElementById("of-formBanner");
 
   var bannerMsg =
-    document.getElementById(
-      "of-bannerMsg"
-    );
+    document.getElementById("of-bannerMsg");
 
   var stampSeal =
-    document.getElementById(
-      "of-stampSeal"
-    );
+    document.getElementById("of-stampSeal");
 
   var submitBtn =
-    document.getElementById(
-      "of-submitBtn"
-    );
-
+    document.getElementById("of-submitBtn");
 
   var SHEET_ENDPOINT =
     "https://script.google.com/macros/s/AKfycbzAbqbr_PZUhjA6ssgeJQ7KCuob6Exdn7Q4yW3kZBcl1CAhr-PwK9FsVZMysty10r0d/exec";
 
-
   var DRAFT_KEY =
-    "of_designer_form_draft";
-
+    "of_designer_form_draft_v2";
 
   var isSubmitting =
     false;
 
 
-  /* =========================================================
-     DISTRITOS
-  ========================================================= */
+  /* DISTRITOS */
 
   var distritos = [
     "Ancón",
@@ -1442,63 +1274,36 @@
     "Villa María del Triunfo"
   ];
 
-
   var selDistrito =
-    document.getElementById(
-      "of-distrito"
-    );
+    document.getElementById("of-distrito");
+
+  distritos.forEach(function(distrito){
+    var option = document.createElement("option");
+    option.value = distrito;
+    option.textContent = distrito;
+    selDistrito.appendChild(option);
+  });
 
 
-  var distMap = {};
+  /* FECHA DE NACIMIENTO */
 
+  var dia =
+    document.getElementById("of-nacDia");
 
-  distritos.forEach(
-    function(d) {
+  var mes =
+    document.getElementById("of-nacMes");
 
-      var opt =
-        document.createElement(
-          "option"
-        );
+  var anio =
+    document.getElementById("of-nacAnio");
 
-      opt.value =
-        d;
+  for (var d = 1; d <= 31; d++) {
+    var optionDia = document.createElement("option");
+    optionDia.value = String(d).padStart(2, "0");
+    optionDia.textContent = d;
+    dia.appendChild(optionDia);
+  }
 
-      opt.textContent =
-        d;
-
-      selDistrito.appendChild(
-        opt
-      );
-
-      distMap[
-        d.toLowerCase()
-      ] = d;
-
-    }
-  );
-
-
-  /* =========================================================
-     FECHA DE NACIMIENTO
-  ========================================================= */
-
-  var selDia =
-    document.getElementById(
-      "of-nacDia"
-    );
-
-  var selMes =
-    document.getElementById(
-      "of-nacMes"
-    );
-
-  var selAnio =
-    document.getElementById(
-      "of-nacAnio"
-    );
-
-
-  var meses = [
+  [
     "Enero",
     "Febrero",
     "Marzo",
@@ -1511,1167 +1316,704 @@
     "Octubre",
     "Noviembre",
     "Diciembre"
-  ];
-
-
-  for (
-    var d = 1;
-    d <= 31;
-    d++
-  ) {
-
-    selDia.add(
-      new Option(
-        d < 10
-          ? "0" + d
-          : d,
-        d
-      )
-    );
-
-  }
-
-
-  meses.forEach(
-    function(m, idx) {
-
-      selMes.add(
-        new Option(
-          m,
-          idx + 1
-        )
-      );
-
-    }
-  );
-
+  ].forEach(function(nombreMes, index){
+    var optionMes = document.createElement("option");
+    optionMes.value = String(index + 1).padStart(2, "0");
+    optionMes.textContent = nombreMes;
+    mes.appendChild(optionMes);
+  });
 
   var currentYear =
-    new Date()
-      .getFullYear();
-
+    new Date().getFullYear();
 
   for (
-    var a = currentYear - 16;
-    a >= currentYear - 80;
-    a--
+    var y = currentYear - 16;
+    y >= currentYear - 80;
+    y--
   ) {
-
-    selAnio.add(
-      new Option(
-        a,
-        a
-      )
-    );
-
+    var optionAnio = document.createElement("option");
+    optionAnio.value = String(y);
+    optionAnio.textContent = y;
+    anio.appendChild(optionAnio);
   }
 
 
-  function isValidBirthDate(
-    day,
-    month,
-    year
-  ) {
+  /* TELÉFONO */
 
-    if (
-      !day ||
-      !month ||
-      !year
-    ) {
-      return false;
-    }
+  var telefono =
+    document.getElementById("of-telefono");
 
+  telefono.addEventListener("input", function(){
 
-    var d =
-      parseInt(
-        day,
-        10
-      );
+    var digits =
+      telefono.value
+        .replace(/\D/g, "")
+        .slice(0, 9);
 
-    var m =
-      parseInt(
-        month,
-        10
-      ) - 1;
-
-    var y =
-      parseInt(
-        year,
-        10
-      );
-
-
-    var dateObj =
-      new Date(
-        y,
-        m,
-        d
-      );
-
-
-    return (
-      dateObj.getFullYear() === y &&
-      dateObj.getMonth() === m &&
-      dateObj.getDate() === d
-    );
-
-  }
-
-
-  /* =========================================================
-     TELÉFONO
-  ========================================================= */
-
-  var telInput =
-    document.getElementById(
-      "of-telefono"
-    );
-
-
-  telInput.addEventListener(
-    "input",
-    function() {
-
-      var clean =
-        this.value
-          .replace(
-            /\D/g,
-            ""
-          )
-          .slice(
-            0,
-            9
-          );
-
-
-      if (
-        clean.length > 6
-      ) {
-
-        this.value =
-          clean.slice(0,3) +
-          " " +
-          clean.slice(3,6) +
-          " " +
-          clean.slice(6);
-
-      } else if (
-        clean.length > 3
-      ) {
-
-        this.value =
-          clean.slice(0,3) +
-          " " +
-          clean.slice(3);
-
-      } else {
-
-        this.value =
-          clean;
-
-      }
-
-
-      saveDraft();
-
-    }
-  );
-
-
-  /* =========================================================
-     MODALIDADES
-  ========================================================= */
-
-  var posts =
-    document.getElementById(
-      "of-posts"
-    );
-
-  var lives =
-    document.getElementById(
-      "of-lives"
-    );
-
-  var mensajes =
-    document.getElementById(
-      "of-mensajes"
-    );
-
-  var volanteo =
-    document.getElementById(
-      "of-volanteo"
-    );
-
-  var modulo =
-    document.getElementById(
-      "of-modulo"
-    );
-
-  var modesWrap =
-    document.getElementById(
-      "of-modesWrap"
-    );
-
-
-  function hasActivity() {
-
-    return (
-      posts.checked ||
-      lives.checked ||
-      mensajes.checked ||
-      volanteo.checked ||
-      modulo.checked
-    );
-
-  }
-
-
-  /* =========================================================
-     PORTAFOLIO
-  ========================================================= */
-
-  function isValidPortfolioUrl(
-    val
-  ) {
-
-    val =
-      (val || "")
-        .trim();
-
-
-    if (
-      !/^https?:\/\//i.test(
-        val
-      )
-    ) {
-      return false;
-    }
-
-
-    try {
-
-      var url =
-        new URL(
-          val
+    telefono.value =
+      digits
+        .replace(
+          /(\d{3})(?=\d)/g,
+          "$1 "
         );
 
-      return (
-        (
-          url.protocol === "http:" ||
-          url.protocol === "https:"
-        ) &&
-        url.hostname.includes(".")
-      );
+  });
 
-    } catch (e) {
 
-      return false;
+  /* ACORDEONES */
 
-    }
+  document
+    .querySelectorAll("#of-form .explain-toggle")
+    .forEach(function(button){
 
+      button.addEventListener("click", function(){
+
+        var panel =
+          document.getElementById(
+            button.getAttribute("data-target")
+          );
+
+        var open =
+          panel.classList.toggle("open");
+
+        button.setAttribute(
+          "aria-expanded",
+          open ? "true" : "false"
+        );
+
+        button.textContent =
+          open
+            ? "ⓘ Ocultar explicación"
+            : "ⓘ Leer explicación";
+
+      });
+
+    });
+
+
+  /* VALIDACIÓN */
+
+  function cleanText(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
 
-  /* =========================================================
-     BORRADOR LOCAL
-  ========================================================= */
+  function getRadioValue(name) {
 
-  function saveDraft() {
+    var selected =
+      form.querySelector(
+        'input[name="' + name + '"]:checked'
+      );
 
-    if (
-      isSubmitting
-    ) {
+    return selected
+      ? selected.value
+      : "";
+  }
+
+
+  function setError(fieldName, hasError) {
+
+    var field =
+      form.querySelector(
+        '[data-field="' + fieldName + '"]'
+      );
+
+    if (!field) {
       return;
     }
 
+    field.classList.toggle(
+      "error",
+      Boolean(hasError)
+    );
+  }
 
-    var gen =
-      form.querySelector(
-        'input[name="genero"]:checked'
+
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+
+  function validRate(value) {
+
+    if (String(value).trim() === "") {
+      return false;
+    }
+
+    var num =
+      Number(value);
+
+    return (
+      Number.isFinite(num) &&
+      Number.isInteger(num) &&
+      num >= 5
+    );
+  }
+
+
+  function validPortfolio(value) {
+    return (
+      /^https?:\/\/[^\s]+\.[^\s]+$/i.test(value) &&
+      value.length <= 500
+    );
+  }
+
+
+  function getFechaNacimiento() {
+
+    if (
+      !anio.value ||
+      !mes.value ||
+      !dia.value
+    ) {
+      return "";
+    }
+
+    var value =
+      anio.value +
+      "-" +
+      mes.value +
+      "-" +
+      dia.value;
+
+    var testDate =
+      new Date(
+        Number(anio.value),
+        Number(mes.value) - 1,
+        Number(dia.value)
+      );
+
+    if (
+      testDate.getFullYear() !== Number(anio.value) ||
+      testDate.getMonth() !== Number(mes.value) - 1 ||
+      testDate.getDate() !== Number(dia.value)
+    ) {
+      return "";
+    }
+
+    return value;
+  }
+
+
+  function validateForm() {
+
+    var nombres =
+      cleanText(
+        document.getElementById("of-nombres").value
+      );
+
+    var apellidos =
+      cleanText(
+        document.getElementById("of-apellidos").value
+      );
+
+    var genero =
+      getRadioValue("genero");
+
+    var fechaNacimiento =
+      getFechaNacimiento();
+
+    var distrito =
+      selDistrito.value;
+
+    var telefonoDigits =
+      telefono.value.replace(/\D/g, "");
+
+    var correo =
+      cleanText(
+        document.getElementById("of-correo").value
+      );
+
+    var disenosGratuitos =
+      getRadioValue("disenosGratuitos");
+
+    var vendedorFreelance =
+      getRadioValue("vendedorFreelance");
+
+    var tarifaTarjeta =
+      document.getElementById("of-tarifaTarjeta").value;
+
+    var tarifaVolante =
+      document.getElementById("of-tarifaVolante").value;
+
+    var portafolio =
+      cleanText(
+        document.getElementById("of-portafolio").value
       );
 
 
-    var draft = {
+    setError(
+      "nombres",
+      nombres.length < 2 ||
+      nombres.length > 60
+    );
 
+    setError(
+      "apellidos",
+      apellidos.length < 2 ||
+      apellidos.length > 60
+    );
+
+    setError(
+      "genero",
+      genero !== "Mujer" &&
+      genero !== "Hombre"
+    );
+
+    setError(
+      "fechaNacimiento",
+      !fechaNacimiento
+    );
+
+    setError(
+      "distrito",
+      distritos.indexOf(distrito) === -1
+    );
+
+    setError(
+      "telefono",
+      !/^9\d{8}$/.test(telefonoDigits)
+    );
+
+    setError(
+      "correo",
+      correo.length > 254 ||
+      !validEmail(correo)
+    );
+
+    setError(
+      "disenosGratuitos",
+      disenosGratuitos !== "SI" &&
+      disenosGratuitos !== "NO"
+    );
+
+    setError(
+      "vendedorFreelance",
+      vendedorFreelance !== "SI" &&
+      vendedorFreelance !== "NO"
+    );
+
+    setError(
+      "tarifaTarjeta",
+      !validRate(tarifaTarjeta)
+    );
+
+    setError(
+      "tarifaVolante",
+      !validRate(tarifaVolante)
+    );
+
+    setError(
+      "portafolio",
+      !validPortfolio(portafolio)
+    );
+
+
+    return !form.querySelector(
+      ".field.error, .opportunity.error"
+    );
+  }
+
+
+  /* BORRAR ERROR AL CORREGIR */
+
+  form.addEventListener("input", function(event){
+
+    var wrapper =
+      event.target.closest(
+        ".field, .opportunity"
+      );
+
+    if (wrapper) {
+      wrapper.classList.remove("error");
+    }
+
+    saveDraft();
+
+  });
+
+  form.addEventListener("change", function(event){
+
+    var wrapper =
+      event.target.closest(
+        ".field, .opportunity"
+      );
+
+    if (wrapper) {
+      wrapper.classList.remove("error");
+    }
+
+    saveDraft();
+
+  });
+
+
+  /* BORRADOR LOCAL */
+
+  function collectDraft() {
+
+    return {
       nombres:
-        form.nombres.value,
+        document.getElementById("of-nombres").value,
 
       apellidos:
-        form.apellidos.value,
+        document.getElementById("of-apellidos").value,
 
       genero:
-        gen
-          ? gen.value
-          : "",
+        getRadioValue("genero"),
 
       nacDia:
-        selDia.value,
+        dia.value,
 
       nacMes:
-        selMes.value,
+        mes.value,
 
       nacAnio:
-        selAnio.value,
+        anio.value,
 
       distrito:
         selDistrito.value,
 
       telefono:
-        telInput.value,
+        telefono.value,
 
       usuarioWhatsapp:
-        document
-          .getElementById(
-            "of-usuarioWhatsapp"
-          )
-          .value,
+        document.getElementById("of-usuarioWhatsapp").value,
 
-      posts:
-        posts.checked,
+      correo:
+        document.getElementById("of-correo").value,
 
-      lives:
-        lives.checked,
+      disenosGratuitos:
+        getRadioValue("disenosGratuitos"),
 
-      mensajes:
-        mensajes.checked,
+      vendedorFreelance:
+        getRadioValue("vendedorFreelance"),
 
-      volanteo:
-        volanteo.checked,
+      tarifaTarjeta:
+        document.getElementById("of-tarifaTarjeta").value,
 
-      modulo:
-        modulo.checked,
-
-      tarjetaBasico:
-        document
-          .getElementById(
-            "of-tarjetaBasico"
-          )
-          .value,
-
-      tarjetaComplejo:
-        document
-          .getElementById(
-            "of-tarjetaComplejo"
-          )
-          .value,
-
-      volanteBasico:
-        document
-          .getElementById(
-            "of-volanteBasico"
-          )
-          .value,
-
-      volanteComplejo:
-        document
-          .getElementById(
-            "of-volanteComplejo"
-          )
-          .value,
+      tarifaVolante:
+        document.getElementById("of-tarifaVolante").value,
 
       portafolio:
-        form.portafolio.value
+        document.getElementById("of-portafolio").value
+    };
+  }
+
+
+  function saveDraft() {
+
+    try {
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify(
+          collectDraft()
+        )
+      );
+    } catch (err) {
+      /* localStorage no disponible */
+    }
+
+  }
+
+
+  function restoreRadio(name, value) {
+
+    if (!value) {
+      return;
+    }
+
+    var radio =
+      form.querySelector(
+        'input[name="' +
+        name +
+        '"][value="' +
+        value +
+        '"]'
+      );
+
+    if (radio) {
+      radio.checked = true;
+    }
+
+  }
+
+
+  function restoreDraft() {
+
+    var draft;
+
+    try {
+      draft =
+        JSON.parse(
+          localStorage.getItem(DRAFT_KEY) || "null"
+        );
+    } catch (err) {
+      return;
+    }
+
+    if (!draft) {
+      return;
+    }
+
+    document.getElementById("of-nombres").value =
+      draft.nombres || "";
+
+    document.getElementById("of-apellidos").value =
+      draft.apellidos || "";
+
+    restoreRadio(
+      "genero",
+      draft.genero
+    );
+
+    dia.value =
+      draft.nacDia || "";
+
+    mes.value =
+      draft.nacMes || "";
+
+    anio.value =
+      draft.nacAnio || "";
+
+    selDistrito.value =
+      draft.distrito || "";
+
+    telefono.value =
+      draft.telefono || "";
+
+    document.getElementById("of-usuarioWhatsapp").value =
+      draft.usuarioWhatsapp || "";
+
+    document.getElementById("of-correo").value =
+      draft.correo || "";
+
+    restoreRadio(
+      "disenosGratuitos",
+      draft.disenosGratuitos
+    );
+
+    restoreRadio(
+      "vendedorFreelance",
+      draft.vendedorFreelance
+    );
+
+    document.getElementById("of-tarifaTarjeta").value =
+      draft.tarifaTarjeta || "";
+
+    document.getElementById("of-tarifaVolante").value =
+      draft.tarifaVolante || "";
+
+    document.getElementById("of-portafolio").value =
+      draft.portafolio || "";
+
+  }
+
+
+  restoreDraft();
+
+
+  /* ENVÍO */
+
+  form.addEventListener("submit", function(event){
+
+    event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+
+    if (
+      document.getElementById("of-sitioWeb").value
+    ) {
+      return;
+    }
+
+
+    banner.classList.remove(
+      "show",
+      "err"
+    );
+
+    stampSeal.style.display =
+      "none";
+
+
+    if (!validateForm()) {
+
+      banner.classList.add(
+        "show",
+        "err"
+      );
+
+      bannerMsg.textContent =
+        "Revisa los campos marcados antes de enviar.";
+
+      var firstError =
+        form.querySelector(
+          ".field.error, .opportunity.error"
+        );
+
+      if (firstError) {
+        firstError.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+      return;
+    }
+
+
+    var payload = {
+
+      nombres:
+        cleanText(
+          document.getElementById("of-nombres").value
+        ),
+
+      apellidos:
+        cleanText(
+          document.getElementById("of-apellidos").value
+        ),
+
+      genero:
+        getRadioValue("genero"),
+
+      fechaNacimiento:
+        getFechaNacimiento(),
+
+      distrito:
+        selDistrito.value,
+
+      telefono:
+        telefono.value.replace(/\D/g, ""),
+
+      usuarioWhatsapp:
+        cleanText(
+          document.getElementById("of-usuarioWhatsapp").value
+        ),
+
+      correo:
+        cleanText(
+          document.getElementById("of-correo").value
+        ),
+
+      disenosGratuitos:
+        getRadioValue("disenosGratuitos"),
+
+      vendedorFreelance:
+        getRadioValue("vendedorFreelance"),
+
+      tarifaTarjeta:
+        document.getElementById("of-tarifaTarjeta").value,
+
+      tarifaVolante:
+        document.getElementById("of-tarifaVolante").value,
+
+      portafolio:
+        cleanText(
+          document.getElementById("of-portafolio").value
+        )
 
     };
 
 
-    try {
+    isSubmitting =
+      true;
 
-      localStorage.setItem(
-        DRAFT_KEY,
-        JSON.stringify(
-          draft
-        )
-      );
+    submitBtn.disabled =
+      true;
 
-    } catch (e) {}
-
-  }
+    submitBtn.textContent =
+      "Enviando...";
 
 
-  function loadDraft() {
-
-    try {
-
-      var raw =
-        localStorage.getItem(
-          DRAFT_KEY
-        );
-
-
-      if (!raw) {
-        return;
+    fetch(
+      SHEET_ENDPOINT,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+        body:
+          JSON.stringify(payload)
       }
+    )
+    .then(function(response){
+      return response.json();
+    })
+    .then(function(result){
 
+      if (result.result === "success") {
 
-      var draft =
-        JSON.parse(
-          raw
-        );
+        form.reset();
 
-
-      if (draft.nombres) {
-        form.nombres.value =
-          draft.nombres;
-      }
-
-
-      if (draft.apellidos) {
-        form.apellidos.value =
-          draft.apellidos;
-      }
-
-
-      if (draft.genero) {
-
-        var radio =
-          form.querySelector(
-            'input[name="genero"][value="' +
-            draft.genero +
-            '"]'
+        try {
+          localStorage.removeItem(
+            DRAFT_KEY
           );
-
-        if (radio) {
-          radio.checked = true;
+        } catch (err) {
+          /* localStorage no disponible */
         }
 
-      }
-
-
-      if (draft.nacDia) {
-        selDia.value =
-          draft.nacDia;
-      }
-
-
-      if (draft.nacMes) {
-        selMes.value =
-          draft.nacMes;
-      }
-
-
-      if (draft.nacAnio) {
-        selAnio.value =
-          draft.nacAnio;
-      }
-
-
-      if (draft.distrito) {
-        selDistrito.value =
-          draft.distrito;
-      }
-
-
-      if (draft.telefono) {
-        telInput.value =
-          draft.telefono;
-      }
-
-
-      if (draft.usuarioWhatsapp) {
-
-        document
-          .getElementById(
-            "of-usuarioWhatsapp"
-          )
-          .value =
-            draft.usuarioWhatsapp;
-
-      }
-
-
-      posts.checked =
-        draft.posts === true;
-
-      lives.checked =
-        draft.lives === true;
-
-      mensajes.checked =
-        draft.mensajes === true;
-
-      volanteo.checked =
-        draft.volanteo === true;
-
-      modulo.checked =
-        draft.modulo === true;
-
-
-      if (draft.tarjetaBasico) {
-
-        document
-          .getElementById(
-            "of-tarjetaBasico"
-          )
-          .value =
-            draft.tarjetaBasico;
-
-      }
-
-
-      if (draft.tarjetaComplejo) {
-
-        document
-          .getElementById(
-            "of-tarjetaComplejo"
-          )
-          .value =
-            draft.tarjetaComplejo;
-
-      }
-
-
-      if (draft.volanteBasico) {
-
-        document
-          .getElementById(
-            "of-volanteBasico"
-          )
-          .value =
-            draft.volanteBasico;
-
-      }
-
-
-      if (draft.volanteComplejo) {
-
-        document
-          .getElementById(
-            "of-volanteComplejo"
-          )
-          .value =
-            draft.volanteComplejo;
-
-      }
-
-
-      if (draft.portafolio) {
-        form.portafolio.value =
-          draft.portafolio;
-      }
-
-
-    } catch (e) {}
-
-  }
-
-
-  form.addEventListener(
-    "input",
-    saveDraft
-  );
-
-
-  form.addEventListener(
-    "change",
-    saveDraft
-  );
-
-
-  loadDraft();
-
-
-  /* =========================================================
-     TARIFAS
-  ========================================================= */
-
-  var rateInputs = [
-    "of-tarjetaBasico",
-    "of-tarjetaComplejo",
-    "of-volanteBasico",
-    "of-volanteComplejo"
-  ];
-
-
-  rateInputs.forEach(
-    function(id) {
-
-      var el =
-        document.getElementById(
-          id
-        );
-
-
-      if (!el) {
-        return;
-      }
-
-
-      el.addEventListener(
-        "blur",
-        function() {
-
-          var val =
-            parseFloat(
-              this.value
-            );
-
-
-          if (
-            isNaN(val) ||
-            val <= 0
-          ) {
-
-            this.value =
-              "";
-
-            saveDraft();
-
-          }
-
-        }
-      );
-
-    }
-  );
-
-
-  function hasValidRate(
-    id
-  ) {
-
-    var val =
-      parseFloat(
-        document
-          .getElementById(
-            id
-          )
-          .value
-      );
-
-
-    return (
-      !isNaN(val) &&
-      val > 0
-    );
-
-  }
-
-
-  /* =========================================================
-     VALIDACIÓN
-  ========================================================= */
-
-  function setError(
-    name,
-    hasError
-  ) {
-
-    var field =
-      form.querySelector(
-        '[data-field="' +
-        name +
-        '"]'
-      );
-
-
-    if (field) {
-
-      field
-        .classList
-        .toggle(
-          "error",
-          hasError
-        );
-
-    }
-
-  }
-
-
-  function validate() {
-
-    var nombresOk =
-      form.nombres
-        .value
-        .trim()
-        .length >= 2;
-
-
-    setError(
-      "nombres",
-      !nombresOk
-    );
-
-
-    var apellidosOk =
-      form.apellidos
-        .value
-        .trim()
-        .length >= 2;
-
-
-    setError(
-      "apellidos",
-      !apellidosOk
-    );
-
-
-    var gen =
-      form.querySelector(
-        'input[name="genero"]:checked'
-      );
-
-
-    setError(
-      "genero",
-      !gen
-    );
-
-
-    var dateOk =
-      isValidBirthDate(
-        selDia.value,
-        selMes.value,
-        selAnio.value
-      );
-
-
-    setError(
-      "fechaNacimiento",
-      !dateOk
-    );
-
-
-    var distVal =
-      selDistrito
-        .value
-        .trim();
-
-
-    var distOk =
-      !!distMap[
-        distVal.toLowerCase()
-      ];
-
-
-    setError(
-      "distrito",
-      !distOk
-    );
-
-
-    var phoneDigits =
-      form.telefono
-        .value
-        .replace(
-          /\D/g,
-          ""
-        );
-
-
-    var phoneOk =
-      phoneDigits.length === 9 &&
-      phoneDigits.startsWith("9");
-
-
-    setError(
-      "telefono",
-      !phoneOk
-    );
-
-
-    var activityOk =
-      hasActivity();
-
-
-    modesWrap
-      .classList
-      .toggle(
-        "error",
-        !activityOk
-      );
-
-
-    var tarjetaOk =
-      hasValidRate(
-        "of-tarjetaBasico"
-      ) ||
-      hasValidRate(
-        "of-tarjetaComplejo"
-      );
-
-
-    form
-      .querySelector(
-        '[data-field="tarjetaGroup"]'
-      )
-      .classList
-      .toggle(
-        "error",
-        !tarjetaOk
-      );
-
-
-    var volanteOk =
-      hasValidRate(
-        "of-volanteBasico"
-      ) ||
-      hasValidRate(
-        "of-volanteComplejo"
-      );
-
-
-    form
-      .querySelector(
-        '[data-field="volanteGroup"]'
-      )
-      .classList
-      .toggle(
-        "error",
-        !volanteOk
-      );
-
-
-    var portVal =
-      form.portafolio
-        .value
-        .trim();
-
-
-    var portOk =
-      isValidPortfolioUrl(
-        portVal
-      );
-
-
-    setError(
-      "portafolio",
-      !portOk
-    );
-
-
-    return (
-      nombresOk &&
-      apellidosOk &&
-      !!gen &&
-      dateOk &&
-      distOk &&
-      phoneOk &&
-      activityOk &&
-      tarjetaOk &&
-      volanteOk &&
-      portOk
-    );
-
-  }
-
-
-  /* =========================================================
-     ENVÍO
-  ========================================================= */
-
-  form.addEventListener(
-    "submit",
-    function(e) {
-
-      e.preventDefault();
-
-
-      if (
-        !validate()
-      ) {
-
-        bannerMsg.textContent =
-          "Revisa los campos marcados en rojo antes de enviar.";
-
-        banner.className =
-          "banner show err";
-
-        stampSeal.style.display =
-          "none";
-
-        return;
-
-      }
-
-
-      /* Honeypot */
-
-      if (
-        document
-          .getElementById(
-            "of-sitioWeb"
-          )
-          .value
-          .trim() !== ""
-      ) {
-
-        bannerMsg.textContent =
-          "¡Ficha enviada correctamente!";
-
-        banner.className =
-          "banner show";
+        banner.classList.remove("err");
+        banner.classList.add("show");
 
         stampSeal.style.display =
           "inline-block";
 
-        localStorage.removeItem(
-          DRAFT_KEY
-        );
+        bannerMsg.textContent =
+          "Tu ficha fue registrada correctamente.";
 
-        form.reset();
+        banner.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
 
         return;
-
       }
 
 
-      var dStr =
-        selDia.value < 10
-          ? "0" +
-            parseInt(
-              selDia.value,
-              10
-            )
-          : selDia.value;
-
-
-      var mStr =
-        selMes.value < 10
-          ? "0" +
-            parseInt(
-              selMes.value,
-              10
-            )
-          : selMes.value;
-
-
-      var fechaNacFormatted =
-        selAnio.value +
-        "-" +
-        mStr +
-        "-" +
-        dStr;
-
-
-      var payload = {
-
-        nombres:
-          form.nombres
-            .value
-            .trim(),
-
-        apellidos:
-          form.apellidos
-            .value
-            .trim(),
-
-        genero:
-          form
-            .querySelector(
-              'input[name="genero"]:checked'
-            )
-            .value,
-
-        fechaNacimiento:
-          fechaNacFormatted,
-
-        distrito:
-          selDistrito
-            .value
-            .trim(),
-
-        telefono:
-          form.telefono
-            .value
-            .replace(
-              /\D/g,
-              ""
-            ),
-
-        usuarioWhatsapp:
-          document
-            .getElementById(
-              "of-usuarioWhatsapp"
-            )
-            .value
-            .trim(),
-
-        posts:
-          posts.checked,
-
-        lives:
-          lives.checked,
-
-        mensajes:
-          mensajes.checked,
-
-        volanteo:
-          volanteo.checked,
-
-        modulo:
-          modulo.checked,
-
-        tarjetaBasico:
-          document
-            .getElementById(
-              "of-tarjetaBasico"
-            )
-            .value
-            .trim(),
-
-        tarjetaComplejo:
-          document
-            .getElementById(
-              "of-tarjetaComplejo"
-            )
-            .value
-            .trim(),
-
-        volanteBasico:
-          document
-            .getElementById(
-              "of-volanteBasico"
-            )
-            .value
-            .trim(),
-
-        volanteComplejo:
-          document
-            .getElementById(
-              "of-volanteComplejo"
-            )
-            .value
-            .trim(),
-
-        portafolio:
-          form.portafolio
-            .value
-            .trim()
-
-      };
-
-
-      isSubmitting =
-        true;
-
-
-      submitBtn.disabled =
-        true;
-
-
-      submitBtn.textContent =
-        "Enviando ficha…";
-
-
-      fetch(
-        SHEET_ENDPOINT,
-        {
-
-          method:
-            "POST",
-
-          headers: {
-            "Content-Type":
-              "text/plain;charset=utf-8"
-          },
-
-          body:
-            JSON.stringify(
-              payload
-            )
-
-        }
-      )
-
-      .then(
-        function(res) {
-
-          if (
-            !res.ok
-          ) {
-            throw new Error(
-              "Server response not ok"
-            );
-          }
-
-          return res.json();
-
-        }
-      )
-
-      .then(
-        function(data) {
-
-          if (
-            data &&
-            data.result ===
-              "success"
-          ) {
-
-            bannerMsg.textContent =
-              "¡Ficha enviada correctamente! Gracias, " +
-              payload.nombres +
-              ".";
-
-            banner.className =
-              "banner show";
-
-            stampSeal.style.display =
-              "inline-block";
-
-            localStorage.removeItem(
-              DRAFT_KEY
-            );
-
-            form.reset();
-
-            return;
-
-          }
-
-
-          bannerMsg.textContent =
-            (
-              data &&
-              data.message
-            )
-              ? data.message
-              : "Ocurrió un error al guardar.";
-
-
-          banner.className =
-            "banner show err";
-
-
-          stampSeal.style.display =
-            "none";
-
-        }
-      )
-
-      .catch(
-        function() {
-
-          bannerMsg.textContent =
-            "Error de conexión con el servidor.";
-
-          banner.className =
-            "banner show err";
-
-          stampSeal.style.display =
-            "none";
-
-        }
-      )
-
-      .finally(
-        function() {
-
-          isSubmitting =
-            false;
-
-          submitBtn.disabled =
-            false;
-
-          submitBtn.textContent =
-            "Enviar ficha";
-
-        }
+      banner.classList.add(
+        "show",
+        "err"
       );
 
-    }
-  );
+      bannerMsg.textContent =
+        result.message ||
+        "No se pudo completar el registro.";
+
+    })
+    .catch(function(){
+
+      banner.classList.add(
+        "show",
+        "err"
+      );
+
+      bannerMsg.textContent =
+        "No se pudo conectar con el servidor. Intenta nuevamente.";
+
+    })
+    .finally(function(){
+
+      isSubmitting =
+        false;
+
+      submitBtn.disabled =
+        false;
+
+      submitBtn.textContent =
+        "Enviar ficha";
+
+    });
+
+  });
 
 })();
 </script>
