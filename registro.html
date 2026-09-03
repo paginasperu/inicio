@@ -1034,7 +1034,6 @@
                 min="1"
                 step="1"
                 inputmode="numeric"
-                placeholder="1"
                 required
               >
 
@@ -1072,7 +1071,6 @@
                 min="1"
                 step="1"
                 inputmode="numeric"
-                placeholder="1"
                 required
               >
 
@@ -1111,7 +1109,7 @@
           type="url"
           id="of-portafolio"
           name="portafolio"
-          placeholder="https://www.behance.net/tu-usuario"
+          placeholder="behance.net/tu-usuario"
           maxlength="500"
           required
         >
@@ -1453,11 +1451,54 @@
   }
 
 
+  function normalizePortfolio(value) {
+
+    var url =
+      cleanText(value);
+
+    if (!url) {
+      return "";
+    }
+
+    if (!/^https?:\/\//i.test(url)) {
+      url =
+        "https://" +
+        url;
+    }
+
+    return url;
+  }
+
+
   function validPortfolio(value) {
-    return (
-      /^https?:\/\/[^\s]+\.[^\s]+$/i.test(value) &&
-      value.length <= 500
-    );
+
+    var url =
+      normalizePortfolio(value);
+
+    if (
+      !url ||
+      url.length > 500
+    ) {
+      return false;
+    }
+
+    try {
+
+      var parsed =
+        new URL(url);
+
+      return (
+        (parsed.protocol === "http:" ||
+         parsed.protocol === "https:") &&
+        parsed.hostname.indexOf(".") !== -1
+      );
+
+    } catch (err) {
+
+      return false;
+
+    }
+
   }
 
 
@@ -1495,6 +1536,26 @@
 
     return value;
   }
+
+
+  var portafolioInput =
+    document.getElementById("of-portafolio");
+
+  portafolioInput.addEventListener("blur", function(){
+
+    var value =
+      cleanText(portafolioInput.value);
+
+    if (!value) {
+      return;
+    }
+
+    portafolioInput.value =
+      normalizePortfolio(value);
+
+    saveDraft();
+
+  });
 
 
   function validateForm() {
@@ -1915,7 +1976,7 @@
         document.getElementById("of-tarifaVolante").value,
 
       portafolio:
-        cleanText(
+        normalizePortfolio(
           document.getElementById("of-portafolio").value
         )
 
